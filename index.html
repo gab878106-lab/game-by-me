@@ -618,6 +618,339 @@ header{
     }
 }
 
+
+
+/* ================= ADMIN PANEL — REDESIGN ================= */
+
+#adminButton{
+    display:none;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.055);
+    color:#f4f4f7;
+}
+#adminButton.show{display:inline-flex}
+
+#adminPanel{
+    position:fixed;
+    inset:0;
+    z-index:9500;
+    display:none;
+    overflow:auto;
+    padding:0;
+    background:#08090e;
+}
+#adminPanel.show{display:block}
+
+.admin-window{
+    width:100%;
+    min-height:100%;
+    margin:0;
+    padding:0;
+    border-radius:0;
+    background:
+        radial-gradient(circle at 15% 0%, rgba(125,92,255,.10), transparent 28%),
+        radial-gradient(circle at 90% 10%, rgba(0,210,255,.06), transparent 25%),
+        #08090e;
+    border:0;
+    box-shadow:none;
+}
+
+.admin-top{
+    position:sticky;
+    top:0;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:20px 30px;
+    background:rgba(8,9,14,.86);
+    border-bottom:1px solid rgba(255,255,255,.07);
+    backdrop-filter:blur(18px);
+}
+
+.admin-brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.admin-logo{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    background:linear-gradient(145deg,#262331,#171720);
+    border:1px solid rgba(255,255,255,.10);
+    font-size:20px;
+}
+
+.admin-title{
+    margin:0;
+    color:#fff;
+    font-size:21px;
+    line-height:1.1;
+    font-weight:900;
+    letter-spacing:-.3px;
+}
+
+.admin-subtitle{
+    margin:5px 0 0;
+    color:#777b8b;
+    font-size:11px;
+}
+
+.admin-actions{
+    display:flex;
+    gap:8px;
+}
+
+.admin-btn{
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:10px;
+    padding:9px 12px;
+    cursor:pointer;
+    color:#dfe1e8;
+    background:#151720;
+    font-size:11px;
+    font-weight:800;
+    transition:.15s ease;
+}
+.admin-btn:hover{
+    background:#1d1f2a;
+    border-color:rgba(255,255,255,.15);
+    transform:translateY(-1px);
+}
+.admin-btn.gold{
+    color:#fff;
+    background:#7657d9;
+    border-color:#8569e8;
+}
+.admin-btn.danger{
+    background:#7d3038;
+}
+.admin-btn.success{
+    background:#24583f;
+}
+
+.admin-content{
+    width:min(1200px,calc(100% - 50px));
+    margin:0 auto;
+    padding:25px 0 45px;
+}
+
+.admin-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.admin-stat{
+    padding:15px 17px;
+    border:1px solid rgba(255,255,255,.065);
+    border-radius:15px;
+    background:rgba(18,19,27,.78);
+}
+
+.admin-stat-label{
+    color:#737786;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+.admin-stat-value{
+    margin-top:5px;
+    color:#fff;
+    font-size:22px;
+    font-weight:900;
+}
+
+.admin-toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+}
+
+.admin-search-wrap{
+    position:relative;
+    flex:1;
+}
+
+.admin-search-icon{
+    position:absolute;
+    left:13px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#6f7382;
+    font-size:13px;
+    pointer-events:none;
+}
+
+.admin-search{
+    width:100%;
+    box-sizing:border-box;
+    margin:0;
+    padding:11px 14px 11px 35px;
+    border-radius:11px;
+    border:1px solid rgba(255,255,255,.075);
+    outline:none;
+    background:#12131b;
+    color:#fff;
+    font-size:12px;
+}
+.admin-search:focus{
+    border-color:rgba(133,105,232,.65);
+    box-shadow:0 0 0 3px rgba(133,105,232,.08);
+}
+
+.admin-message{
+    min-height:18px;
+    margin:8px 2px 12px;
+    color:#7d8190;
+    font-size:11px;
+}
+
+.admin-table-wrap{
+    overflow:auto;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:17px;
+    background:rgba(14,15,22,.82);
+}
+
+.admin-table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:930px;
+}
+
+.admin-table th{
+    padding:12px 13px;
+    color:#707483;
+    background:#11121a;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    text-align:left;
+    font-size:9px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.75px;
+}
+
+.admin-table td{
+    padding:13px;
+    color:#d8dae1;
+    border-bottom:1px solid rgba(255,255,255,.045);
+    font-size:11px;
+    vertical-align:middle;
+}
+
+.admin-table tbody tr{
+    transition:background .12s ease;
+}
+.admin-table tbody tr:hover{
+    background:rgba(255,255,255,.025);
+}
+.admin-table tbody tr:last-child td{
+    border-bottom:0;
+}
+
+.admin-player{
+    color:#fff;
+    font-size:12px;
+    font-weight:900;
+}
+
+.admin-muted{
+    max-width:170px;
+    margin-top:3px;
+    overflow:hidden;
+    color:#626674;
+    font-size:9px;
+    text-overflow:ellipsis;
+}
+
+.admin-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:5px 8px;
+    border-radius:999px;
+    font-size:9px;
+    font-weight:900;
+}
+.admin-badge::before{
+    content:"";
+    width:5px;
+    height:5px;
+    border-radius:50%;
+}
+.admin-badge.ok{
+    color:#72e5a8;
+    background:rgba(72,220,140,.08);
+}
+.admin-badge.ok::before{background:#55d991}
+.admin-badge.banned{
+    color:#ff8e96;
+    background:rgba(255,70,85,.09);
+}
+.admin-badge.banned::before{background:#ff6975}
+
+.admin-row-actions{
+    display:flex;
+    gap:5px;
+}
+
+.admin-mini{
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:8px;
+    padding:7px 8px;
+    cursor:pointer;
+    color:#cfd1d9;
+    background:#191a23;
+    font-size:9px;
+    font-weight:800;
+    transition:.12s ease;
+}
+.admin-mini:hover{
+    transform:translateY(-1px);
+    background:#242631;
+}
+.admin-mini.money{color:#7ee3a6}
+.admin-mini.xp{color:#b4a2ff}
+.admin-mini.shards{color:#f0c56b}
+.admin-mini.ban{color:#ff8d95}
+.admin-mini.unban{color:#74dfab}
+
+@media(max-width:800px){
+    .admin-top{
+        padding:16px;
+    }
+    .admin-content{
+        width:calc(100% - 20px);
+        padding-top:15px;
+    }
+    .admin-stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+@media(max-width:500px){
+    .admin-top{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+    .admin-actions{
+        width:100%;
+    }
+    .admin-btn{
+        flex:1;
+    }
+}
+
 /* ================= BAN ================= */
 
 #banScreen{
@@ -881,6 +1214,97 @@ Tu ne peux plus jouer ni modifier ta sauvegarde tant que cette sanction est acti
 </div>
 
 
+
+<!-- ================= ADMIN ================= -->
+
+<div id="adminPanel">
+
+<div class="admin-window">
+
+<div class="admin-top">
+
+<div class="admin-brand">
+<div class="admin-logo">👑</div>
+<div>
+<h2 class="admin-title">Administration</h2>
+<div class="admin-subtitle">Gestion des joueurs · € Clicker</div>
+</div>
+</div>
+
+<div class="admin-actions">
+<button class="admin-btn gold" id="adminRefresh" type="button">🔄 Actualiser</button>
+<button class="admin-btn" id="adminClose" type="button">✕ Fermer</button>
+</div>
+
+</div>
+
+<div class="admin-content">
+
+<div class="admin-stats">
+<div class="admin-stat">
+<div class="admin-stat-label">Joueurs</div>
+<div class="admin-stat-value" id="adminTotalPlayers">0</div>
+</div>
+<div class="admin-stat">
+<div class="admin-stat-label">Actifs</div>
+<div class="admin-stat-value" id="adminActivePlayers">0</div>
+</div>
+<div class="admin-stat">
+<div class="admin-stat-label">Bannis</div>
+<div class="admin-stat-value" id="adminBannedPlayers">0</div>
+</div>
+<div class="admin-stat">
+<div class="admin-stat-label">Statut</div>
+<div class="admin-stat-value">EN LIGNE</div>
+</div>
+</div>
+
+<div class="admin-toolbar">
+<div class="admin-search-wrap">
+<span class="admin-search-icon">⌕</span>
+<input
+id="adminSearch"
+class="admin-search"
+type="search"
+placeholder="Rechercher un joueur...">
+</div>
+</div>
+
+<div class="admin-message" id="adminMessage"></div>
+
+<div class="admin-table-wrap">
+
+<table class="admin-table">
+
+<thead>
+<tr>
+<th>Joueur</th>
+<th>Argent</th>
+<th>XP</th>
+<th>Niveau</th>
+<th>Renaissance</th>
+<th>Shards</th>
+<th>Statut</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="adminPlayersBody">
+<tr>
+<td colspan="8">Chargement...</td>
+</tr>
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+
 <!-- ================= GAME ================= -->
 
 <div id="gameScreen" style="display:none">
@@ -908,6 +1332,8 @@ Tu ne peux plus jouer ni modifier ta sauvegarde tant que cette sanction est acti
 <div class="header-pill">
 ✨ x<span id="globalMultiplier">1</span>
 </div>
+
+<button class="header-pill" id="adminButton" type="button">👑 Admin</button>
 
 <button class="header-pill logout" id="logoutButton" type="button">
 🚪 Déconnexion
@@ -1096,6 +1522,9 @@ let saveData = null;
 let notificationTimeout;
 let saveInProgress = false;
 let isBanned = false;
+let isAdmin = false;
+let adminPlayers = [];
+
 let banCheckInProgress = false;
 
 
@@ -1647,6 +2076,335 @@ await loadGame();
 
 
 
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+function setAdminMessage(message, error=false){
+    const el = document.getElementById("adminMessage");
+    if(!el) return;
+    el.textContent = message || "";
+    el.style.color = error ? "#ff8d8d" : "#aeb0bd";
+}
+
+async function checkAdmin(){
+    if(!currentUser) return false;
+
+    try{
+        const {data,error} = await supabaseClient.rpc("is_admin");
+
+        if(error){
+            console.error("Erreur vérification admin:", error);
+            isAdmin = false;
+            return false;
+        }
+
+        isAdmin = data === true;
+
+        const button = document.getElementById("adminButton");
+        if(button){
+            button.classList.toggle("show", isAdmin);
+        }
+
+        return isAdmin;
+    }catch(error){
+        console.error(error);
+        isAdmin = false;
+        return false;
+    }
+}
+
+function closeAdminPanel(){
+    document.getElementById("adminPanel")?.classList.remove("show");
+}
+
+function openAdminPanel(){
+    if(!isAdmin) return;
+    document.getElementById("adminPanel")?.classList.add("show");
+    loadAdminPlayers();
+}
+
+function escapeAdminHtml(value){
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function getPlayerId(player){
+    return player.id || player.user_id || player.target_id;
+}
+
+function getPlayerName(player){
+    return player.username ||
+           player.name ||
+           player.email ||
+           getPlayerId(player) ||
+           "Joueur";
+}
+
+function isPlayerBanned(player){
+    return player.banned === true ||
+           player.is_banned === true ||
+           player.status === "banned";
+}
+
+function renderAdminPlayers(){
+    const body = document.getElementById("adminPlayersBody");
+    const search = (document.getElementById("adminSearch")?.value || "").trim().toLowerCase();
+
+    if(!body) return;
+
+    const totalEl = document.getElementById("adminTotalPlayers");
+const activeEl = document.getElementById("adminActivePlayers");
+const bannedEl = document.getElementById("adminBannedPlayers");
+
+const bannedCount = adminPlayers.filter(isPlayerBanned).length;
+if(totalEl) totalEl.textContent = adminPlayers.length.toLocaleString("fr-FR");
+if(activeEl) activeEl.textContent = Math.max(0, adminPlayers.length - bannedCount).toLocaleString("fr-FR");
+if(bannedEl) bannedEl.textContent = bannedCount.toLocaleString("fr-FR");
+
+const filtered = adminPlayers.filter(player => {
+        const text = [
+            getPlayerName(player),
+            getPlayerId(player),
+            player.email || ""
+        ].join(" ").toLowerCase();
+
+        return !search || text.includes(search);
+    });
+
+    if(!filtered.length){
+        body.innerHTML = '<tr><td colspan="8">Aucun joueur trouvé.</td></tr>';
+        return;
+    }
+
+    body.innerHTML = filtered.map(player => {
+        const id = getPlayerId(player);
+        const banned = isPlayerBanned(player);
+        const money = Number(player.money ?? 0);
+        const xp = Number(player.xp ?? 0);
+        const level = Number(player.level ?? 1);
+        const prestige = Number(player.prestige ?? 0);
+        const shards = Number(player.prestige_shards ?? player.prestigeShards ?? 0);
+
+        return `
+<tr>
+<td>
+    <div class="admin-player">${escapeAdminHtml(getPlayerName(player))}</div>
+    <div class="admin-muted">${escapeAdminHtml(id)}</div>
+</td>
+<td>${money.toLocaleString("fr-FR")}</td>
+<td>${xp.toLocaleString("fr-FR")}</td>
+<td>${level.toLocaleString("fr-FR")}</td>
+<td>${prestige.toLocaleString("fr-FR")}</td>
+<td>${shards.toLocaleString("fr-FR")}</td>
+<td>
+    <span class="admin-badge ${banned ? "banned" : "ok"}">
+        ${banned ? "BANNI" : "ACTIF"}
+    </span>
+</td>
+<td>
+    <div class="admin-row-actions">
+        <button class="admin-mini money" data-admin-action="money" data-player="${escapeAdminHtml(id)}">💰 +1M</button>
+        <button class="admin-mini xp" data-admin-action="xp" data-player="${escapeAdminHtml(id)}">⭐ +10K</button>
+        <button class="admin-mini shards" data-admin-action="shards" data-player="${escapeAdminHtml(id)}">💎 +10</button>
+        ${
+            banned
+            ? `<button class="admin-mini unban" data-admin-action="unban" data-player="${escapeAdminHtml(id)}">🔓 Débannir</button>`
+            : `<button class="admin-mini ban" data-admin-action="ban" data-player="${escapeAdminHtml(id)}">🔨 Bannir</button>`
+        }
+    </div>
+</td>
+</tr>`;
+    }).join("");
+}
+
+async function loadAdminPlayers(){
+    if(!isAdmin) return;
+
+    const body = document.getElementById("adminPlayersBody");
+    if(body){
+        body.innerHTML = '<tr><td colspan="8">⏳ Chargement des joueurs...</td></tr>';
+    }
+
+    setAdminMessage("⏳ Chargement...");
+
+    try{
+        const {data,error} = await supabaseClient.rpc("admin_list_players");
+
+        if(error){
+            console.error(error);
+            setAdminMessage("❌ Impossible de charger les joueurs : " + error.message, true);
+            return;
+        }
+
+        adminPlayers = Array.isArray(data) ? data : (data ? [data] : []);
+        renderAdminPlayers();
+        setAdminMessage(`${adminPlayers.length} joueur(s) chargé(s).`);
+    }catch(error){
+        console.error(error);
+        setAdminMessage("❌ Erreur lors du chargement.", true);
+    }
+}
+
+async function adminGiveMoney(playerId){
+    const amount = 1000000;
+
+    if(!confirm(`Donner ${amount.toLocaleString("fr-FR")} € à ce joueur ?`)) return;
+
+    setAdminMessage("⏳ Attribution de l'argent...");
+
+    const {error} = await supabaseClient.rpc("admin_give_money", {
+        target_id: playerId,
+        amount: amount
+    });
+
+    if(error){
+        console.error(error);
+        setAdminMessage("❌ " + error.message, true);
+        return;
+    }
+
+    setAdminMessage("✅ 1 000 000 € ajoutés.");
+    await loadAdminPlayers();
+}
+
+async function adminGiveXP(playerId){
+    const amount = 10000;
+
+    if(!confirm(`Donner ${amount.toLocaleString("fr-FR")} XP à ce joueur ?`)) return;
+
+    setAdminMessage("⏳ Attribution de l'XP...");
+
+    const {error} = await supabaseClient.rpc("admin_give_xp", {
+        target_id: playerId,
+        amount: amount
+    });
+
+    if(error){
+        console.error(error);
+        setAdminMessage("❌ " + error.message, true);
+        return;
+    }
+
+    setAdminMessage("✅ 10 000 XP ajoutés.");
+    await loadAdminPlayers();
+}
+
+async function adminGiveShards(playerId){
+    const amount = 10;
+
+    if(!confirm(`Donner ${amount} shards à ce joueur ?`)) return;
+
+    setAdminMessage("⏳ Attribution des shards...");
+
+    const {error} = await supabaseClient.rpc("admin_give_shards", {
+        target_id: playerId,
+        amount: amount
+    });
+
+    if(error){
+        console.error(error);
+        setAdminMessage("❌ " + error.message, true);
+        return;
+    }
+
+    setAdminMessage("✅ 10 shards ajoutés.");
+    await loadAdminPlayers();
+}
+
+async function adminBan(playerId){
+    const reason = prompt("Raison du bannissement :", "Violation des règles");
+    if(reason === null) return;
+
+    const durationText = prompt(
+        "Durée du bannissement en heures.\n\n" +
+        "Exemples : 1 = 1 heure, 24 = 1 jour, 168 = 7 jours.\n" +
+        "Laisse vide pour un bannissement permanent.",
+        "24"
+    );
+
+    if(durationText === null) return;
+
+    let durationHours = 0;
+
+    if(durationText.trim() !== ""){
+        durationHours = Number.parseInt(durationText.trim(), 10);
+
+        if(!Number.isInteger(durationHours) || durationHours < 1){
+            alert("❌ Durée invalide.");
+            return;
+        }
+    }
+
+    if(!confirm(
+        `Bannir ce joueur ?\n\nRaison : ${reason || "Aucune raison indiquée"}\n` +
+        `Durée : ${durationHours === 0 ? "Permanent" : durationHours + " heure(s)"}`
+    )) return;
+
+    setAdminMessage("⏳ Bannissement...");
+
+    const {error} = await supabaseClient.rpc("admin_ban_player", {
+        target_id: playerId,
+        ban_reason: reason || "Aucune raison indiquée",
+        duration_hours: durationHours
+    });
+
+    if(error){
+        console.error(error);
+        setAdminMessage("❌ " + error.message, true);
+        return;
+    }
+
+    setAdminMessage("✅ Joueur banni.");
+    await loadAdminPlayers();
+}
+
+async function adminUnban(playerId){
+    if(!confirm("Débannir ce joueur ?")) return;
+
+    setAdminMessage("⏳ Débannissement...");
+
+    const {error} = await supabaseClient.rpc("admin_unban_player", {
+        target_id: playerId
+    });
+
+    if(error){
+        console.error(error);
+        setAdminMessage("❌ " + error.message, true);
+        return;
+    }
+
+    setAdminMessage("✅ Joueur débanni.");
+    await loadAdminPlayers();
+}
+
+document.getElementById("adminButton")?.addEventListener("click", openAdminPanel);
+document.getElementById("adminClose")?.addEventListener("click", closeAdminPanel);
+document.getElementById("adminRefresh")?.addEventListener("click", loadAdminPlayers);
+document.getElementById("adminSearch")?.addEventListener("input", renderAdminPlayers);
+
+document.getElementById("adminPlayersBody")?.addEventListener("click", async event => {
+    const button = event.target.closest("[data-admin-action]");
+    if(!button) return;
+
+    const action = button.dataset.adminAction;
+    const playerId = button.dataset.player;
+
+    if(!playerId) return;
+
+    if(action === "money") await adminGiveMoney(playerId);
+    if(action === "xp") await adminGiveXP(playerId);
+    if(action === "shards") await adminGiveShards(playerId);
+    if(action === "ban") await adminBan(playerId);
+    if(action === "unban") await adminUnban(playerId);
+});
+
+
 /* =========================================================
    VÉRIFICATION DU BAN
 ========================================================= */
@@ -1774,6 +2532,8 @@ return;
 if(await checkBan()){
     return;
 }
+
+await checkAdmin();
 
 const { data,error } =
 await supabaseClient
@@ -2871,6 +3631,11 @@ if(event === "SIGNED_OUT"){
 currentUser = null;
 currentUsername = null;
 saveData = null;
+isAdmin = false;
+adminPlayers = [];
+
+document.getElementById("adminButton")?.classList.remove("show");
+closeAdminPanel();
 
 }
 
