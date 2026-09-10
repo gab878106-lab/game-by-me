@@ -1,0 +1,2468 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>€ Clicker</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter,Arial,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at 15% 10%,#292061 0,transparent 35%),
+        radial-gradient(circle at 85% 90%,#075b55 0,transparent 32%),
+        #07080e;
+}
+
+button,input{font-family:inherit}
+
+/* ================= AUTH ================= */
+
+#authScreen{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+        radial-gradient(circle at 50% 30%,rgba(99,87,230,.25),transparent 45%),
+        #07080e;
+}
+
+.auth-box{
+    width:420px;
+    max-width:100%;
+    padding:32px;
+    border-radius:25px;
+    background:rgba(16,17,28,.94);
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 25px 100px rgba(0,0,0,.6);
+    backdrop-filter:blur(25px);
+}
+
+.auth-logo{
+    text-align:center;
+    font-size:32px;
+    font-weight:900;
+}
+
+.auth-logo span,
+.logo span{
+    color:#8174ff;
+}
+
+.auth-subtitle{
+    text-align:center;
+    color:#777986;
+    font-size:12px;
+    margin:5px 0 25px;
+}
+
+.auth-tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:20px;
+}
+
+.auth-tab{
+    padding:11px;
+    border:0;
+    border-radius:10px;
+    cursor:pointer;
+    color:#888;
+    background:#22232e;
+    font-weight:bold;
+}
+
+.auth-tab.active{
+    color:white;
+    background:#6357e6;
+}
+
+.auth-form{
+    display:none;
+}
+
+.auth-form.active{
+    display:block;
+}
+
+.auth-label{
+    display:block;
+    margin:13px 0 6px;
+    color:#aaa;
+    font-size:12px;
+}
+
+.auth-input{
+    width:100%;
+    padding:13px;
+    border-radius:11px;
+    border:1px solid rgba(255,255,255,.08);
+    outline:none;
+    color:white;
+    background:#0d0e16;
+}
+
+.auth-input:focus{
+    border-color:#7064ff;
+    box-shadow:0 0 0 3px rgba(112,100,255,.1);
+}
+
+.auth-submit{
+    width:100%;
+    margin-top:20px;
+    padding:13px;
+    border:0;
+    border-radius:11px;
+    cursor:pointer;
+    color:white;
+    background:linear-gradient(90deg,#6357e6,#8174ff);
+    font-weight:900;
+}
+
+.auth-message{
+    min-height:18px;
+    margin-top:12px;
+    text-align:center;
+    font-size:12px;
+    color:#ff7777;
+}
+
+.auth-note{
+    margin-top:18px;
+    color:#666875;
+    text-align:center;
+    font-size:10px;
+    line-height:1.5;
+}
+
+/* ================= HEADER ================= */
+
+header{
+    height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:0 32px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(8,9,15,.82);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(20px);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+}
+
+.header-stats{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+}
+
+.header-pill{
+    padding:9px 14px;
+    border-radius:30px;
+    background:rgba(124,108,255,.11);
+    border:1px solid rgba(124,108,255,.25);
+    color:#c0baff;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.user-pill{
+    color:#67ffac;
+    border-color:rgba(103,255,172,.2);
+    background:rgba(103,255,172,.07);
+}
+
+.logout{
+    border:0;
+    cursor:pointer;
+    color:#ff8b8b;
+    background:transparent;
+    font-weight:bold;
+}
+
+/* ================= GAME ================= */
+
+.game{
+    width:1350px;
+    max-width:95%;
+    margin:28px auto;
+    display:grid;
+    grid-template-columns:minmax(350px,1fr) 500px;
+    gap:22px;
+}
+
+.panel{
+    background:rgba(16,17,28,.86);
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:25px;
+    padding:26px;
+    box-shadow:0 20px 70px rgba(0,0,0,.35);
+    backdrop-filter:blur(20px);
+}
+
+.sticky-game{
+    position:sticky;
+    top:100px;
+    align-self:start;
+}
+
+.money-title{
+    text-align:center;
+    color:#858694;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    font-size:12px;
+}
+
+.money{
+    text-align:center;
+    font-size:clamp(42px,6vw,72px);
+    font-weight:900;
+    margin:6px 0 25px;
+    background:linear-gradient(90deg,#fff,#aaa1ff,#67ffb1);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    word-break:break-word;
+}
+
+.click-zone{
+    display:flex;
+    justify-content:center;
+    margin:28px 0;
+}
+
+#clickButton{
+    width:235px;
+    height:235px;
+    border-radius:50%;
+    border:0;
+    cursor:pointer;
+    color:white;
+    font-weight:900;
+    font-size:27px;
+    background:radial-gradient(circle at 35% 28%,#9389ff,#5d50ea 52%,#322798);
+    box-shadow:
+        0 0 30px rgba(108,92,255,.6),
+        0 0 100px rgba(108,92,255,.23),
+        inset 0 0 35px rgba(255,255,255,.14);
+    transition:.1s;
+}
+
+#clickButton:hover{
+    transform:scale(1.03);
+}
+
+#clickButton:active{
+    transform:scale(.91);
+}
+
+.floating{
+    position:fixed;
+    z-index:999;
+    pointer-events:none;
+    color:#66ffab;
+    font-size:23px;
+    font-weight:900;
+    animation:floatingMoney .85s ease-out forwards;
+}
+
+@keyframes floatingMoney{
+    0%{
+        opacity:1;
+        transform:translate(-50%,0) scale(.8);
+    }
+
+    100%{
+        opacity:0;
+        transform:translate(-50%,-100px) scale(1.35);
+    }
+}
+
+/* ================= STATS ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.stat{
+    padding:15px;
+    border-radius:15px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+    text-align:center;
+}
+
+.stat-icon{
+    font-size:23px;
+}
+
+.stat-value{
+    margin-top:5px;
+    font-size:19px;
+    font-weight:bold;
+}
+
+.stat-label{
+    margin-top:4px;
+    color:#777986;
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+/* ================= XP ================= */
+
+.xp-box{
+    margin-top:20px;
+}
+
+.xp-info{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    color:#8b8c9a;
+    font-size:12px;
+}
+
+.xp-bar{
+    height:10px;
+    border-radius:20px;
+    background:#242531;
+    overflow:hidden;
+}
+
+.xp-progress{
+    width:0;
+    height:100%;
+    border-radius:20px;
+    background:linear-gradient(90deg,#6f61ff,#9f95ff);
+    transition:width .25s;
+}
+
+/* ================= PRESTIGE ================= */
+
+.prestige-box{
+    margin-top:22px;
+    padding:20px;
+    border-radius:18px;
+    background:
+        radial-gradient(circle at 80% 20%,rgba(255,196,68,.16),transparent 40%),
+        rgba(255,193,58,.05);
+    border:1px solid rgba(255,196,68,.25);
+}
+
+.prestige-title{
+    font-size:20px;
+    font-weight:900;
+    color:#ffd96a;
+}
+
+.prestige-desc{
+    margin:8px 0 15px;
+    color:#aaa9a0;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.prestige-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:13px;
+}
+
+.prestige-stat{
+    padding:10px;
+    text-align:center;
+    border-radius:12px;
+    background:rgba(255,255,255,.04);
+}
+
+.prestige-stat strong{
+    display:block;
+    color:#ffe397;
+    font-size:18px;
+}
+
+.prestige-stat span{
+    color:#86847b;
+    font-size:10px;
+}
+
+#prestigeButton{
+    width:100%;
+    padding:13px;
+    border:0;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:900;
+    color:#281d00;
+    background:linear-gradient(90deg,#f6ba31,#ffe787);
+}
+
+#prestigeButton:disabled{
+    cursor:not-allowed;
+    color:#777;
+    background:#292a31;
+}
+
+/* ================= SHOP ================= */
+
+.shop-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:17px;
+}
+
+.shop-header h2{
+    margin:0;
+    font-size:24px;
+}
+
+.shop-subtitle{
+    color:#737481;
+    font-size:11px;
+}
+
+.shop-list{
+    max-height:calc(100vh - 155px);
+    padding-right:5px;
+    overflow-y:auto;
+}
+
+.shop-list::-webkit-scrollbar{
+    width:6px;
+}
+
+.shop-list::-webkit-scrollbar-thumb{
+    border-radius:10px;
+    background:#393a48;
+}
+
+.upgrade{
+    position:relative;
+    margin-bottom:11px;
+    padding:17px;
+    border-radius:17px;
+    background:linear-gradient(
+        135deg,
+        rgba(255,255,255,.055),
+        rgba(255,255,255,.018)
+    );
+    border:1px solid rgba(255,255,255,.07);
+    transition:.2s;
+}
+
+.upgrade:hover{
+    transform:translateY(-2px);
+    border-color:rgba(124,108,255,.42);
+    background:rgba(124,108,255,.075);
+}
+
+.upgrade-top{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.upgrade-icon{
+    flex:0 0 auto;
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    background:rgba(124,108,255,.12);
+    border:1px solid rgba(124,108,255,.2);
+    font-size:24px;
+}
+
+.upgrade-name{
+    margin:0 65px 0 0;
+    font-size:15px;
+}
+
+.upgrade-description{
+    margin:5px 0 0;
+    color:#80818d;
+    font-size:11px;
+    line-height:1.45;
+}
+
+.owned{
+    position:absolute;
+    top:15px;
+    right:15px;
+    padding:4px 8px;
+    border-radius:8px;
+    color:#67ffac;
+    background:rgba(101,255,161,.1);
+    font-size:10px;
+    font-weight:bold;
+}
+
+.buy{
+    width:100%;
+    margin-top:13px;
+    padding:10px;
+    border:0;
+    border-radius:10px;
+    cursor:pointer;
+    color:white;
+    background:#6357e6;
+    font-size:12px;
+    font-weight:bold;
+    transition:.18s;
+}
+
+.buy:hover:not(:disabled){
+    transform:translateY(-1px);
+    background:#796eff;
+}
+
+.buy:disabled{
+    cursor:not-allowed;
+    color:#656671;
+    background:#292a34;
+}
+
+/* ================= NOTIFICATION ================= */
+
+#notification{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:500;
+    max-width:320px;
+    padding:15px 19px;
+    border-radius:13px;
+    background:#191a25;
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 15px 50px rgba(0,0,0,.5);
+    opacity:0;
+    transform:translateY(100px);
+    transition:.3s;
+}
+
+#notification.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+    .game{
+        grid-template-columns:1fr;
+    }
+
+    .sticky-game{
+        position:static;
+    }
+
+    .shop-list{
+        max-height:none;
+        overflow:visible;
+    }
+}
+
+@media(max-width:550px){
+    header{
+        height:auto;
+        padding:15px;
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .header-stats{
+        justify-content:flex-start;
+    }
+
+    .panel{
+        padding:18px;
+    }
+
+    #clickButton{
+        width:185px;
+        height:185px;
+        font-size:22px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= AUTHENTIFICATION ================= -->
+
+<div id="authScreen">
+
+<div class="auth-box">
+
+<div class="auth-logo">
+€ <span>CLICKER</span>
+</div>
+
+<div class="auth-subtitle">
+Connecte-toi pour retrouver ton empire
+</div>
+
+<div class="auth-tabs">
+
+<button
+class="auth-tab active"
+id="loginTab"
+type="button">
+Connexion
+</button>
+
+<button
+class="auth-tab"
+id="registerTab"
+type="button">
+Inscription
+</button>
+
+</div>
+
+<form id="loginForm" class="auth-form active">
+
+<label class="auth-label">
+Identifiant
+</label>
+
+<input
+class="auth-input"
+id="loginUsername"
+autocomplete="username"
+required
+maxlength="20">
+
+<label class="auth-label">
+Mot de passe
+</label>
+
+<input
+class="auth-input"
+id="loginPassword"
+type="password"
+autocomplete="current-password"
+required>
+
+<button
+class="auth-submit"
+type="submit">
+🔑 Se connecter
+</button>
+
+</form>
+
+<form id="registerForm" class="auth-form">
+
+<label class="auth-label">
+Identifiant
+</label>
+
+<input
+class="auth-input"
+id="registerUsername"
+autocomplete="username"
+minlength="3"
+maxlength="20"
+required
+placeholder="Ex : Gabriel123">
+
+<label class="auth-label">
+Mot de passe
+</label>
+
+<input
+class="auth-input"
+id="registerPassword"
+type="password"
+autocomplete="new-password"
+minlength="6"
+required>
+
+<label class="auth-label">
+Confirmer le mot de passe
+</label>
+
+<input
+class="auth-input"
+id="registerPasswordConfirm"
+type="password"
+autocomplete="new-password"
+minlength="6"
+required>
+
+<button
+class="auth-submit"
+type="submit">
+🚀 Créer mon compte
+</button>
+
+</form>
+
+<div
+class="auth-message"
+id="authMessage">
+</div>
+
+<div class="auth-note">
+Les comptes sont enregistrés localement dans ce navigateur.
+Pour une vraie sécurité en ligne, il faudrait un serveur et une base
+de données.
+</div>
+
+</div>
+</div>
+
+
+<!-- ================= JEU ================= -->
+
+<div id="gameScreen" style="display:none">
+
+<header>
+
+<div class="logo">
+€ <span>CLICKER</span>
+</div>
+
+<div class="header-stats">
+
+<div class="header-pill user-pill">
+👤 <span id="currentUsername"></span>
+</div>
+
+<div class="header-pill">
+⭐ Niveau <span id="level">1</span>
+</div>
+
+<div class="header-pill">
+♻️ Renaissance <span id="prestigeLevel">0</span>
+</div>
+
+<div class="header-pill">
+✨ x<span id="globalMultiplier">1</span>
+</div>
+
+<button
+class="header-pill logout"
+id="logoutButton"
+type="button">
+🚪 Déconnexion
+</button>
+
+</div>
+
+</header>
+
+
+<main class="game">
+
+<section class="panel sticky-game">
+
+<div class="money-title">
+Ton empire
+</div>
+
+<div class="money">
+<span id="money">0</span> €
+</div>
+
+<div class="click-zone">
+
+<button id="clickButton">
++<span id="clickValue">1</span> €
+</button>
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-icon">👆</div>
+<div class="stat-value">
+<span id="perClick">1</span> €
+</div>
+<div class="stat-label">PAR CLIC</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">⚡</div>
+<div class="stat-value">
+<span id="perSecond">0</span> €
+</div>
+<div class="stat-label">PAR SECONDE</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">🛒</div>
+<div class="stat-value">
+<span id="upgradeCount">0</span>
+</div>
+<div class="stat-label">AMÉLIORATIONS</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">🏦</div>
+<div class="stat-value">
+<span id="totalEarned">0</span> €
+</div>
+<div class="stat-label">TOTAL GAGNÉ</div>
+</div>
+
+</div>
+
+
+<div class="xp-box">
+
+<div class="xp-info">
+
+<span>Progression</span>
+
+<span>
+<span id="xp">0</span> /
+<span id="xpMax">100</span> XP
+</span>
+
+</div>
+
+<div class="xp-bar">
+
+<div
+class="xp-progress"
+id="xpProgress">
+</div>
+
+</div>
+
+</div>
+
+
+<div class="prestige-box">
+
+<div class="prestige-title">
+♻️ Renaissance
+</div>
+
+<div class="prestige-desc">
+Recommence ta partie à zéro pour obtenir des
+<strong>Éclats de Renaissance</strong>.
+Ils augmentent définitivement tous tes revenus.
+</div>
+
+<div class="prestige-info">
+
+<div class="prestige-stat">
+
+<strong id="prestigeShards">
+0
+</strong>
+
+<span>
+ÉCLATS POSSÉDÉS
+</span>
+
+</div>
+
+<div class="prestige-stat">
+
+<strong>
++<span id="prestigeGain">0</span>
+</strong>
+
+<span>
+PROCHAINE RENAISSANCE
+</span>
+
+</div>
+
+</div>
+
+<button
+id="prestigeButton"
+disabled>
+Renaissance indisponible
+</button>
+
+</div>
+
+</section>
+
+
+<section class="panel">
+
+<div class="shop-header">
+
+<h2>🛒 Boutique</h2>
+
+<div class="shop-subtitle">
+AMÉLIORE TON EMPIRE
+</div>
+
+</div>
+
+<div
+class="shop-list"
+id="shopList">
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<div id="notification"></div>
+
+
+<script>
+
+/* =========================================================
+   AUTHENTIFICATION
+========================================================= */
+
+const ACCOUNTS_KEY = "euroClickerAccountsV4";
+const SESSION_KEY = "euroClickerSessionV4";
+
+let accounts = {};
+let currentUsername = null;
+let saveData = null;
+let notificationTimeout;
+
+
+/* =========================================================
+   AMÉLIORATIONS
+========================================================= */
+
+const upgradesData = [
+
+{
+id:"mouse",
+icon:"🖱️",
+name:"Souris améliorée",
+description:"+1 € par clic",
+basePrice:10,
+priceGrowth:1.35,
+click:1,
+auto:0
+},
+
+{
+id:"keyboard",
+icon:"⌨️",
+name:"Clavier mécanique",
+description:"+3 € par clic",
+basePrice:35,
+priceGrowth:1.38,
+click:3,
+auto:0
+},
+
+{
+id:"turbo",
+icon:"⚡",
+name:"Turbo clic",
+description:"+10 € par clic",
+basePrice:150,
+priceGrowth:1.4,
+click:10,
+auto:0
+},
+
+{
+id:"worker",
+icon:"🤖",
+name:"Robot collecteur",
+description:"+2 € automatiquement par seconde",
+basePrice:250,
+priceGrowth:1.42,
+click:0,
+auto:2
+},
+
+{
+id:"server",
+icon:"🖥️",
+name:"Serveur automatique",
+description:"+12 € par seconde",
+basePrice:1200,
+priceGrowth:1.44,
+click:0,
+auto:12
+},
+
+{
+id:"diamond",
+icon:"💎",
+name:"Clic diamant",
+description:"+50 € par clic",
+basePrice:3000,
+priceGrowth:1.46,
+click:50,
+auto:0
+},
+
+{
+id:"factory",
+icon:"🏭",
+name:"Usine",
+description:"+80 € par seconde",
+basePrice:10000,
+priceGrowth:1.48,
+click:0,
+auto:80
+},
+
+{
+id:"bank",
+icon:"🏦",
+name:"Banque",
+description:"+450 € par seconde",
+basePrice:50000,
+priceGrowth:1.5,
+click:0,
+auto:450
+},
+
+{
+id:"quantumMouse",
+icon:"🌀",
+name:"Souris quantique",
+description:"+1 000 € par clic",
+basePrice:150000,
+priceGrowth:1.52,
+click:1000,
+auto:0
+},
+
+{
+id:"datacenter",
+icon:"🌐",
+name:"Data Center",
+description:"+5 000 € par seconde",
+basePrice:500000,
+priceGrowth:1.54,
+click:0,
+auto:5000
+},
+
+{
+id:"mine",
+icon:"⛏️",
+name:"Mine automatisée",
+description:"+25 000 € par seconde",
+basePrice:2500000,
+priceGrowth:1.55,
+click:0,
+auto:25000
+},
+
+{
+id:"megaFactory",
+icon:"🏗️",
+name:"Méga usine",
+description:"+150 000 € par seconde",
+basePrice:10000000,
+priceGrowth:1.57,
+click:0,
+auto:150000
+},
+
+{
+id:"ai",
+icon:"🧠",
+name:"Intelligence artificielle",
+description:"+750 000 € par seconde",
+basePrice:50000000,
+priceGrowth:1.58,
+click:0,
+auto:750000
+},
+
+{
+id:"rocket",
+icon:"🚀",
+name:"Entreprise spatiale",
+description:"+4 M€ par seconde",
+basePrice:250000000,
+priceGrowth:1.6,
+click:0,
+auto:4000000
+},
+
+{
+id:"moon",
+icon:"🌕",
+name:"Base lunaire",
+description:"+20 M€ par seconde",
+basePrice:1000000000,
+priceGrowth:1.62,
+click:0,
+auto:20000000
+},
+
+{
+id:"planet",
+icon:"🪐",
+name:"Colonie planétaire",
+description:"+100 M€ par seconde",
+basePrice:5000000000,
+priceGrowth:1.64,
+click:0,
+auto:100000000
+},
+
+{
+id:"star",
+icon:"⭐",
+name:"Centrale stellaire",
+description:"+500 M€ par seconde",
+basePrice:25000000000,
+priceGrowth:1.66,
+click:0,
+auto:500000000
+},
+
+{
+id:"galaxy",
+icon:"🌌",
+name:"Empire galactique",
+description:"+5 Md€ par seconde",
+basePrice:250000000000,
+priceGrowth:1.68,
+click:0,
+auto:5000000000
+},
+
+{
+id:"blackhole",
+icon:"🕳️",
+name:"Extracteur de trou noir",
+description:"+50 Md€ par seconde",
+basePrice:2500000000000,
+priceGrowth:1.7,
+click:0,
+auto:50000000000
+},
+
+{
+id:"dimension",
+icon:"🔮",
+name:"Mine dimensionnelle",
+description:"+1 000 Md€ par seconde",
+basePrice:50000000000000,
+priceGrowth:1.72,
+click:0,
+auto:1000000000000
+}
+
+];
+
+
+/* =========================================================
+   SAUVEGARDE
+========================================================= */
+
+function defaultSave(){
+
+const upgrades = {};
+
+for(const upgrade of upgradesData){
+
+upgrades[upgrade.id] = 0;
+
+}
+
+return {
+
+money:0,
+totalEarned:0,
+xp:0,
+level:1,
+prestige:0,
+prestigeShards:0,
+upgrades
+
+};
+
+}
+
+
+/*
+   Répare les anciennes sauvegardes
+   et ajoute automatiquement les nouvelles améliorations.
+*/
+
+function repairSave(data){
+
+const fresh = defaultSave();
+
+if(!data || typeof data !== "object"){
+
+return fresh;
+
+}
+
+if(Number.isFinite(data.money) && data.money >= 0){
+
+fresh.money = data.money;
+
+}
+
+if(Number.isFinite(data.totalEarned) && data.totalEarned >= 0){
+
+fresh.totalEarned = data.totalEarned;
+
+}
+
+if(Number.isFinite(data.xp) && data.xp >= 0){
+
+fresh.xp = data.xp;
+
+}
+
+if(Number.isFinite(data.level) && data.level >= 1){
+
+fresh.level = Math.floor(data.level);
+
+}
+
+if(Number.isFinite(data.prestige) && data.prestige >= 0){
+
+fresh.prestige = Math.floor(data.prestige);
+
+}
+
+if(
+Number.isFinite(data.prestigeShards) &&
+data.prestigeShards >= 0
+){
+
+fresh.prestigeShards =
+Math.floor(data.prestigeShards);
+
+}
+
+if(data.upgrades && typeof data.upgrades === "object"){
+
+for(const upgrade of upgradesData){
+
+const owned =
+data.upgrades[upgrade.id];
+
+if(Number.isFinite(owned) && owned >= 0){
+
+fresh.upgrades[upgrade.id] =
+Math.floor(owned);
+
+}
+
+}
+
+}
+
+return fresh;
+
+}
+
+
+/* =========================================================
+   OUTILS AUTH
+========================================================= */
+
+function loadAccounts(){
+
+try{
+
+accounts =
+JSON.parse(
+localStorage.getItem(ACCOUNTS_KEY)
+) || {};
+
+}
+catch{
+
+accounts = {};
+
+}
+
+}
+
+
+function saveAccounts(){
+
+localStorage.setItem(
+ACCOUNTS_KEY,
+JSON.stringify(accounts)
+);
+
+}
+
+
+async function hashPassword(password){
+
+const data =
+new TextEncoder().encode(password);
+
+const hash =
+await crypto.subtle.digest(
+"SHA-256",
+data
+);
+
+return Array.from(
+new Uint8Array(hash)
+)
+.map(
+byte =>
+byte.toString(16).padStart(2,"0")
+)
+.join("");
+
+}
+
+
+function normalizeUsername(username){
+
+return username
+.trim()
+.toLowerCase();
+
+}
+
+
+function validUsername(username){
+
+return /^[a-zA-Z0-9_-]{3,20}$/
+.test(username);
+
+}
+
+
+function showAuthMessage(message){
+
+document.getElementById(
+"authMessage"
+).textContent = message;
+
+}
+
+
+/* =========================================================
+   FORMATAGE
+========================================================= */
+
+function formatNumber(number){
+
+if(!Number.isFinite(number)){
+
+return "∞";
+
+}
+
+const abs = Math.abs(number);
+
+const units = [
+
+{value:1e18,name:"Qi"},
+{value:1e15,name:"Qa"},
+{value:1e12,name:"T"},
+{value:1e9,name:"Md"},
+{value:1e6,name:"M"},
+{value:1e3,name:"k"}
+
+];
+
+for(const unit of units){
+
+if(abs >= unit.value){
+
+return (
+number / unit.value
+)
+.toFixed(2)
+.replace(".00","")
+.replace(".0","")
++" "+unit.name;
+
+}
+
+}
+
+return Math.floor(number)
+.toLocaleString("fr-FR");
+
+}
+
+
+/* =========================================================
+   SAUVEGARDE PAR COMPTE
+========================================================= */
+
+function save(){
+
+if(
+!currentUsername ||
+!saveData ||
+!accounts[currentUsername]
+){
+
+return;
+
+}
+
+accounts[currentUsername].game =
+saveData;
+
+saveAccounts();
+
+}
+
+
+/* =========================================================
+   CONNEXION
+========================================================= */
+
+async function login(username,password){
+
+const key =
+normalizeUsername(username);
+
+if(!accounts[key]){
+
+showAuthMessage(
+"❌ Identifiant ou mot de passe incorrect."
+);
+
+return;
+
+}
+
+const hash =
+await hashPassword(password);
+
+if(accounts[key].passwordHash !== hash){
+
+showAuthMessage(
+"❌ Identifiant ou mot de passe incorrect."
+);
+
+return;
+
+}
+
+currentUsername = key;
+
+saveData =
+repairSave(accounts[key].game);
+
+localStorage.setItem(
+SESSION_KEY,
+currentUsername
+);
+
+document.getElementById(
+"currentUsername"
+).textContent =
+accounts[key].username;
+
+document.getElementById(
+"authScreen"
+).style.display =
+"none";
+
+document.getElementById(
+"gameScreen"
+).style.display =
+"block";
+
+createShop();
+update();
+
+notify(
+"👋 Bienvenue "+
+accounts[key].username+
+" !"
+);
+
+}
+
+
+/* =========================================================
+   INSCRIPTION
+========================================================= */
+
+async function register(
+username,
+password,
+confirmation
+){
+
+username = username.trim();
+
+if(!validUsername(username)){
+
+showAuthMessage(
+"❌ Identifiant : 3 à 20 caractères, lettres, chiffres, _ ou -."
+);
+
+return;
+
+}
+
+if(password.length < 6){
+
+showAuthMessage(
+"❌ Le mot de passe doit contenir au moins 6 caractères."
+);
+
+return;
+
+}
+
+if(password !== confirmation){
+
+showAuthMessage(
+"❌ Les mots de passe ne correspondent pas."
+);
+
+return;
+
+}
+
+const key =
+normalizeUsername(username);
+
+if(accounts[key]){
+
+showAuthMessage(
+"❌ Cet identifiant existe déjà."
+);
+
+return;
+
+}
+
+const passwordHash =
+await hashPassword(password);
+
+accounts[key] = {
+
+username,
+passwordHash,
+createdAt:new Date().toISOString(),
+game:defaultSave()
+
+};
+
+saveAccounts();
+
+showAuthMessage(
+"✅ Compte créé ! Connexion..."
+);
+
+await login(
+username,
+password
+);
+
+}
+
+
+/* =========================================================
+   INTERFACE AUTH
+========================================================= */
+
+document.getElementById(
+"loginTab"
+).addEventListener(
+"click",
+()=>{
+
+document
+.getElementById("loginTab")
+.classList.add("active");
+
+document
+.getElementById("registerTab")
+.classList.remove("active");
+
+document
+.getElementById("loginForm")
+.classList.add("active");
+
+document
+.getElementById("registerForm")
+.classList.remove("active");
+
+showAuthMessage("");
+
+}
+);
+
+
+document.getElementById(
+"registerTab"
+).addEventListener(
+"click",
+()=>{
+
+document
+.getElementById("registerTab")
+.classList.add("active");
+
+document
+.getElementById("loginTab")
+.classList.remove("active");
+
+document
+.getElementById("registerForm")
+.classList.add("active");
+
+document
+.getElementById("loginForm")
+.classList.remove("active");
+
+showAuthMessage("");
+
+}
+);
+
+
+document.getElementById(
+"loginForm"
+).addEventListener(
+"submit",
+async event=>{
+
+event.preventDefault();
+
+await login(
+
+document.getElementById(
+"loginUsername"
+).value,
+
+document.getElementById(
+"loginPassword"
+).value
+
+);
+
+}
+);
+
+
+document.getElementById(
+"registerForm"
+).addEventListener(
+"submit",
+async event=>{
+
+event.preventDefault();
+
+await register(
+
+document.getElementById(
+"registerUsername"
+).value,
+
+document.getElementById(
+"registerPassword"
+).value,
+
+document.getElementById(
+"registerPasswordConfirm"
+).value
+
+);
+
+}
+);
+
+
+/* =========================================================
+   DÉCONNEXION
+========================================================= */
+
+document.getElementById(
+"logoutButton"
+).addEventListener(
+"click",
+()=>{
+
+save();
+
+localStorage.removeItem(
+SESSION_KEY
+);
+
+location.reload();
+
+}
+);
+
+
+/* =========================================================
+   MULTIPLICATEUR
+========================================================= */
+
+function getPrestigeMultiplier(){
+
+return 1 +
+saveData.prestigeShards * 0.25;
+
+}
+
+
+/* =========================================================
+   GAINS
+========================================================= */
+
+function getBaseClickValue(){
+
+let value = 1;
+
+for(const upgrade of upgradesData){
+
+value +=
+upgrade.click *
+saveData.upgrades[upgrade.id];
+
+}
+
+return value;
+
+}
+
+
+function getClickValue(){
+
+return getBaseClickValue() *
+getPrestigeMultiplier();
+
+}
+
+
+function getPerSecond(){
+
+let value = 0;
+
+for(const upgrade of upgradesData){
+
+value +=
+upgrade.auto *
+saveData.upgrades[upgrade.id];
+
+}
+
+return value *
+getPrestigeMultiplier();
+
+}
+
+
+/* =========================================================
+   PRIX
+========================================================= */
+
+function getPrice(upgrade){
+
+const owned =
+saveData.upgrades[upgrade.id];
+
+return Math.floor(
+
+upgrade.basePrice *
+Math.pow(
+upgrade.priceGrowth,
+owned
+)
+
+);
+
+}
+
+
+/* =========================================================
+   BOUTIQUE
+========================================================= */
+
+const shopList =
+document.getElementById("shopList");
+
+
+function createShop(){
+
+shopList.innerHTML = "";
+
+for(const upgrade of upgradesData){
+
+const card =
+document.createElement("div");
+
+card.className = "upgrade";
+
+card.innerHTML = `
+
+<div class="owned">
+x<span id="${upgrade.id}Owned">0</span>
+</div>
+
+<div class="upgrade-top">
+
+<div class="upgrade-icon">
+${upgrade.icon}
+</div>
+
+<div>
+
+<h3 class="upgrade-name">
+${upgrade.name}
+</h3>
+
+<p class="upgrade-description">
+${upgrade.description}
+</p>
+
+</div>
+
+</div>
+
+<button
+class="buy"
+id="${upgrade.id}Buy">
+
+Acheter ·
+<span id="${upgrade.id}Price">0</span> €
+
+</button>
+
+`;
+
+shopList.appendChild(card);
+
+document
+.getElementById(
+upgrade.id+"Buy"
+)
+.addEventListener(
+"click",
+()=>buyUpgrade(upgrade)
+);
+
+}
+
+}
+
+
+/* =========================================================
+   ACHAT
+========================================================= */
+
+function buyUpgrade(upgrade){
+
+const price =
+getPrice(upgrade);
+
+if(saveData.money < price){
+
+notify(
+"❌ Il te manque "+
+formatNumber(
+price - saveData.money
+)+
+" €"
+);
+
+return;
+
+}
+
+saveData.money -= price;
+
+saveData.upgrades[
+upgrade.id
+]++;
+
+notify(
+upgrade.icon+
+" "+
+upgrade.name+
+" acheté !"
+);
+
+save();
+update();
+
+}
+
+
+/* =========================================================
+   ARGENT + XP
+========================================================= */
+
+function addMoney(amount){
+
+saveData.money += amount;
+
+saveData.totalEarned += amount;
+
+saveData.xp += Math.max(
+1,
+Math.log10(amount + 1) * 4
+);
+
+let xpNeeded =
+getXpNeeded();
+
+while(saveData.xp >= xpNeeded){
+
+saveData.xp -= xpNeeded;
+
+saveData.level++;
+
+xpNeeded =
+getXpNeeded();
+
+notify(
+"⭐ Niveau "+
+saveData.level+
+" atteint !"
+);
+
+}
+
+save();
+update();
+
+}
+
+
+function getXpNeeded(){
+
+return Math.floor(
+100 *
+Math.pow(
+saveData.level,
+1.35
+)
+);
+
+}
+
+
+/* =========================================================
+   CLIC
+========================================================= */
+
+document
+.getElementById("clickButton")
+.addEventListener(
+"click",
+event=>{
+
+const gain =
+getClickValue();
+
+addMoney(gain);
+
+const floating =
+document.createElement("div");
+
+floating.className =
+"floating";
+
+floating.textContent =
+"+"+
+formatNumber(gain)+
+" €";
+
+floating.style.left =
+event.clientX+"px";
+
+floating.style.top =
+event.clientY+"px";
+
+document.body.appendChild(
+floating
+);
+
+setTimeout(
+()=>floating.remove(),
+850
+);
+
+}
+);
+
+
+/* =========================================================
+   RENAISSANCE
+========================================================= */
+
+const PRESTIGE_REQUIREMENT =
+1000000;
+
+
+function getPrestigeGain(){
+
+if(
+saveData.totalEarned <
+PRESTIGE_REQUIREMENT
+){
+
+return 0;
+
+}
+
+return Math.max(
+1,
+Math.floor(
+Math.sqrt(
+saveData.totalEarned /
+PRESTIGE_REQUIREMENT
+)
+)
+);
+
+}
+
+
+function prestige(){
+
+const gain =
+getPrestigeGain();
+
+if(gain <= 0){
+
+notify(
+"🔒 Atteins au moins 1 M€ de gains."
+);
+
+return;
+
+}
+
+const confirmPrestige =
+confirm(
+
+"Faire une Renaissance ?\n\n"+
+"Tu vas perdre ton argent, tes niveaux et tes améliorations.\n\n"+
+"Tu conserveras tes Éclats de Renaissance et gagneras +"+
+gain+
+" éclat(s).\n\n"+
+"Chaque éclat donne +25 % à tous tes revenus."
+
+);
+
+if(!confirmPrestige){
+
+return;
+
+}
+
+saveData.prestige++;
+
+saveData.prestigeShards +=
+gain;
+
+saveData.money = 0;
+
+saveData.totalEarned = 0;
+
+saveData.xp = 0;
+
+saveData.level = 1;
+
+for(const upgrade of upgradesData){
+
+saveData.upgrades[
+upgrade.id
+] = 0;
+
+}
+
+save();
+
+notify(
+"♻️ Renaissance "+
+saveData.prestige+
+" ! Multiplicateur x"+
+getPrestigeMultiplier().toFixed(2)
+);
+
+update();
+
+}
+
+
+document
+.getElementById("prestigeButton")
+.addEventListener(
+"click",
+prestige
+);
+
+
+/* =========================================================
+   AFFICHAGE
+========================================================= */
+
+function update(){
+
+if(!saveData){
+
+return;
+
+}
+
+const click =
+getClickValue();
+
+const perSecond =
+getPerSecond();
+
+const multiplier =
+getPrestigeMultiplier();
+
+
+document.getElementById(
+"money"
+).textContent =
+formatNumber(
+saveData.money
+);
+
+document.getElementById(
+"clickValue"
+).textContent =
+formatNumber(click);
+
+document.getElementById(
+"perClick"
+).textContent =
+formatNumber(click);
+
+document.getElementById(
+"perSecond"
+).textContent =
+formatNumber(perSecond);
+
+document.getElementById(
+"level"
+).textContent =
+saveData.level;
+
+document.getElementById(
+"prestigeLevel"
+).textContent =
+saveData.prestige;
+
+document.getElementById(
+"prestigeShards"
+).textContent =
+saveData.prestigeShards;
+
+document.getElementById(
+"globalMultiplier"
+).textContent =
+multiplier.toFixed(2);
+
+document.getElementById(
+"totalEarned"
+).textContent =
+formatNumber(
+saveData.totalEarned
+);
+
+
+/* AMÉLIORATIONS */
+
+let upgradeCount = 0;
+
+for(const upgrade of upgradesData){
+
+const owned =
+saveData.upgrades[
+upgrade.id
+];
+
+upgradeCount += owned;
+
+const price =
+getPrice(upgrade);
+
+document.getElementById(
+upgrade.id+"Owned"
+).textContent =
+owned;
+
+document.getElementById(
+upgrade.id+"Price"
+).textContent =
+formatNumber(price);
+
+document.getElementById(
+upgrade.id+"Buy"
+).disabled =
+saveData.money < price;
+
+}
+
+document.getElementById(
+"upgradeCount"
+).textContent =
+upgradeCount;
+
+
+/* XP */
+
+const xpNeeded =
+getXpNeeded();
+
+document.getElementById(
+"xp"
+).textContent =
+Math.floor(
+saveData.xp
+);
+
+document.getElementById(
+"xpMax"
+).textContent =
+xpNeeded;
+
+document.getElementById(
+"xpProgress"
+).style.width =
+
+Math.min(
+saveData.xp /
+xpNeeded *
+100,
+100
+)+"%";
+
+
+/* RENAISSANCE */
+
+const prestigeGain =
+getPrestigeGain();
+
+document.getElementById(
+"prestigeGain"
+).textContent =
+prestigeGain;
+
+const prestigeButton =
+document.getElementById(
+"prestigeButton"
+);
+
+if(prestigeGain > 0){
+
+prestigeButton.disabled =
+false;
+
+prestigeButton.textContent =
+"♻️ Renaissance · +"+
+prestigeGain+
+" éclat(s)";
+
+}
+else{
+
+prestigeButton.disabled =
+true;
+
+prestigeButton.textContent =
+"🔒 Renaissance à 1 M€ de gains";
+
+}
+
+}
+
+
+/* =========================================================
+   REVENU AUTOMATIQUE
+========================================================= */
+
+setInterval(
+()=>{
+
+if(!saveData){
+
+return;
+
+}
+
+const income =
+getPerSecond();
+
+if(income > 0){
+
+const gain =
+income / 10;
+
+saveData.money += gain;
+
+saveData.totalEarned += gain;
+
+update();
+
+}
+
+},
+100
+);
+
+
+/* =========================================================
+   SAUVEGARDE AUTO
+========================================================= */
+
+setInterval(
+save,
+3000
+);
+
+window.addEventListener(
+"beforeunload",
+save
+);
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+function notify(text){
+
+const box =
+document.getElementById(
+"notification"
+);
+
+box.textContent =
+text;
+
+box.classList.add(
+"show"
+);
+
+clearTimeout(
+notificationTimeout
+);
+
+notificationTimeout =
+setTimeout(
+()=>{
+
+box.classList.remove(
+"show"
+);
+
+},
+2000
+);
+
+}
+
+
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
+
+loadAccounts();
+
+const existingSession =
+localStorage.getItem(
+SESSION_KEY
+);
+
+if(
+existingSession &&
+accounts[existingSession]
+){
+
+currentUsername =
+existingSession;
+
+saveData =
+repairSave(
+accounts[
+currentUsername
+].game
+);
+
+document.getElementById(
+"currentUsername"
+).textContent =
+accounts[
+currentUsername
+].username;
+
+document.getElementById(
+"authScreen"
+).style.display =
+"none";
+
+document.getElementById(
+"gameScreen"
+).style.display =
+"block";
+
+createShop();
+update();
+
+}
+else{
+
+document.getElementById(
+"authScreen"
+).style.display =
+"flex";
+
+document.getElementById(
+"gameScreen"
+).style.display =
+"none";
+
+}
+
+</script>
+
+</body>
+</html>
+```
