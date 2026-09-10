@@ -8,6 +8,90 @@
 
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+```css
+/* ================= BAN ================= */
+
+#banScreen{
+    position:fixed;
+    inset:0;
+    z-index:20000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+        radial-gradient(circle at 50% 25%,rgba(255,70,70,.18),transparent 45%),
+        #07080e;
+}
+
+#banScreen.show{
+    display:flex;
+}
+
+.ban-box{
+    width:500px;
+    max-width:100%;
+    padding:35px;
+    text-align:center;
+    border-radius:25px;
+    background:rgba(20,15,22,.96);
+    border:1px solid rgba(255,80,80,.25);
+    box-shadow:0 25px 100px rgba(0,0,0,.7);
+}
+
+.ban-icon{
+    font-size:65px;
+    margin-bottom:10px;
+}
+
+.ban-title{
+    margin:0;
+    color:#ff7070;
+    font-size:30px;
+    font-weight:900;
+}
+
+.ban-text{
+    margin:12px 0 25px;
+    color:#aaa;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.ban-info{
+    padding:17px;
+    text-align:left;
+    border-radius:15px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.07);
+}
+
+.ban-info-row{
+    margin:8px 0;
+    color:#aaa;
+    font-size:13px;
+}
+
+.ban-info-row strong{
+    color:white;
+}
+
+.ban-logout{
+    width:100%;
+    margin-top:20px;
+    padding:13px;
+    border:0;
+    border-radius:11px;
+    cursor:pointer;
+    color:white;
+    background:#b83b3b;
+    font-weight:900;
+}
+
+.ban-logout:hover{
+    background:#d34a4a;
+}
+```
 
 <style>
 *{box-sizing:border-box}
