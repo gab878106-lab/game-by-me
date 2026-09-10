@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>€ Clicker</title>
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 
@@ -619,7 +622,7 @@ header{
 
 <body>
 
-<!-- ================= AUTHENTIFICATION ================= -->
+<!-- ================= AUTH ================= -->
 
 <div id="authScreen">
 
@@ -635,17 +638,11 @@ Connecte-toi pour retrouver ton empire
 
 <div class="auth-tabs">
 
-<button
-class="auth-tab active"
-id="loginTab"
-type="button">
+<button class="auth-tab active" id="loginTab" type="button">
 Connexion
 </button>
 
-<button
-class="auth-tab"
-id="registerTab"
-type="button">
+<button class="auth-tab" id="registerTab" type="button">
 Inscription
 </button>
 
@@ -654,15 +651,16 @@ Inscription
 <form id="loginForm" class="auth-form active">
 
 <label class="auth-label">
-Identifiant
+Adresse e-mail
 </label>
 
 <input
 class="auth-input"
-id="loginUsername"
-autocomplete="username"
+id="loginEmail"
+type="email"
+autocomplete="email"
 required
-maxlength="20">
+placeholder="ton@email.com">
 
 <label class="auth-label">
 Mot de passe
@@ -675,9 +673,7 @@ type="password"
 autocomplete="current-password"
 required>
 
-<button
-class="auth-submit"
-type="submit">
+<button class="auth-submit" type="submit">
 🔑 Se connecter
 </button>
 
@@ -686,7 +682,7 @@ type="submit">
 <form id="registerForm" class="auth-form">
 
 <label class="auth-label">
-Identifiant
+Pseudo
 </label>
 
 <input
@@ -697,6 +693,18 @@ minlength="3"
 maxlength="20"
 required
 placeholder="Ex : Gabriel123">
+
+<label class="auth-label">
+Adresse e-mail
+</label>
+
+<input
+class="auth-input"
+id="registerEmail"
+type="email"
+autocomplete="email"
+required
+placeholder="ton@email.com">
 
 <label class="auth-label">
 Mot de passe
@@ -722,30 +730,24 @@ autocomplete="new-password"
 minlength="6"
 required>
 
-<button
-class="auth-submit"
-type="submit">
+<button class="auth-submit" type="submit">
 🚀 Créer mon compte
 </button>
 
 </form>
 
-<div
-class="auth-message"
-id="authMessage">
-</div>
+<div class="auth-message" id="authMessage"></div>
 
 <div class="auth-note">
-Les comptes sont enregistrés localement dans ce navigateur.
-Pour une vraie sécurité en ligne, il faudrait un serveur et une base
-de données.
+Ton compte et ta partie sont stockés en ligne avec Supabase.
+Ton mot de passe n'est pas enregistré dans le jeu.
 </div>
 
 </div>
 </div>
 
 
-<!-- ================= JEU ================= -->
+<!-- ================= GAME ================= -->
 
 <div id="gameScreen" style="display:none">
 
@@ -773,17 +775,13 @@ de données.
 ✨ x<span id="globalMultiplier">1</span>
 </div>
 
-<button
-class="header-pill logout"
-id="logoutButton"
-type="button">
+<button class="header-pill logout" id="logoutButton" type="button">
 🚪 Déconnexion
 </button>
 
 </div>
 
 </header>
-
 
 <main class="game">
 
@@ -804,7 +802,6 @@ Ton empire
 </button>
 
 </div>
-
 
 <div class="stats">
 
@@ -842,7 +839,6 @@ Ton empire
 
 </div>
 
-
 <div class="xp-box">
 
 <div class="xp-info">
@@ -858,15 +854,11 @@ Ton empire
 
 <div class="xp-bar">
 
-<div
-class="xp-progress"
-id="xpProgress">
-</div>
+<div class="xp-progress" id="xpProgress"></div>
 
 </div>
 
 </div>
-
 
 <div class="prestige-box">
 
@@ -908,16 +900,13 @@ PROCHAINE RENAISSANCE
 
 </div>
 
-<button
-id="prestigeButton"
-disabled>
+<button id="prestigeButton" disabled>
 Renaissance indisponible
 </button>
 
 </div>
 
 </section>
-
 
 <section class="panel">
 
@@ -931,10 +920,7 @@ AMÉLIORE TON EMPIRE
 
 </div>
 
-<div
-class="shop-list"
-id="shopList">
-</div>
+<div class="shop-list" id="shopList"></div>
 
 </section>
 
@@ -948,16 +934,33 @@ id="shopList">
 <script>
 
 /* =========================================================
-   AUTHENTIFICATION
+   SUPABASE
 ========================================================= */
 
-const ACCOUNTS_KEY = "euroClickerAccountsV4";
-const SESSION_KEY = "euroClickerSessionV4";
+const SUPABASE_URL =
+"https://cedahfjtmhxddjkldhen.supabase.co";
 
-let accounts = {};
+const SUPABASE_KEY =
+"sb_publishable_PCpVfnXjB6CXRrI4yMwthQ_kFS5oipW";
+
+const { createClient } = window.supabase;
+
+const supabaseClient =
+createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentUser = null;
 let currentUsername = null;
 let saveData = null;
 let notificationTimeout;
+let saveInProgress = false;
 
 
 /* =========================================================
@@ -1190,7 +1193,7 @@ auto:1000000000000
 
 
 /* =========================================================
-   SAUVEGARDE
+   SAUVEGARDE PAR DÉFAUT
 ========================================================= */
 
 function defaultSave(){
@@ -1198,9 +1201,7 @@ function defaultSave(){
 const upgrades = {};
 
 for(const upgrade of upgradesData){
-
-upgrades[upgrade.id] = 0;
-
+    upgrades[upgrade.id] = 0;
 }
 
 return {
@@ -1218,76 +1219,61 @@ upgrades
 }
 
 
-/*
-   Répare les anciennes sauvegardes
-   et ajoute automatiquement les nouvelles améliorations.
-*/
+/* =========================================================
+   RÉPARATION
+========================================================= */
 
 function repairSave(data){
 
 const fresh = defaultSave();
 
 if(!data || typeof data !== "object"){
-
-return fresh;
-
+    return fresh;
 }
 
 if(Number.isFinite(data.money) && data.money >= 0){
-
-fresh.money = data.money;
-
+    fresh.money = data.money;
 }
 
 if(Number.isFinite(data.totalEarned) && data.totalEarned >= 0){
-
-fresh.totalEarned = data.totalEarned;
-
+    fresh.totalEarned = data.totalEarned;
 }
 
 if(Number.isFinite(data.xp) && data.xp >= 0){
-
-fresh.xp = data.xp;
-
+    fresh.xp = data.xp;
 }
 
 if(Number.isFinite(data.level) && data.level >= 1){
-
-fresh.level = Math.floor(data.level);
-
+    fresh.level = Math.floor(data.level);
 }
 
 if(Number.isFinite(data.prestige) && data.prestige >= 0){
-
-fresh.prestige = Math.floor(data.prestige);
-
+    fresh.prestige = Math.floor(data.prestige);
 }
 
 if(
-Number.isFinite(data.prestigeShards) &&
-data.prestigeShards >= 0
+    Number.isFinite(data.prestigeShards) &&
+    data.prestigeShards >= 0
 ){
-
-fresh.prestigeShards =
-Math.floor(data.prestigeShards);
-
+    fresh.prestigeShards =
+        Math.floor(data.prestigeShards);
 }
 
 if(data.upgrades && typeof data.upgrades === "object"){
 
-for(const upgrade of upgradesData){
+    for(const upgrade of upgradesData){
 
-const owned =
-data.upgrades[upgrade.id];
+        const owned =
+            Number(data.upgrades[upgrade.id]);
 
-if(Number.isFinite(owned) && owned >= 0){
+        if(Number.isFinite(owned) && owned >= 0){
 
-fresh.upgrades[upgrade.id] =
-Math.floor(owned);
+            fresh.upgrades[upgrade.id] =
+                Math.floor(owned);
 
-}
+        }
 
-}
+    }
 
 }
 
@@ -1297,223 +1283,18 @@ return fresh;
 
 
 /* =========================================================
-   OUTILS AUTH
+   AUTH MESSAGE
 ========================================================= */
 
-function loadAccounts(){
+function showAuthMessage(message,isError=true){
 
-try{
+const box =
+document.getElementById("authMessage");
 
-accounts =
-JSON.parse(
-localStorage.getItem(ACCOUNTS_KEY)
-) || {};
+box.textContent = message;
 
-}
-catch{
-
-accounts = {};
-
-}
-
-}
-
-
-function saveAccounts(){
-
-localStorage.setItem(
-ACCOUNTS_KEY,
-JSON.stringify(accounts)
-);
-
-}
-
-
-async function hashPassword(password){
-
-const data =
-new TextEncoder().encode(password);
-
-const hash =
-await crypto.subtle.digest(
-"SHA-256",
-data
-);
-
-return Array.from(
-new Uint8Array(hash)
-)
-.map(
-byte =>
-byte.toString(16).padStart(2,"0")
-)
-.join("");
-
-}
-
-
-function normalizeUsername(username){
-
-return username
-.trim()
-.toLowerCase();
-
-}
-
-
-function validUsername(username){
-
-return /^[a-zA-Z0-9_-]{3,20}$/
-.test(username);
-
-}
-
-
-function showAuthMessage(message){
-
-document.getElementById(
-"authMessage"
-).textContent = message;
-
-}
-
-
-/* =========================================================
-   FORMATAGE
-========================================================= */
-
-function formatNumber(number){
-
-if(!Number.isFinite(number)){
-
-return "∞";
-
-}
-
-const abs = Math.abs(number);
-
-const units = [
-
-{value:1e18,name:"Qi"},
-{value:1e15,name:"Qa"},
-{value:1e12,name:"T"},
-{value:1e9,name:"Md"},
-{value:1e6,name:"M"},
-{value:1e3,name:"k"}
-
-];
-
-for(const unit of units){
-
-if(abs >= unit.value){
-
-return (
-number / unit.value
-)
-.toFixed(2)
-.replace(".00","")
-.replace(".0","")
-+" "+unit.name;
-
-}
-
-}
-
-return Math.floor(number)
-.toLocaleString("fr-FR");
-
-}
-
-
-/* =========================================================
-   SAUVEGARDE PAR COMPTE
-========================================================= */
-
-function save(){
-
-if(
-!currentUsername ||
-!saveData ||
-!accounts[currentUsername]
-){
-
-return;
-
-}
-
-accounts[currentUsername].game =
-saveData;
-
-saveAccounts();
-
-}
-
-
-/* =========================================================
-   CONNEXION
-========================================================= */
-
-async function login(username,password){
-
-const key =
-normalizeUsername(username);
-
-if(!accounts[key]){
-
-showAuthMessage(
-"❌ Identifiant ou mot de passe incorrect."
-);
-
-return;
-
-}
-
-const hash =
-await hashPassword(password);
-
-if(accounts[key].passwordHash !== hash){
-
-showAuthMessage(
-"❌ Identifiant ou mot de passe incorrect."
-);
-
-return;
-
-}
-
-currentUsername = key;
-
-saveData =
-repairSave(accounts[key].game);
-
-localStorage.setItem(
-SESSION_KEY,
-currentUsername
-);
-
-document.getElementById(
-"currentUsername"
-).textContent =
-accounts[key].username;
-
-document.getElementById(
-"authScreen"
-).style.display =
-"none";
-
-document.getElementById(
-"gameScreen"
-).style.display =
-"block";
-
-createShop();
-update();
-
-notify(
-"👋 Bienvenue "+
-accounts[key].username+
-" !"
-);
+box.style.color =
+isError ? "#ff7777" : "#67ffac";
 
 }
 
@@ -1522,23 +1303,41 @@ accounts[key].username+
    INSCRIPTION
 ========================================================= */
 
-async function register(
-username,
-password,
-confirmation
-){
+async function register(){
 
-username = username.trim();
+const username =
+document.getElementById("registerUsername")
+.value
+.trim();
 
-if(!validUsername(username)){
+const email =
+document.getElementById("registerEmail")
+.value
+.trim();
+
+const password =
+document.getElementById("registerPassword")
+.value;
+
+const confirmation =
+document.getElementById("registerPasswordConfirm")
+.value;
+
+
+/* PSEUDO */
+
+if(!/^[a-zA-Z0-9_-]{3,20}$/.test(username)){
 
 showAuthMessage(
-"❌ Identifiant : 3 à 20 caractères, lettres, chiffres, _ ou -."
+"❌ Le pseudo doit contenir 3 à 20 caractères : lettres, chiffres, _ ou -."
 );
 
 return;
 
 }
+
+
+/* MOT DE PASSE */
 
 if(password.length < 6){
 
@@ -1560,177 +1359,396 @@ return;
 
 }
 
-const key =
-normalizeUsername(username);
 
-if(accounts[key]){
+/* CRÉATION SUPABASE */
 
 showAuthMessage(
-"❌ Cet identifiant existe déjà."
+"⏳ Création du compte...",
+false
+);
+
+const { data,error } =
+await supabaseClient.auth.signUp({
+
+email,
+password
+
+});
+
+
+if(error){
+
+showAuthMessage(
+"❌ "+translateAuthError(error.message)
 );
 
 return;
 
 }
 
-const passwordHash =
-await hashPassword(password);
 
-accounts[key] = {
+/* COMPTE CRÉÉ */
 
-username,
-passwordHash,
-createdAt:new Date().toISOString(),
-game:defaultSave()
-
-};
-
-saveAccounts();
+if(!data.user){
 
 showAuthMessage(
-"✅ Compte créé ! Connexion..."
+"❌ Impossible de créer le compte."
 );
 
-await login(
-username,
+return;
+
+}
+
+
+/*
+   Si Supabase demande une confirmation
+   par e-mail, il n'y aura pas encore
+   de session.
+*/
+
+if(!data.session){
+
+showAuthMessage(
+"✅ Compte créé ! Vérifie ton e-mail puis connecte-toi.",
+false
+);
+
+return;
+
+}
+
+
+/* SESSION DISPONIBLE */
+
+currentUser = data.user;
+currentUsername = username;
+
+saveData = defaultSave();
+
+const { error:saveError } =
+await supabaseClient
+.from("game_saves")
+.insert({
+
+id:currentUser.id,
+username:username,
+money:saveData.money,
+total_earned:saveData.totalEarned,
+xp:saveData.xp,
+level:saveData.level,
+prestige:saveData.prestige,
+prestige_shards:saveData.prestigeShards,
+upgrades:saveData.upgrades
+
+});
+
+
+if(saveError){
+
+/*
+   Le compte existe quand même.
+   On tente de récupérer/créer la sauvegarde.
+*/
+
+console.error(saveError);
+
+showAuthMessage(
+"⚠️ Compte créé, mais problème avec la sauvegarde."
+);
+
+return;
+
+}
+
+enterGame();
+
+}
+
+
+/* =========================================================
+   CONNEXION
+========================================================= */
+
+async function login(){
+
+const email =
+document.getElementById("loginEmail")
+.value
+.trim();
+
+const password =
+document.getElementById("loginPassword")
+.value;
+
+showAuthMessage(
+"⏳ Connexion...",
+false
+);
+
+const { data,error } =
+await supabaseClient.auth.signInWithPassword({
+
+email,
 password
+
+});
+
+if(error){
+
+showAuthMessage(
+"❌ "+translateAuthError(error.message)
+);
+
+return;
+
+}
+
+currentUser = data.user;
+
+await loadGame();
+
+}
+
+
+/* =========================================================
+   CHARGER LA PARTIE
+========================================================= */
+
+async function loadGame(){
+
+if(!currentUser){
+
+return;
+
+}
+
+const { data,error } =
+await supabaseClient
+.from("game_saves")
+.select("*")
+.eq("id",currentUser.id)
+.maybeSingle();
+
+if(error){
+
+console.error(error);
+
+showAuthMessage(
+"❌ Impossible de charger la sauvegarde."
+);
+
+return;
+
+}
+
+
+/*
+   Si aucune sauvegarde n'existe,
+   on en crée une.
+*/
+
+if(!data){
+
+saveData = defaultSave();
+
+currentUsername =
+currentUser.user_metadata?.username ||
+currentUser.email?.split("@")[0] ||
+"Joueur";
+
+await save();
+
+}
+else{
+
+currentUsername =
+data.username ||
+currentUser.user_metadata?.username ||
+currentUser.email?.split("@")[0] ||
+"Joueur";
+
+saveData =
+repairSave({
+
+money:data.money,
+totalEarned:data.total_earned,
+xp:data.xp,
+level:data.level,
+prestige:data.prestige,
+prestigeShards:data.prestige_shards,
+upgrades:data.upgrades
+
+});
+
+}
+
+enterGame();
+
+}
+
+
+/* =========================================================
+   ENTRER DANS LE JEU
+========================================================= */
+
+function enterGame(){
+
+document.getElementById(
+"currentUsername"
+).textContent =
+currentUsername;
+
+document.getElementById(
+"authScreen"
+).style.display =
+"none";
+
+document.getElementById(
+"gameScreen"
+).style.display =
+"block";
+
+createShop();
+update();
+
+notify(
+"👋 Bienvenue "+currentUsername+" !"
 );
 
 }
 
 
 /* =========================================================
-   INTERFACE AUTH
+   SAUVEGARDE SUPABASE
 ========================================================= */
 
-document.getElementById(
-"loginTab"
-).addEventListener(
-"click",
-()=>{
+async function save(){
 
-document
-.getElementById("loginTab")
-.classList.add("active");
+if(
+!currentUser ||
+!saveData ||
+saveInProgress
+){
 
-document
-.getElementById("registerTab")
-.classList.remove("active");
-
-document
-.getElementById("loginForm")
-.classList.add("active");
-
-document
-.getElementById("registerForm")
-.classList.remove("active");
-
-showAuthMessage("");
+return;
 
 }
-);
 
+saveInProgress = true;
 
-document.getElementById(
-"registerTab"
-).addEventListener(
-"click",
-()=>{
+try{
 
-document
-.getElementById("registerTab")
-.classList.add("active");
+const { error } =
+await supabaseClient
+.from("game_saves")
+.upsert({
 
-document
-.getElementById("loginTab")
-.classList.remove("active");
+id:currentUser.id,
+username:currentUsername,
 
-document
-.getElementById("registerForm")
-.classList.add("active");
+money:saveData.money,
 
-document
-.getElementById("loginForm")
-.classList.remove("active");
+total_earned:
+saveData.totalEarned,
 
-showAuthMessage("");
+xp:saveData.xp,
 
-}
-);
+level:
+saveData.level,
 
+prestige:
+saveData.prestige,
 
-document.getElementById(
-"loginForm"
-).addEventListener(
-"submit",
-async event=>{
+prestige_shards:
+saveData.prestigeShards,
 
-event.preventDefault();
+upgrades:
+saveData.upgrades,
 
-await login(
+updated_at:
+new Date().toISOString()
 
-document.getElementById(
-"loginUsername"
-).value,
+},{
+onConflict:"id"
+});
 
-document.getElementById(
-"loginPassword"
-).value
+if(error){
 
+console.error(
+"Erreur sauvegarde:",
+error
 );
 
 }
-);
-
-
-document.getElementById(
-"registerForm"
-).addEventListener(
-"submit",
-async event=>{
-
-event.preventDefault();
-
-await register(
-
-document.getElementById(
-"registerUsername"
-).value,
-
-document.getElementById(
-"registerPassword"
-).value,
-
-document.getElementById(
-"registerPasswordConfirm"
-).value
-
-);
 
 }
-);
+catch(error){
+
+console.error(error);
+
+}
+finally{
+
+saveInProgress = false;
+
+}
+
+}
 
 
 /* =========================================================
    DÉCONNEXION
 ========================================================= */
 
-document.getElementById(
-"logoutButton"
-).addEventListener(
+document
+.getElementById("logoutButton")
+.addEventListener(
 "click",
-()=>{
+async()=>{
 
-save();
+await save();
 
-localStorage.removeItem(
-SESSION_KEY
-);
+await supabaseClient.auth.signOut();
+
+currentUser = null;
+currentUsername = null;
+saveData = null;
 
 location.reload();
 
 }
 );
+
+
+/* =========================================================
+   ERREURS AUTH
+========================================================= */
+
+function translateAuthError(message){
+
+if(message.includes("Invalid login credentials")){
+    return "Identifiant ou mot de passe incorrect.";
+}
+
+if(message.includes("Email not confirmed")){
+    return "Ton adresse e-mail n'est pas encore confirmée.";
+}
+
+if(message.includes("User already registered")){
+    return "Cette adresse e-mail possède déjà un compte.";
+}
+
+if(message.includes("Password should be at least")){
+    return "Le mot de passe est trop court.";
+}
+
+if(message.includes("Unable to validate email")){
+    return "Adresse e-mail invalide.";
+}
+
+return message;
+
+}
 
 
 /* =========================================================
@@ -1810,6 +1828,51 @@ owned
 )
 
 );
+
+}
+
+
+/* =========================================================
+   FORMATAGE
+========================================================= */
+
+function formatNumber(number){
+
+if(!Number.isFinite(number)){
+    return "∞";
+}
+
+const abs = Math.abs(number);
+
+const units = [
+
+{value:1e18,name:"Qi"},
+{value:1e15,name:"Qa"},
+{value:1e12,name:"T"},
+{value:1e9,name:"Md"},
+{value:1e6,name:"M"},
+{value:1e3,name:"k"}
+
+];
+
+for(const unit of units){
+
+if(abs >= unit.value){
+
+return (
+number / unit.value
+)
+.toFixed(2)
+.replace(".00","")
+.replace(".0","")
++" "+unit.name;
+
+}
+
+}
+
+return Math.floor(number)
+.toLocaleString("fr-FR");
 
 }
 
@@ -1900,7 +1963,7 @@ if(saveData.money < price){
 notify(
 "❌ Il te manque "+
 formatNumber(
-price - saveData.money
+price-saveData.money
 )+
 " €"
 );
@@ -1922,14 +1985,13 @@ upgrade.name+
 " acheté !"
 );
 
-save();
 update();
 
 }
 
 
 /* =========================================================
-   ARGENT + XP
+   ARGENT
 ========================================================= */
 
 function addMoney(amount){
@@ -1940,7 +2002,7 @@ saveData.totalEarned += amount;
 
 saveData.xp += Math.max(
 1,
-Math.log10(amount + 1) * 4
+Math.log10(amount+1)*4
 );
 
 let xpNeeded =
@@ -1963,11 +2025,14 @@ saveData.level+
 
 }
 
-save();
 update();
 
 }
 
+
+/* =========================================================
+   XP
+========================================================= */
 
 function getXpNeeded(){
 
@@ -2059,7 +2124,7 @@ PRESTIGE_REQUIREMENT
 }
 
 
-function prestige(){
+async function prestige(){
 
 const gain =
 getPrestigeGain();
@@ -2087,9 +2152,7 @@ gain+
 );
 
 if(!confirmPrestige){
-
-return;
-
+    return;
 }
 
 saveData.prestige++;
@@ -2113,7 +2176,7 @@ upgrade.id
 
 }
 
-save();
+await save();
 
 notify(
 "♻️ Renaissance "+
@@ -2142,9 +2205,7 @@ prestige
 function update(){
 
 if(!saveData){
-
-return;
-
+    return;
 }
 
 const click =
@@ -2157,54 +2218,41 @@ const multiplier =
 getPrestigeMultiplier();
 
 
-document.getElementById(
-"money"
-).textContent =
-formatNumber(
-saveData.money
-);
+document.getElementById("money")
+.textContent =
+formatNumber(saveData.money);
 
-document.getElementById(
-"clickValue"
-).textContent =
+document.getElementById("clickValue")
+.textContent =
 formatNumber(click);
 
-document.getElementById(
-"perClick"
-).textContent =
+document.getElementById("perClick")
+.textContent =
 formatNumber(click);
 
-document.getElementById(
-"perSecond"
-).textContent =
+document.getElementById("perSecond")
+.textContent =
 formatNumber(perSecond);
 
-document.getElementById(
-"level"
-).textContent =
+document.getElementById("level")
+.textContent =
 saveData.level;
 
-document.getElementById(
-"prestigeLevel"
-).textContent =
+document.getElementById("prestigeLevel")
+.textContent =
 saveData.prestige;
 
-document.getElementById(
-"prestigeShards"
-).textContent =
+document.getElementById("prestigeShards")
+.textContent =
 saveData.prestigeShards;
 
-document.getElementById(
-"globalMultiplier"
-).textContent =
+document.getElementById("globalMultiplier")
+.textContent =
 multiplier.toFixed(2);
 
-document.getElementById(
-"totalEarned"
-).textContent =
-formatNumber(
-saveData.totalEarned
-);
+document.getElementById("totalEarned")
+.textContent =
+formatNumber(saveData.totalEarned);
 
 
 /* AMÉLIORATIONS */
@@ -2251,31 +2299,23 @@ upgradeCount;
 const xpNeeded =
 getXpNeeded();
 
-document.getElementById(
-"xp"
-).textContent =
-Math.floor(
-saveData.xp
-);
+document.getElementById("xp")
+.textContent =
+Math.floor(saveData.xp);
 
-document.getElementById(
-"xpMax"
-).textContent =
+document.getElementById("xpMax")
+.textContent =
 xpNeeded;
 
-document.getElementById(
-"xpProgress"
-).style.width =
-
+document.getElementById("xpProgress")
+.style.width =
 Math.min(
-saveData.xp /
-xpNeeded *
-100,
+saveData.xp/xpNeeded*100,
 100
 )+"%";
 
 
-/* RENAISSANCE */
+/* PRESTIGE */
 
 const prestigeGain =
 getPrestigeGain();
@@ -2292,8 +2332,7 @@ document.getElementById(
 
 if(prestigeGain > 0){
 
-prestigeButton.disabled =
-false;
+prestigeButton.disabled = false;
 
 prestigeButton.textContent =
 "♻️ Renaissance · +"+
@@ -2303,8 +2342,7 @@ prestigeGain+
 }
 else{
 
-prestigeButton.disabled =
-true;
+prestigeButton.disabled = true;
 
 prestigeButton.textContent =
 "🔒 Renaissance à 1 M€ de gains";
@@ -2322,9 +2360,7 @@ setInterval(
 ()=>{
 
 if(!saveData){
-
-return;
-
+    return;
 }
 
 const income =
@@ -2333,7 +2369,7 @@ getPerSecond();
 if(income > 0){
 
 const gain =
-income / 10;
+income/10;
 
 saveData.money += gain;
 
@@ -2353,13 +2389,12 @@ update();
 ========================================================= */
 
 setInterval(
-save,
-3000
-);
+()=>{
 
-window.addEventListener(
-"beforeunload",
-save
+save();
+
+},
+3000
 );
 
 
@@ -2377,9 +2412,7 @@ document.getElementById(
 box.textContent =
 text;
 
-box.classList.add(
-"show"
-);
+box.classList.add("show");
 
 clearTimeout(
 notificationTimeout
@@ -2389,9 +2422,7 @@ notificationTimeout =
 setTimeout(
 ()=>{
 
-box.classList.remove(
-"show"
-);
+box.classList.remove("show");
 
 },
 2000
@@ -2401,50 +2432,26 @@ box.classList.remove(
 
 
 /* =========================================================
-   DÉMARRAGE
+   AUTH SUPABASE AU DÉMARRAGE
 ========================================================= */
 
-loadAccounts();
+async function start(){
 
-const existingSession =
-localStorage.getItem(
-SESSION_KEY
-);
+const {
+    data:{
+        session
+    }
+} =
+await supabaseClient
+.auth
+.getSession();
 
-if(
-existingSession &&
-accounts[existingSession]
-){
+if(session){
 
-currentUsername =
-existingSession;
+currentUser =
+session.user;
 
-saveData =
-repairSave(
-accounts[
-currentUsername
-].game
-);
-
-document.getElementById(
-"currentUsername"
-).textContent =
-accounts[
-currentUsername
-].username;
-
-document.getElementById(
-"authScreen"
-).style.display =
-"none";
-
-document.getElementById(
-"gameScreen"
-).style.display =
-"block";
-
-createShop();
-update();
+await loadGame();
 
 }
 else{
@@ -2460,6 +2467,128 @@ document.getElementById(
 "none";
 
 }
+
+}
+
+
+/* =========================================================
+   ONGLETS AUTH
+========================================================= */
+
+document
+.getElementById("loginTab")
+.addEventListener(
+"click",
+()=>{
+
+document
+.getElementById("loginTab")
+.classList.add("active");
+
+document
+.getElementById("registerTab")
+.classList.remove("active");
+
+document
+.getElementById("loginForm")
+.classList.add("active");
+
+document
+.getElementById("registerForm")
+.classList.remove("active");
+
+showAuthMessage("");
+
+}
+);
+
+
+document
+.getElementById("registerTab")
+.addEventListener(
+"click",
+()=>{
+
+document
+.getElementById("registerTab")
+.classList.add("active");
+
+document
+.getElementById("loginTab")
+.classList.remove("active");
+
+document
+.getElementById("registerForm")
+.classList.add("active");
+
+document
+.getElementById("loginForm")
+.classList.remove("active");
+
+showAuthMessage("");
+
+}
+);
+
+
+/* =========================================================
+   FORMULAIRES
+========================================================= */
+
+document
+.getElementById("loginForm")
+.addEventListener(
+"submit",
+async event=>{
+
+event.preventDefault();
+
+await login();
+
+}
+);
+
+
+document
+.getElementById("registerForm")
+.addEventListener(
+"submit",
+async event=>{
+
+event.preventDefault();
+
+await register();
+
+}
+);
+
+
+/* =========================================================
+   CHANGEMENT DE SESSION
+========================================================= */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+async(event,session)=>{
+
+if(event === "SIGNED_OUT"){
+
+currentUser = null;
+currentUsername = null;
+saveData = null;
+
+}
+
+}
+);
+
+
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
+
+start();
 
 </script>
 
