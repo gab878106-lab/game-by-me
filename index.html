@@ -2410,62 +2410,53 @@ document.getElementById("adminPlayersBody")?.addEventListener("click", async eve
 ========================================================= */
 
 async function checkBan(){
+    if(!currentUser){
+        return false;
+    }
 
-if(!currentUser || banCheckInProgress){
-    return false;
+    try{
+        const { data, error } = await supabaseClient.rpc(
+            "is_user_banned",
+            {
+                uid: currentUser.id
+            }
+        );
+
+        if(error){
+            console.error("Erreur vérification ban:", error);
+            isBanned = false;
+            return false;
+        }
+
+        isBanned = data === true;
+
+        if(isBanned){
+            console.warn("Utilisateur banni.");
+
+            // Déconnexion immédiate
+            await supabaseClient.auth.signOut();
+
+            currentUser = null;
+            currentUsername = null;
+            saveData = null;
+
+            showAuth();
+            showNotification(
+                "🚫 Votre compte est actuellement banni.",
+                "error"
+            );
+
+            return true;
+        }
+
+        return false;
+
+    }catch(error){
+        console.error("Erreur vérification ban:", error);
+        isBanned = false;
+        return false;
+    }
 }
-
-banCheckInProgress = true;
-
-try{
-
-const { data,error } =
-await supabaseClient
-.rpc("my_ban_status");
-
-if(error){
-
-console.error(
-"Erreur vérification ban:",
-error
-);
-
-return false;
-
-}
-
-const status =
-Array.isArray(data)
-    ? data[0]
-    : data;
-
-if(status && status.banned === true){
-
-isBanned = true;
-
-showBanScreen(
-status.reason,
-status.expires_at
-);
-
-return true;
-
-}
-
-isBanned = false;
-
-return false;
-
-}
-finally{
-
-banCheckInProgress = false;
-
-}
-
-}
-
-
 /* =========================================================
    ÉCRAN DE BAN
 ========================================================= */
