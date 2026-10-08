@@ -1,9 +1,8 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="gabrielber" content="width=device-width, initial-scale=1.0">
 <title>€ Clicker</title>
 
 <!-- Supabase -->
@@ -23,7 +22,7 @@ body{
         #07080e;
 }
 
-button,input{font-family:inherit}
+button,input,select{font-family:inherit}
 
 /* ================= AUTH ================= */
 
@@ -176,6 +175,7 @@ header{
     gap:10px;
     flex-wrap:wrap;
     justify-content:flex-end;
+    align-items:center;
 }
 
 .header-pill{
@@ -188,6 +188,27 @@ header{
     font-weight:bold;
 }
 
+.language-pill{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+#languageSelect{
+    background:transparent;
+    color:inherit;
+    border:none;
+    outline:none;
+    font-family:inherit;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#languageSelect option{
+    background:#191a25;
+    color:white;
+}
+
 .user-pill{
     color:#67ffac;
     border-color:rgba(103,255,172,.2);
@@ -195,11 +216,8 @@ header{
 }
 
 .logout{
-    border:0;
-    cursor:pointer;
     color:#ff8b8b;
-    background:transparent;
-    font-weight:bold;
+    cursor:pointer;
 }
 
 /* ================= GAME ================= */
@@ -557,7 +575,7 @@ header{
     position:fixed;
     right:24px;
     bottom:24px;
-    z-index:500;
+    z-index:11000;
     max-width:320px;
     padding:15px 19px;
     border-radius:13px;
@@ -574,61 +592,15 @@ header{
     transform:translateY(0);
 }
 
-/* ================= MOBILE ================= */
-
-@media(max-width:900px){
-    .game{
-        grid-template-columns:1fr;
-    }
-
-    .sticky-game{
-        position:static;
-    }
-
-    .shop-list{
-        max-height:none;
-        overflow:visible;
-    }
-}
-
-@media(max-width:550px){
-    header{
-        height:auto;
-        padding:15px;
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .header-stats{
-        justify-content:flex-start;
-    }
-
-    .panel{
-        padding:18px;
-    }
-
-    #clickButton{
-        width:185px;
-        height:185px;
-        font-size:22px;
-    }
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-    }
-}
-
-
-
-/* ================= ADMIN PANEL — REDESIGN ================= */
+/* ================= ADMIN ================= */
 
 #adminButton{
     display:none;
-    border:1px solid rgba(255,255,255,.10);
-    background:rgba(255,255,255,.055);
-    color:#f4f4f7;
 }
-#adminButton.show{display:inline-flex}
+
+#adminButton.show{
+    display:inline-flex;
+}
 
 #adminPanel{
     position:fixed;
@@ -639,20 +611,18 @@ header{
     padding:0;
     background:#08090e;
 }
-#adminPanel.show{display:block}
+
+#adminPanel.show{
+    display:block;
+}
 
 .admin-window{
     width:100%;
     min-height:100%;
-    margin:0;
-    padding:0;
-    border-radius:0;
     background:
-        radial-gradient(circle at 15% 0%, rgba(125,92,255,.10), transparent 28%),
-        radial-gradient(circle at 90% 10%, rgba(0,210,255,.06), transparent 25%),
+        radial-gradient(circle at 15% 0%,rgba(125,92,255,.10),transparent 28%),
+        radial-gradient(circle at 90% 10%,rgba(0,210,255,.06),transparent 25%),
         #08090e;
-    border:0;
-    box-shadow:none;
 }
 
 .admin-top{
@@ -692,7 +662,6 @@ header{
     font-size:21px;
     line-height:1.1;
     font-weight:900;
-    letter-spacing:-.3px;
 }
 
 .admin-subtitle{
@@ -717,21 +686,17 @@ header{
     font-weight:800;
     transition:.15s ease;
 }
+
 .admin-btn:hover{
     background:#1d1f2a;
     border-color:rgba(255,255,255,.15);
     transform:translateY(-1px);
 }
+
 .admin-btn.gold{
     color:#fff;
     background:#7657d9;
     border-color:#8569e8;
-}
-.admin-btn.danger{
-    background:#7d3038;
-}
-.admin-btn.success{
-    background:#24583f;
 }
 
 .admin-content{
@@ -794,8 +759,6 @@ header{
 
 .admin-search{
     width:100%;
-    box-sizing:border-box;
-    margin:0;
     padding:11px 14px 11px 35px;
     border-radius:11px;
     border:1px solid rgba(255,255,255,.075);
@@ -804,6 +767,7 @@ header{
     color:#fff;
     font-size:12px;
 }
+
 .admin-search:focus{
     border-color:rgba(133,105,232,.65);
     box-shadow:0 0 0 3px rgba(133,105,232,.08);
@@ -849,12 +813,10 @@ header{
     vertical-align:middle;
 }
 
-.admin-table tbody tr{
-    transition:background .12s ease;
-}
 .admin-table tbody tr:hover{
     background:rgba(255,255,255,.025);
 }
+
 .admin-table tbody tr:last-child td{
     border-bottom:0;
 }
@@ -883,22 +845,31 @@ header{
     font-size:9px;
     font-weight:900;
 }
+
 .admin-badge::before{
     content:"";
     width:5px;
     height:5px;
     border-radius:50%;
 }
+
 .admin-badge.ok{
     color:#72e5a8;
     background:rgba(72,220,140,.08);
 }
-.admin-badge.ok::before{background:#55d991}
+
+.admin-badge.ok::before{
+    background:#55d991;
+}
+
 .admin-badge.banned{
     color:#ff8e96;
     background:rgba(255,70,85,.09);
 }
-.admin-badge.banned::before{background:#ff6975}
+
+.admin-badge.banned::before{
+    background:#ff6975;
+}
 
 .admin-row-actions{
     display:flex;
@@ -914,41 +885,26 @@ header{
     background:#191a23;
     font-size:9px;
     font-weight:800;
-    transition:.12s ease;
 }
-.admin-mini:hover{
-    transform:translateY(-1px);
-    background:#242631;
-}
-.admin-mini.money{color:#7ee3a6}
-.admin-mini.xp{color:#b4a2ff}
-.admin-mini.shards{color:#f0c56b}
-.admin-mini.ban{color:#ff8d95}
-.admin-mini.unban{color:#74dfab}
 
-@media(max-width:800px){
-    .admin-top{
-        padding:16px;
-    }
-    .admin-content{
-        width:calc(100% - 20px);
-        padding-top:15px;
-    }
-    .admin-stats{
-        grid-template-columns:repeat(2,1fr);
-    }
+.admin-mini.money{
+    color:#7ee3a6;
 }
-@media(max-width:500px){
-    .admin-top{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-    .admin-actions{
-        width:100%;
-    }
-    .admin-btn{
-        flex:1;
-    }
+
+.admin-mini.xp{
+    color:#b4a2ff;
+}
+
+.admin-mini.shards{
+    color:#f0c56b;
+}
+
+.admin-mini.ban{
+    color:#ff8d95;
+}
+
+.admin-mini.unban{
+    color:#74dfab;
 }
 
 /* ================= BAN ================= */
@@ -1037,10 +993,79 @@ header{
     font-weight:900;
 }
 
-#banLogoutButton:hover{
-    background:#ad3b3b;
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+    .game{
+        grid-template-columns:1fr;
+    }
+
+    .sticky-game{
+        position:static;
+    }
+
+    .shop-list{
+        max-height:none;
+        overflow:visible;
+    }
 }
 
+@media(max-width:800px){
+    .admin-top{
+        padding:16px;
+    }
+
+    .admin-content{
+        width:calc(100% - 20px);
+        padding-top:15px;
+    }
+
+    .admin-stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:550px){
+    header{
+        height:auto;
+        padding:15px;
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .header-stats{
+        justify-content:flex-start;
+    }
+
+    .panel{
+        padding:18px;
+    }
+
+    #clickButton{
+        width:185px;
+        height:185px;
+        font-size:22px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:500px){
+    .admin-top{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .admin-actions{
+        width:100%;
+    }
+
+    .admin-btn{
+        flex:1;
+    }
+}
 </style>
 </head>
 
@@ -1050,124 +1075,116 @@ header{
 
 <div id="authScreen">
 
-<div class="auth-box">
+    <div class="auth-box">
 
-<div class="auth-logo">
-€ <span>CLICKER</span>
-</div>
+        <div class="auth-logo">
+            € <span>CLICKER</span>
+        </div>
 
-<div class="auth-subtitle">
-Connecte-toi pour retrouver ton empire
-</div>
+        <div class="auth-subtitle">
+            Connecte-toi pour retrouver ton empire
+        </div>
 
-<div class="auth-tabs">
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="loginTab" type="button">
+                Connexion
+            </button>
 
-<button class="auth-tab active" id="loginTab" type="button">
-Connexion
-</button>
+            <button class="auth-tab" id="registerTab" type="button">
+                Inscription
+            </button>
+        </div>
 
-<button class="auth-tab" id="registerTab" type="button">
-Inscription
-</button>
+        <form id="loginForm" class="auth-form active">
 
-</div>
+            <label class="auth-label">Adresse e-mail</label>
 
-<form id="loginForm" class="auth-form active">
+            <input
+                class="auth-input"
+                id="loginEmail"
+                type="email"
+                autocomplete="email"
+                required
+                placeholder="ton@email.com"
+            >
 
-<label class="auth-label">
-Adresse e-mail
-</label>
+            <label class="auth-label">Mot de passe</label>
 
-<input
-class="auth-input"
-id="loginEmail"
-type="email"
-autocomplete="email"
-required
-placeholder="ton@email.com">
+            <input
+                class="auth-input"
+                id="loginPassword"
+                type="password"
+                autocomplete="current-password"
+                required
+            >
 
-<label class="auth-label">
-Mot de passe
-</label>
+            <button class="auth-submit" type="submit">
+                🔑 Se connecter
+            </button>
 
-<input
-class="auth-input"
-id="loginPassword"
-type="password"
-autocomplete="current-password"
-required>
+        </form>
 
-<button class="auth-submit" type="submit">
-🔑 Se connecter
-</button>
+        <form id="registerForm" class="auth-form">
 
-</form>
+            <label class="auth-label">Pseudo</label>
 
-<form id="registerForm" class="auth-form">
+            <input
+                class="auth-input"
+                id="registerUsername"
+                autocomplete="username"
+                minlength="3"
+                maxlength="20"
+                required
+                placeholder="Ex : Gabriel123"
+            >
 
-<label class="auth-label">
-Pseudo
-</label>
+            <label class="auth-label">Adresse e-mail</label>
 
-<input
-class="auth-input"
-id="registerUsername"
-autocomplete="username"
-minlength="3"
-maxlength="20"
-required
-placeholder="Ex : Gabriel123">
+            <input
+                class="auth-input"
+                id="registerEmail"
+                type="email"
+                autocomplete="email"
+                required
+                placeholder="ton@email.com"
+            >
 
-<label class="auth-label">
-Adresse e-mail
-</label>
+            <label class="auth-label">Mot de passe</label>
 
-<input
-class="auth-input"
-id="registerEmail"
-type="email"
-autocomplete="email"
-required
-placeholder="ton@email.com">
+            <input
+                class="auth-input"
+                id="registerPassword"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
 
-<label class="auth-label">
-Mot de passe
-</label>
+            <label class="auth-label">Confirmer le mot de passe</label>
 
-<input
-class="auth-input"
-id="registerPassword"
-type="password"
-autocomplete="new-password"
-minlength="6"
-required>
+            <input
+                class="auth-input"
+                id="registerPasswordConfirm"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
 
-<label class="auth-label">
-Confirmer le mot de passe
-</label>
+            <button class="auth-submit" type="submit">
+                🚀 Créer mon compte
+            </button>
 
-<input
-class="auth-input"
-id="registerPasswordConfirm"
-type="password"
-autocomplete="new-password"
-minlength="6"
-required>
+        </form>
 
-<button class="auth-submit" type="submit">
-🚀 Créer mon compte
-</button>
+        <div class="auth-message" id="authMessage"></div>
 
-</form>
+        <div class="auth-note">
+            Ton compte et ta partie sont stockés en ligne avec Supabase.
+            Ton mot de passe n'est pas enregistré dans le jeu.
+        </div>
 
-<div class="auth-message" id="authMessage"></div>
-
-<div class="auth-note">
-Ton compte et ta partie sont stockés en ligne avec Supabase.
-Ton mot de passe n'est pas enregistré dans le jeu.
-</div>
-
-</div>
+    </div>
 </div>
 
 
@@ -1175,133 +1192,167 @@ Ton mot de passe n'est pas enregistré dans le jeu.
 
 <div id="banScreen">
 
-<div class="ban-box">
+    <div class="ban-box">
 
-<div class="ban-icon">🚫</div>
+        <div class="ban-icon">🚫</div>
 
-<h1 class="ban-title">Compte banni</h1>
+        <h1 class="ban-title">Compte banni</h1>
 
-<div class="ban-text">
-Ton accès à € Clicker a été suspendu.
-Tu ne peux plus jouer ni modifier ta sauvegarde tant que cette sanction est active.
+        <div class="ban-text">
+            Ton accès à € Clicker a été suspendu.
+            Tu ne peux plus jouer ni modifier ta sauvegarde
+            tant que cette sanction est active.
+        </div>
+
+        <div class="ban-info">
+
+            <div class="ban-row">
+                <strong>JOUEUR</strong>
+                <span id="banUsername">Joueur</span>
+            </div>
+
+            <div class="ban-row">
+                <strong>RAISON</strong>
+                <span id="banReason">Aucune raison indiquée</span>
+            </div>
+
+            <div class="ban-row">
+                <strong>EXPIRATION</strong>
+                <span id="banExpiration">Permanent</span>
+            </div>
+
+        </div>
+
+        <button id="banLogoutButton" type="button">
+            🚪 Se déconnecter
+        </button>
+
+    </div>
 </div>
-
-<div class="ban-info">
-
-<div class="ban-row">
-<strong>JOUEUR</strong>
-<span id="banUsername">Joueur</span>
-</div>
-
-<div class="ban-row">
-<strong>RAISON</strong>
-<span id="banReason">Aucune raison indiquée</span>
-</div>
-
-<div class="ban-row">
-<strong>EXPIRATION</strong>
-<span id="banExpiration">Permanent</span>
-</div>
-
-</div>
-
-<button id="banLogoutButton" type="button">
-🚪 Se déconnecter
-</button>
-
-</div>
-
-</div>
-
 
 
 <!-- ================= ADMIN ================= -->
 
 <div id="adminPanel">
 
-<div class="admin-window">
+    <div class="admin-window">
 
-<div class="admin-top">
+        <div class="admin-top">
 
-<div class="admin-brand">
-<div class="admin-logo">👑</div>
-<div>
-<h2 class="admin-title">Administration</h2>
-<div class="admin-subtitle">Gestion des joueurs · € Clicker</div>
-</div>
-</div>
+            <div class="admin-brand">
 
-<div class="admin-actions">
-<button class="admin-btn gold" id="adminRefresh" type="button">🔄 Actualiser</button>
-<button class="admin-btn" id="adminClose" type="button">✕ Fermer</button>
-</div>
+                <div class="admin-logo">👑</div>
 
-</div>
+                <div>
+                    <h2 class="admin-title">Administration</h2>
+                    <div class="admin-subtitle">
+                        Gestion des joueurs · € Clicker
+                    </div>
+                </div>
 
-<div class="admin-content">
+            </div>
 
-<div class="admin-stats">
-<div class="admin-stat">
-<div class="admin-stat-label">Joueurs</div>
-<div class="admin-stat-value" id="adminTotalPlayers">0</div>
-</div>
-<div class="admin-stat">
-<div class="admin-stat-label">Actifs</div>
-<div class="admin-stat-value" id="adminActivePlayers">0</div>
-</div>
-<div class="admin-stat">
-<div class="admin-stat-label">Bannis</div>
-<div class="admin-stat-value" id="adminBannedPlayers">0</div>
-</div>
-<div class="admin-stat">
-<div class="admin-stat-label">Statut</div>
-<div class="admin-stat-value">EN LIGNE</div>
-</div>
-</div>
+            <div class="admin-actions">
 
-<div class="admin-toolbar">
-<div class="admin-search-wrap">
-<span class="admin-search-icon">⌕</span>
-<input
-id="adminSearch"
-class="admin-search"
-type="search"
-placeholder="Rechercher un joueur...">
-</div>
-</div>
+                <button
+                    class="admin-btn gold"
+                    id="adminRefresh"
+                    type="button"
+                >
+                    🔄 Actualiser
+                </button>
 
-<div class="admin-message" id="adminMessage"></div>
+                <button
+                    class="admin-btn"
+                    id="adminClose"
+                    type="button"
+                >
+                    ✕ Fermer
+                </button>
 
-<div class="admin-table-wrap">
+            </div>
 
-<table class="admin-table">
+        </div>
 
-<thead>
-<tr>
-<th>Joueur</th>
-<th>Argent</th>
-<th>XP</th>
-<th>Niveau</th>
-<th>Renaissance</th>
-<th>Shards</th>
-<th>Statut</th>
-<th>Actions</th>
-</tr>
-</thead>
+        <div class="admin-content">
 
-<tbody id="adminPlayersBody">
-<tr>
-<td colspan="8">Chargement...</td>
-</tr>
-</tbody>
+            <div class="admin-stats">
 
-</table>
+                <div class="admin-stat">
+                    <div class="admin-stat-label">Joueurs</div>
+                    <div class="admin-stat-value" id="adminTotalPlayers">0</div>
+                </div>
 
-</div>
+                <div class="admin-stat">
+                    <div class="admin-stat-label">Actifs</div>
+                    <div class="admin-stat-value" id="adminActivePlayers">0</div>
+                </div>
 
-</div>
+                <div class="admin-stat">
+                    <div class="admin-stat-label">Bannis</div>
+                    <div class="admin-stat-value" id="adminBannedPlayers">0</div>
+                </div>
 
-</div>
+                <div class="admin-stat">
+                    <div class="admin-stat-label">Statut</div>
+                    <div class="admin-stat-value">EN LIGNE</div>
+                </div>
+
+            </div>
+
+            <div class="admin-toolbar">
+
+                <div class="admin-search-wrap">
+
+                    <span class="admin-search-icon">⌕</span>
+
+                    <input
+                        id="adminSearch"
+                        class="admin-search"
+                        type="search"
+                        placeholder="Rechercher un joueur..."
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="admin-message" id="adminMessage"></div>
+
+            <div class="admin-table-wrap">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Joueur</th>
+                            <th>Argent</th>
+                            <th>XP</th>
+                            <th>Niveau</th>
+                            <th>Renaissance</th>
+                            <th>Shards</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="adminPlayersBody">
+
+                        <tr>
+                            <td colspan="8">Chargement...</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 </div>
 
 
@@ -1309,182 +1360,243 @@ placeholder="Rechercher un joueur...">
 
 <div id="gameScreen" style="display:none">
 
-<header>
+    <header>
 
-<div class="logo">
-€ <span>CLICKER</span>
-</div>
+        <div class="logo">
+            € <span>CLICKER</span>
+        </div>
 
-<div class="header-stats">
+        <div class="header-stats">
 
-<div class="header-pill user-pill">
-👤 <span id="currentUsername"></span>
-</div>
+            <div class="header-pill language-pill">
+                🌐
 
-<div class="header-pill">
-⭐ Niveau <span id="level">1</span>
-</div>
+                <select id="languageSelect">
 
-<div class="header-pill">
-♻️ Renaissance <span id="prestigeLevel">0</span>
-</div>
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="ru">Русский</option>
 
-<div class="header-pill">
-✨ x<span id="globalMultiplier">1</span>
-</div>
+                </select>
 
-<button class="header-pill" id="adminButton" type="button" onclick="openAdminPanel()">👑 Admin</button>
+            </div>
 
-<button class="header-pill logout" id="logoutButton" type="button">
-🚪 Déconnexion
-</button>
+            <div class="header-pill user-pill">
+                👤 <span id="currentUsername"></span>
+            </div>
 
-</div>
+            <div class="header-pill">
+                ⭐ Niveau <span id="level">1</span>
+            </div>
 
-</header>
+            <div class="header-pill">
+                ♻️ Renaissance <span id="prestigeLevel">0</span>
+            </div>
 
-<main class="game">
+            <div class="header-pill">
+                ✨ x<span id="globalMultiplier">1</span>
+            </div>
 
-<section class="panel sticky-game">
+            <button
+                class="header-pill"
+                id="adminButton"
+                type="button"
+            >
+                👑 Admin
+            </button>
 
-<div class="money-title">
-Ton empire
-</div>
+            <button
+                class="header-pill logout"
+                id="logoutButton"
+                type="button"
+            >
+                🚪 Déconnexion
+            </button>
 
-<div class="money">
-<span id="money">0</span> €
-</div>
+        </div>
 
-<div class="click-zone">
+    </header>
 
-<button id="clickButton">
-+<span id="clickValue">1</span> €
-</button>
+    <main class="game">
 
-</div>
+        <section class="panel sticky-game">
 
-<div class="stats">
+            <div class="money-title">
+                Ton empire
+            </div>
 
-<div class="stat">
-<div class="stat-icon">👆</div>
-<div class="stat-value">
-<span id="perClick">1</span> €
-</div>
-<div class="stat-label">PAR CLIC</div>
-</div>
+            <div class="money">
+                <span id="money">0</span>
+                <span class="currency-symbol">€</span>
+            </div>
 
-<div class="stat">
-<div class="stat-icon">⚡</div>
-<div class="stat-value">
-<span id="perSecond">0</span> €
-</div>
-<div class="stat-label">PAR SECONDE</div>
-</div>
+            <div class="click-zone">
 
-<div class="stat">
-<div class="stat-icon">🛒</div>
-<div class="stat-value">
-<span id="upgradeCount">0</span>
-</div>
-<div class="stat-label">AMÉLIORATIONS</div>
-</div>
+                <button id="clickButton">
 
-<div class="stat">
-<div class="stat-icon">🏦</div>
-<div class="stat-value">
-<span id="totalEarned">0</span> €
-</div>
-<div class="stat-label">TOTAL GAGNÉ</div>
-</div>
+                    +<span id="clickValue">1</span>
+                    <span class="currency-symbol">€</span>
 
-</div>
+                </button>
 
-<div class="xp-box">
+            </div>
 
-<div class="xp-info">
+            <div class="stats">
 
-<span>Progression</span>
+                <div class="stat">
 
-<span>
-<span id="xp">0</span> /
-<span id="xpMax">100</span> XP
-</span>
+                    <div class="stat-icon">👆</div>
 
-</div>
+                    <div class="stat-value">
+                        <span id="perClick">1</span>
+                        <span class="currency-symbol">€</span>
+                    </div>
 
-<div class="xp-bar">
+                    <div class="stat-label">
+                        PAR CLIC
+                    </div>
 
-<div class="xp-progress" id="xpProgress"></div>
+                </div>
 
-</div>
+                <div class="stat">
 
-</div>
+                    <div class="stat-icon">⚡</div>
 
-<div class="prestige-box">
+                    <div class="stat-value">
+                        <span id="perSecond">0</span>
+                        <span class="currency-symbol">€</span>
+                    </div>
 
-<div class="prestige-title">
-♻️ Renaissance
-</div>
+                    <div class="stat-label">
+                        PAR SECONDE
+                    </div>
 
-<div class="prestige-desc">
-Recommence ta partie à zéro pour obtenir des
-<strong>Éclats de Renaissance</strong>.
-Ils augmentent définitivement tous tes revenus.
-</div>
+                </div>
 
-<div class="prestige-info">
+                <div class="stat">
 
-<div class="prestige-stat">
+                    <div class="stat-icon">🛒</div>
 
-<strong id="prestigeShards">
-0
-</strong>
+                    <div class="stat-value">
+                        <span id="upgradeCount">0</span>
+                    </div>
 
-<span>
-ÉCLATS POSSÉDÉS
-</span>
+                    <div class="stat-label">
+                        AMÉLIORATIONS
+                    </div>
 
-</div>
+                </div>
 
-<div class="prestige-stat">
+                <div class="stat">
 
-<strong>
-+<span id="prestigeGain">0</span>
-</strong>
+                    <div class="stat-icon">🏦</div>
 
-<span>
-PROCHAINE RENAISSANCE
-</span>
+                    <div class="stat-value">
+                        <span id="totalEarned">0</span>
+                        <span class="currency-symbol">€</span>
+                    </div>
 
-</div>
+                    <div class="stat-label">
+                        TOTAL GAGNÉ
+                    </div>
 
-</div>
+                </div>
 
-<button id="prestigeButton" disabled>
-Renaissance indisponible
-</button>
+            </div>
 
-</div>
+            <div class="xp-box">
 
-</section>
+                <div class="xp-info">
 
-<section class="panel">
+                    <span>Progression</span>
 
-<div class="shop-header">
+                    <span>
+                        <span id="xp">0</span> /
+                        <span id="xpMax">100</span> XP
+                    </span>
 
-<h2>🛒 Boutique</h2>
+                </div>
 
-<div class="shop-subtitle">
-AMÉLIORE TON EMPIRE
-</div>
+                <div class="xp-bar">
+                    <div
+                        class="xp-progress"
+                        id="xpProgress"
+                    ></div>
+                </div>
 
-</div>
+            </div>
 
-<div class="shop-list" id="shopList"></div>
+            <div class="prestige-box">
 
-</section>
+                <div class="prestige-title">
+                    ♻️ Renaissance
+                </div>
 
-</main>
+                <div class="prestige-desc">
+                    Recommence ta partie à zéro pour obtenir des
+                    <strong>Éclats de Renaissance</strong>.
+                    Ils augmentent définitivement tous tes revenus.
+                </div>
+
+                <div class="prestige-info">
+
+                    <div class="prestige-stat">
+
+                        <strong id="prestigeShards">
+                            0
+                        </strong>
+
+                        <span>
+                            ÉCLATS POSSÉDÉS
+                        </span>
+
+                    </div>
+
+                    <div class="prestige-stat">
+
+                        <strong>
+                            +<span id="prestigeGain">0</span>
+                        </strong>
+
+                        <span>
+                            PROCHAINE RENAISSANCE
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button
+                    id="prestigeButton"
+                    disabled
+                >
+                    Renaissance indisponible
+                </button>
+
+            </div>
+
+        </section>
+
+        <section class="panel">
+
+            <div class="shop-header">
+
+                <h2>🛒 Boutique</h2>
+
+                <div class="shop-subtitle">
+                    AMÉLIORE TON EMPIRE
+                </div>
+
+            </div>
+
+            <div
+                class="shop-list"
+                id="shopList"
+            ></div>
+
+        </section>
+
+    </main>
 
 </div>
 
@@ -1492,24 +1604,25 @@ AMÉLIORE TON EMPIRE
 
 
 <script>
+"use strict";
 
 /* =========================================================
    SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
-"https://cedahfjtmhxddjkldhen.supabase.co";
+    "https://cedahfjtmhxddjkldhen.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_PCpVfnXjB6CXRrI4yMwthQ_kFS5oipW";
+    "sb_publishable_PCpVfnXjB6CXRrI4yMwthQ_kFS5oipW";
 
 const { createClient } = window.supabase;
 
 const supabaseClient =
-createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =========================================================
@@ -1519,331 +1632,896 @@ createClient(
 let currentUser = null;
 let currentUsername = null;
 let saveData = null;
-let notificationTimeout;
+
+let notificationTimeout = null;
 let saveInProgress = false;
+
 let isBanned = false;
 let isAdmin = false;
 let adminPlayers = [];
+
+let currentLang =
+    localStorage.getItem("clicker_language") || "fr";
+
+if(!["fr","en","ru"].includes(currentLang)){
+    currentLang = "fr";
+}
 
 let banCheckInProgress = false;
 
 
 /* =========================================================
-   AMÉLIORATIONS
+   TRADUCTIONS
 ========================================================= */
 
-const upgradesData = [
+const translations = {
 
-{
-id:"mouse",
-icon:"🖱️",
-name:"Souris améliorée",
-description:"+1 € par clic",
-basePrice:10,
-priceGrowth:1.35,
-click:1,
-auto:0
-},
+    fr: {
 
-{
-id:"keyboard",
-icon:"⌨️",
-name:"Clavier mécanique",
-description:"+3 € par clic",
-basePrice:35,
-priceGrowth:1.38,
-click:3,
-auto:0
-},
+        buy: "Acheter",
+        notEnough: "Il te manque",
+        bought: "acheté !",
 
-{
-id:"turbo",
-icon:"⚡",
-name:"Turbo clic",
-description:"+10 € par clic",
-basePrice:150,
-priceGrowth:1.4,
-click:10,
-auto:0
-},
+        empire: "Ton empire",
 
-{
-id:"worker",
-icon:"🤖",
-name:"Robot collecteur",
-description:"+2 € automatiquement par seconde",
-basePrice:250,
-priceGrowth:1.42,
-click:0,
-auto:2
-},
+        perClick: "PAR CLIC",
+        perSecond: "PAR SECONDE",
+        upgrades: "AMÉLIORATIONS",
+        totalEarned: "TOTAL GAGNÉ",
 
-{
-id:"server",
-icon:"🖥️",
-name:"Serveur automatique",
-description:"+12 € par seconde",
-basePrice:1200,
-priceGrowth:1.44,
-click:0,
-auto:12
-},
+        shopTitle: "Boutique",
+        shopSubtitle: "AMÉLIORE TON EMPIRE",
 
-{
-id:"diamond",
-icon:"💎",
-name:"Clic diamant",
-description:"+50 € par clic",
-basePrice:3000,
-priceGrowth:1.46,
-click:50,
-auto:0
-},
+        items: {
 
-{
-id:"factory",
-icon:"🏭",
-name:"Usine",
-description:"+80 € par seconde",
-basePrice:10000,
-priceGrowth:1.48,
-click:0,
-auto:80
-},
+            mouse: {
+                name:"Souris améliorée",
+                desc:"+1 {CURRENCY} par clic"
+            },
 
-{
-id:"bank",
-icon:"🏦",
-name:"Banque",
-description:"+450 € par seconde",
-basePrice:50000,
-priceGrowth:1.5,
-click:0,
-auto:450
-},
+            keyboard: {
+                name:"Clavier mécanique",
+                desc:"+3 {CURRENCY} par clic"
+            },
 
-{
-id:"quantumMouse",
-icon:"🌀",
-name:"Souris quantique",
-description:"+1 000 € par clic",
-basePrice:150000,
-priceGrowth:1.52,
-click:1000,
-auto:0
-},
+            turbo: {
+                name:"Turbo clic",
+                desc:"+10 {CURRENCY} par clic"
+            },
 
-{
-id:"datacenter",
-icon:"🌐",
-name:"Data Center",
-description:"+5 000 € par seconde",
-basePrice:500000,
-priceGrowth:1.54,
-click:0,
-auto:5000
-},
+            worker: {
+                name:"Robot collecteur",
+                desc:"+2 {CURRENCY} automatiquement par seconde"
+            },
 
-{
-id:"mine",
-icon:"⛏️",
-name:"Mine automatisée",
-description:"+25 000 € par seconde",
-basePrice:2500000,
-priceGrowth:1.55,
-click:0,
-auto:25000
-},
+            server: {
+                name:"Serveur automatique",
+                desc:"+12 {CURRENCY} par seconde"
+            },
 
-{
-id:"megaFactory",
-icon:"🏗️",
-name:"Méga usine",
-description:"+150 000 € par seconde",
-basePrice:10000000,
-priceGrowth:1.57,
-click:0,
-auto:150000
-},
+            diamond: {
+                name:"Clic diamant",
+                desc:"+50 {CURRENCY} par clic"
+            },
 
-{
-id:"ai",
-icon:"🧠",
-name:"Intelligence artificielle",
-description:"+750 000 € par seconde",
-basePrice:50000000,
-priceGrowth:1.58,
-click:0,
-auto:750000
-},
+            factory: {
+                name:"Usine",
+                desc:"+80 {CURRENCY} par seconde"
+            },
 
-{
-id:"rocket",
-icon:"🚀",
-name:"Entreprise spatiale",
-description:"+4 M€ par seconde",
-basePrice:250000000,
-priceGrowth:1.6,
-click:0,
-auto:4000000
-},
+            bank: {
+                name:"Banque",
+                desc:"+450 {CURRENCY} par seconde"
+            },
 
-{
-id:"moon",
-icon:"🌕",
-name:"Base lunaire",
-description:"+20 M€ par seconde",
-basePrice:1000000000,
-priceGrowth:1.62,
-click:0,
-auto:20000000
-},
+            quantumMouse: {
+                name:"Souris quantique",
+                desc:"+1 000 {CURRENCY} par clic"
+            },
 
-{
-id:"planet",
-icon:"🪐",
-name:"Colonie planétaire",
-description:"+100 M€ par seconde",
-basePrice:5000000000,
-priceGrowth:1.64,
-click:0,
-auto:100000000
-},
+            datacenter: {
+                name:"Data Center",
+                desc:"+5 000 {CURRENCY} par seconde"
+            },
 
-{
-id:"star",
-icon:"⭐",
-name:"Centrale stellaire",
-description:"+500 M€ par seconde",
-basePrice:25000000000,
-priceGrowth:1.66,
-click:0,
-auto:500000000
-},
+            mine: {
+                name:"Mine automatisée",
+                desc:"+25 000 {CURRENCY} par seconde"
+            },
 
-{
-id:"galaxy",
-icon:"🌌",
-name:"Empire galactique",
-description:"+5 Md€ par seconde",
-basePrice:250000000000,
-priceGrowth:1.68,
-click:0,
-auto:5000000000
-},
+            megaFactory: {
+                name:"Méga usine",
+                desc:"+150 000 {CURRENCY} par seconde"
+            },
 
-{
-id:"blackhole",
-icon:"🕳️",
-name:"Extracteur de trou noir",
-description:"+50 Md€ par seconde",
-basePrice:2500000000000,
-priceGrowth:1.7,
-click:0,
-auto:50000000000
-},
+            rbmk1000: {
+                name:"RBMK-1000",
+                desc:"+100 {CURRENCY} par clic"
+            },
 
-{
-id:"dimension",
-icon:"🔮",
-name:"Mine dimensionnelle",
-description:"+1 000 Md€ par seconde",
-basePrice:50000000000000,
-priceGrowth:1.72,
-click:0,
-auto:1000000000000
-}
+            rbmk1500: {
+                name:"RBMK-1500",
+                desc:"+500 {CURRENCY} par clic et +50 {CURRENCY}/s"
+            },
 
-];
+            chernobyl: {
+                name:"Tchernobyl",
+                desc:"+2 500 {CURRENCY} par clic et +250 {CURRENCY}/s"
+            },
+
+            ai: {
+                name:"Intelligence artificielle",
+                desc:"+750 000 {CURRENCY} par seconde"
+            },
+
+            rocket: {
+                name:"Entreprise spatiale",
+                desc:"+4 M {CURRENCY} par seconde"
+            },
+
+            moon: {
+                name:"Base lunaire",
+                desc:"+20 M {CURRENCY} par seconde"
+            },
+
+            planet: {
+                name:"Colonie planétaire",
+                desc:"+100 M {CURRENCY} par seconde"
+            },
+
+            star: {
+                name:"Centrale stellaire",
+                desc:"+500 M {CURRENCY} par seconde"
+            },
+
+            galaxy: {
+                name:"Empire galactique",
+                desc:"+5 Md {CURRENCY} par seconde"
+            },
+
+            blackhole: {
+                name:"Extracteur de trou noir",
+                desc:"+50 Md {CURRENCY} par seconde"
+            },
+
+            dimension: {
+                name:"Mine dimensionnelle",
+                desc:"+1 000 Md {CURRENCY} par seconde"
+            }
+
+        }
+
+    },
 
 
-/* =========================================================
-   SAUVEGARDE PAR DÉFAUT
-========================================================= */
+    en: {
 
-function defaultSave(){
+        buy:"Buy",
+        notEnough:"You need",
+        bought:"purchased!",
 
-const upgrades = {};
+        empire:"Your Empire",
 
-for(const upgrade of upgradesData){
-    upgrades[upgrade.id] = 0;
-}
+        perClick:"PER CLICK",
+        perSecond:"PER SECOND",
+        upgrades:"UPGRADES",
+        totalEarned:"TOTAL EARNED",
 
-return {
+        shopTitle:"Shop",
+        shopSubtitle:"UPGRADE YOUR EMPIRE",
 
-money:0,
-totalEarned:0,
-xp:0,
-level:1,
-prestige:0,
-prestigeShards:0,
-upgrades
+        items: {
 
-};
+            mouse: {
+                name:"Upgraded Mouse",
+                desc:"+1 {CURRENCY} per click"
+            },
 
-}
+            keyboard: {
+                name:"Mechanical Keyboard",
+                desc:"+3 {CURRENCY} per click"
+            },
+
+            turbo: {
+                name:"Turbo Click",
+                desc:"+10 {CURRENCY} per click"
+            },
+
+            worker: {
+                name:"Collector Robot",
+                desc:"+2 {CURRENCY} automatically per second"
+            },
+
+            server: {
+                name:"Automatic Server",
+                desc:"+12 {CURRENCY} per second"
+            },
+
+            diamond: {
+                name:"Diamond Click",
+                desc:"+50 {CURRENCY} per click"
+            },
+
+            factory: {
+                name:"Factory",
+                desc:"+80 {CURRENCY} per second"
+            },
+
+            bank: {
+                name:"Bank",
+                desc:"+450 {CURRENCY} per second"
+            },
+
+            quantumMouse: {
+                name:"Quantum Mouse",
+                desc:"+1,000 {CURRENCY} per click"
+            },
+
+            datacenter: {
+                name:"Data Center",
+                desc:"+5,000 {CURRENCY} per second"
+            },
+
+            mine: {
+                name:"Automated Mine",
+                desc:"+25,000 {CURRENCY} per second"
+            },
+
+            megaFactory: {
+                name:"Mega Factory",
+                desc:"+150,000 {CURRENCY} per second"
+            },
+
+            rbmk1000: {
+                name:"RBMK-1000",
+                desc:"+100 {CURRENCY} per click"
+            },
+
+            rbmk1500: {
+                name:"RBMK-1500",
+                desc:"+500 {CURRENCY} per click and +50 {CURRENCY}/s"
+            },
+
+            chernobyl: {
+                name:"Chernobyl",
+                desc:"+2,500 {CURRENCY} per click and +250 {CURRENCY}/s"
+            },
+
+            ai: {
+                name:"Artificial Intelligence",
+                desc:"+750,000 {CURRENCY} per second"
+            },
+
+            rocket: {
+                name:"Space Company",
+                desc:"+4M {CURRENCY} per second"
+            },
+
+            moon: {
+                name:"Lunar Base",
+                desc:"+20M {CURRENCY} per second"
+            },
+
+            planet: {
+                name:"Planetary Colony",
+                desc:"+100M {CURRENCY} per second"
+            },
+
+            star: {
+                name:"Stellar Power Plant",
+                desc:"+500M {CURRENCY} per second"
+            },
+
+            galaxy: {
+                name:"Galactic Empire",
+                desc:"+5B {CURRENCY} per second"
+            },
+
+            blackhole: {
+                name:"Black Hole Extractor",
+                desc:"+50B {CURRENCY} per second"
+            },
+
+            dimension: {
+                name:"Dimensional Mine",
+                desc:"+1,000B {CURRENCY} per second"
+            }
+
+        }
+
+    },
 
 
-/* =========================================================
-   RÉPARATION
-========================================================= */
+    ru: {
 
-function repairSave(data){
+        buy:"Купить",
+        notEnough:"Не хватает",
+        bought:"куплено!",
 
-const fresh = defaultSave();
+        empire:"Ваша империя",
 
-if(!data || typeof data !== "object"){
-    return fresh;
-}
+        perClick:"ЗА КЛИК",
+        perSecond:"В СЕКУНДУ",
+        upgrades:"УЛУЧШЕНИЯ",
+        totalEarned:"ВСЕГО ЗАРАБОТАНО",
 
-if(Number.isFinite(data.money) && data.money >= 0){
-    fresh.money = data.money;
-}
+        shopTitle:"Магазин",
+        shopSubtitle:"УЛУЧШАЙТЕ СВОЮ ИМПЕРИЮ",
 
-if(Number.isFinite(data.totalEarned) && data.totalEarned >= 0){
-    fresh.totalEarned = data.totalEarned;
-}
+        items: {
 
-if(Number.isFinite(data.xp) && data.xp >= 0){
-    fresh.xp = data.xp;
-}
+            mouse: {
+                name:"Улучшенная мышь",
+                desc:"+1 {CURRENCY} за клик"
+            },
 
-if(Number.isFinite(data.level) && data.level >= 1){
-    fresh.level = Math.floor(data.level);
-}
+            keyboard: {
+                name:"Механическая клавиатура",
+                desc:"+3 {CURRENCY} за клик"
+            },
 
-if(Number.isFinite(data.prestige) && data.prestige >= 0){
-    fresh.prestige = Math.floor(data.prestige);
-}
+            turbo: {
+                name:"Турбо клик",
+                desc:"+10 {CURRENCY} за клик"
+            },
 
-if(
-    Number.isFinite(data.prestigeShards) &&
-    data.prestigeShards >= 0
-){
-    fresh.prestigeShards =
-        Math.floor(data.prestigeShards);
-}
+            worker: {
+                name:"Робот-сборщик",
+                desc:"+2 {CURRENCY} автоматически в секунду"
+            },
 
-if(data.upgrades && typeof data.upgrades === "object"){
+            server: {
+                name:"Автоматический сервер",
+                desc:"+12 {CURRENCY} в секунду"
+            },
 
-    for(const upgrade of upgradesData){
+            diamond: {
+                name:"Алмазный клик",
+                desc:"+50 {CURRENCY} за клик"
+            },
 
-        const owned =
-            Number(data.upgrades[upgrade.id]);
+            factory: {
+                name:"Завод",
+                desc:"+80 {CURRENCY} в секунду"
+            },
 
-        if(Number.isFinite(owned) && owned >= 0){
+            bank: {
+                name:"Банк",
+                desc:"+450 {CURRENCY} в секунду"
+            },
 
-            fresh.upgrades[upgrade.id] =
-                Math.floor(owned);
+            quantumMouse: {
+                name:"Квантовая мышь",
+                desc:"+1 000 {CURRENCY} за клик"
+            },
+
+            datacenter: {
+                name:"Дата-центр",
+                desc:"+5 000 {CURRENCY} в секунду"
+            },
+
+            mine: {
+                name:"Автоматизированная шахта",
+                desc:"+25 000 {CURRENCY} в секунду"
+            },
+
+            megaFactory: {
+                name:"Мегазавод",
+                desc:"+150 000 {CURRENCY} в секунду"
+            },
+
+            rbmk1000: {
+                name:"РБМК-1000",
+                desc:"+100 {CURRENCY} за клик"
+            },
+
+            rbmk1500: {
+                name:"РБМК-1500",
+                desc:"+500 {CURRENCY} за клик и +50 {CURRENCY}/с"
+            },
+
+            chernobyl: {
+                name:"Чернобыль",
+                desc:"+2 500 {CURRENCY} за клик и +250 {CURRENCY}/с"
+            },
+
+            ai: {
+                name:"Искусственный интеллект",
+                desc:"+750 000 {CURRENCY} в секунду"
+            },
+
+            rocket: {
+                name:"Космическая компания",
+                desc:"+4 млн {CURRENCY} в секунду"
+            },
+
+            moon: {
+                name:"Лунная база",
+                desc:"+20 млн {CURRENCY} в секунду"
+            },
+
+            planet: {
+                name:"Планетарная колония",
+                desc:"+100 млн {CURRENCY} в секунду"
+            },
+
+            star: {
+                name:"Звездная электростанция",
+                desc:"+500 млн {CURRENCY} в секунду"
+            },
+
+            galaxy: {
+                name:"Галактическая империя",
+                desc:"+5 млрд {CURRENCY} в секунду"
+            },
+
+            blackhole: {
+                name:"Экстрактор черной дыры",
+                desc:"+50 млрд {CURRENCY} в секунду"
+            },
+
+            dimension: {
+                name:"Пространственная шахта",
+                desc:"+1 000 млрд {CURRENCY} в секунду"
+            }
 
         }
 
     }
 
+};
+
+
+/* =========================================================
+   UPGRADES
+========================================================= */
+
+const upgradesData = [
+
+    {
+        id:"mouse",
+        icon:"🖱️",
+        name:"Souris améliorée",
+        description:"+1 {CURRENCY} par clic",
+        basePrice:10,
+        priceGrowth:1.35,
+        click:1,
+        auto:0,
+        category:"beginning"
+    },
+
+    {
+        id:"keyboard",
+        icon:"⌨️",
+        name:"Clavier mécanique",
+        description:"+3 {CURRENCY} par clic",
+        basePrice:35,
+        priceGrowth:1.38,
+        click:3,
+        auto:0,
+        category:"beginning"
+    },
+
+    {
+        id:"turbo",
+        icon:"⚡",
+        name:"Turbo clic",
+        description:"+10 {CURRENCY} par clic",
+        basePrice:150,
+        priceGrowth:1.40,
+        click:10,
+        auto:0,
+        category:"beginning"
+    },
+
+    {
+        id:"worker",
+        icon:"🤖",
+        name:"Robot collecteur",
+        description:"+2 {CURRENCY} automatiquement par seconde",
+        basePrice:250,
+        priceGrowth:1.42,
+        click:0,
+        auto:2,
+        category:"beginning"
+    },
+
+    {
+        id:"server",
+        icon:"🖥️",
+        name:"Serveur automatique",
+        description:"+12 {CURRENCY} par seconde",
+        basePrice:1200,
+        priceGrowth:1.44,
+        click:0,
+        auto:12,
+        category:"beginning"
+    },
+
+    {
+        id:"diamond",
+        icon:"💎",
+        name:"Clic diamant",
+        description:"+50 {CURRENCY} par clic",
+        basePrice:3000,
+        priceGrowth:1.46,
+        click:50,
+        auto:0,
+        category:"beginning"
+    },
+
+    {
+        id:"factory",
+        icon:"🏭",
+        name:"Usine",
+        description:"+80 {CURRENCY} par seconde",
+        basePrice:10000,
+        priceGrowth:1.48,
+        click:0,
+        auto:80,
+        category:"industry"
+    },
+
+    {
+        id:"bank",
+        icon:"🏦",
+        name:"Banque",
+        description:"+450 {CURRENCY} par seconde",
+        basePrice:50000,
+        priceGrowth:1.50,
+        click:0,
+        auto:450,
+        category:"industry"
+    },
+
+    {
+        id:"quantumMouse",
+        icon:"🌀",
+        name:"Souris quantique",
+        description:"+1 000 {CURRENCY} par clic",
+        basePrice:150000,
+        priceGrowth:1.52,
+        click:1000,
+        auto:0,
+        category:"industry"
+    },
+
+    {
+        id:"datacenter",
+        icon:"🌐",
+        name:"Data Center",
+        description:"+5 000 {CURRENCY} par seconde",
+        basePrice:500000,
+        priceGrowth:1.54,
+        click:0,
+        auto:5000,
+        category:"industry"
+    },
+
+    {
+        id:"mine",
+        icon:"⛏️",
+        name:"Mine automatisée",
+        description:"+25 000 {CURRENCY} par seconde",
+        basePrice:2500000,
+        priceGrowth:1.55,
+        click:0,
+        auto:25000,
+        category:"industry"
+    },
+
+    {
+        id:"megaFactory",
+        icon:"🏗️",
+        name:"Méga usine",
+        description:"+150 000 {CURRENCY} par seconde",
+        basePrice:10000000,
+        priceGrowth:1.57,
+        click:0,
+        auto:150000,
+        category:"industry"
+    },
+
+    {
+        id:"rbmk1000",
+        icon:"☢️",
+        name:"RBMK-1000",
+        description:"+100 {CURRENCY} par clic",
+        basePrice:5000,
+        priceGrowth:1.55,
+        click:100,
+        auto:0,
+        category:"rbmk"
+    },
+
+    {
+        id:"rbmk1500",
+        icon:"☢️",
+        name:"RBMK-1500",
+        description:"+500 {CURRENCY} par clic et +50 {CURRENCY}/s",
+        basePrice:25000,
+        priceGrowth:1.58,
+        click:500,
+        auto:50,
+        category:"rbmk"
+    },
+
+    {
+        id:"chernobyl",
+        icon:"☢️",
+        name:"Tchernobyl",
+        description:"+2 500 {CURRENCY} par clic et +250 {CURRENCY}/s",
+        basePrice:100000,
+        priceGrowth:1.60,
+        click:2500,
+        auto:250,
+        category:"rbmk"
+    },
+
+    {
+        id:"ai",
+        icon:"🧠",
+        name:"Intelligence artificielle",
+        description:"+750 000 {CURRENCY} par seconde",
+        basePrice:50000000,
+        priceGrowth:1.58,
+        click:0,
+        auto:750000,
+        category:"technology"
+    },
+
+    {
+        id:"rocket",
+        icon:"🚀",
+        name:"Entreprise spatiale",
+        description:"+4 M {CURRENCY} par seconde",
+        basePrice:250000000,
+        priceGrowth:1.60,
+        click:0,
+        auto:4000000,
+        category:"technology"
+    },
+
+    {
+        id:"moon",
+        icon:"🌕",
+        name:"Base lunaire",
+        description:"+20 M {CURRENCY} par seconde",
+        basePrice:1000000000,
+        priceGrowth:1.62,
+        click:0,
+        auto:20000000,
+        category:"technology"
+    },
+
+    {
+        id:"planet",
+        icon:"🪐",
+        name:"Colonie planétaire",
+        description:"+100 M {CURRENCY} par seconde",
+        basePrice:5000000000,
+        priceGrowth:1.64,
+        click:0,
+        auto:100000000,
+        category:"technology"
+    },
+
+    {
+        id:"star",
+        icon:"⭐",
+        name:"Centrale stellaire",
+        description:"+500 M {CURRENCY} par seconde",
+        basePrice:25000000000,
+        priceGrowth:1.66,
+        click:0,
+        auto:500000000,
+        category:"technology"
+    },
+
+    {
+        id:"galaxy",
+        icon:"🌌",
+        name:"Empire galactique",
+        description:"+5 Md {CURRENCY} par seconde",
+        basePrice:250000000000,
+        priceGrowth:1.68,
+        click:0,
+        auto:5000000000,
+        category:"technology"
+    },
+
+    {
+        id:"blackhole",
+        icon:"🕳️",
+        name:"Extracteur de trou noir",
+        description:"+50 Md {CURRENCY} par seconde",
+        basePrice:2500000000000,
+        priceGrowth:1.70,
+        click:0,
+        auto:50000000000,
+        category:"technology"
+    },
+
+    {
+        id:"dimension",
+        icon:"🔮",
+        name:"Mine dimensionnelle",
+        description:"+1 000 Md {CURRENCY} par seconde",
+        basePrice:50000000000000,
+        priceGrowth:1.72,
+        click:0,
+        auto:1000000000000,
+        category:"technology"
+    },
+
+    {
+        id:"akimov",
+        icon:"👨‍🔬",
+        name:"Akimov",
+        description:"+20% de rendement",
+        basePrice:5000000,
+        priceGrowth:1,
+        click:0,
+        auto:0,
+        special:"akimov",
+        maxOwned:1,
+        category:"personnel"
+    },
+
+    {
+        id:"diatlov",
+        icon:"⚠️",
+        name:"DIATLOV",
+        description:"+100% de production — risque de catastrophe",
+        basePrice:25000000,
+        priceGrowth:1,
+        click:0,
+        auto:0,
+        special:"diatlov",
+        maxOwned:1,
+        category:"personnel"
+    }
+
+];
+
+
+/* =========================================================
+   SAVE PAR DÉFAUT
+========================================================= */
+
+function defaultSave(){
+
+    const upgrades = {};
+
+    for(const upgrade of upgradesData){
+        upgrades[upgrade.id] = 0;
+    }
+
+    return {
+
+        money:0,
+
+        /* IMPORTANT :
+           Le jeu utilise totalEarned côté JavaScript.
+        */
+        totalEarned:0,
+
+        xp:0,
+
+        level:1,
+
+        prestige:0,
+
+        prestigeShards:0,
+
+        clicks:0,
+
+        upgrades:upgrades,
+
+        username:currentUsername || "Player"
+
+    };
 }
 
-return fresh;
 
+/* =========================================================
+   RÉPARATION SAVE
+========================================================= */
+
+function repairSave(data){
+
+    const fresh = defaultSave();
+
+    if(!data || typeof data !== "object"){
+        return fresh;
+    }
+
+    if(
+        Number.isFinite(Number(data.money)) &&
+        Number(data.money) >= 0
+    ){
+        fresh.money = Number(data.money);
+    }
+
+    /*
+       Compatibilité avec les anciennes sauvegardes.
+       On accepte totalEarned ET total_earned.
+    */
+
+    const totalEarned =
+        data.totalEarned ??
+        data.total_earned;
+
+    if(
+        Number.isFinite(Number(totalEarned)) &&
+        Number(totalEarned) >= 0
+    ){
+        fresh.totalEarned =
+            Number(totalEarned);
+    }
+
+    if(
+        Number.isFinite(Number(data.xp)) &&
+        Number(data.xp) >= 0
+    ){
+        fresh.xp = Number(data.xp);
+    }
+
+    if(
+        Number.isFinite(Number(data.level)) &&
+        Number(data.level) >= 1
+    ){
+        fresh.level =
+            Math.floor(Number(data.level));
+    }
+
+    if(
+        Number.isFinite(Number(data.prestige)) &&
+        Number(data.prestige) >= 0
+    ){
+        fresh.prestige =
+            Math.floor(Number(data.prestige));
+    }
+
+    const shards =
+        data.prestigeShards ??
+        data.prestige_shards;
+
+    if(
+        Number.isFinite(Number(shards)) &&
+        Number(shards) >= 0
+    ){
+        fresh.prestigeShards =
+            Math.floor(Number(shards));
+    }
+
+    if(
+        data.upgrades &&
+        typeof data.upgrades === "object"
+    ){
+
+        for(const upgrade of upgradesData){
+
+            const owned =
+                Number(
+                    data.upgrades[upgrade.id]
+                );
+
+            if(
+                Number.isFinite(owned) &&
+                owned >= 0
+            ){
+
+                fresh.upgrades[upgrade.id] =
+                    Math.floor(owned);
+
+            }
+
+        }
+
+    }
+
+    return fresh;
 }
 
 
@@ -1851,16 +2529,22 @@ return fresh;
    AUTH MESSAGE
 ========================================================= */
 
-function showAuthMessage(message,isError=true){
+function showAuthMessage(
+    message,
+    isError=true
+){
 
-const box =
-document.getElementById("authMessage");
+    const box =
+        document.getElementById(
+            "authMessage"
+        );
 
-box.textContent = message;
+    box.textContent = message;
 
-box.style.color =
-isError ? "#ff7777" : "#67ffac";
-
+    box.style.color =
+        isError
+        ? "#ff7777"
+        : "#67ffac";
 }
 
 
@@ -1870,163 +2554,191 @@ isError ? "#ff7777" : "#67ffac";
 
 async function register(){
 
-const username =
-document.getElementById("registerUsername")
-.value
-.trim();
+    const username =
+        document
+            .getElementById(
+                "registerUsername"
+            )
+            .value
+            .trim();
 
-const email =
-document.getElementById("registerEmail")
-.value
-.trim();
+    const email =
+        document
+            .getElementById(
+                "registerEmail"
+            )
+            .value
+            .trim();
 
-const password =
-document.getElementById("registerPassword")
-.value;
+    const password =
+        document
+            .getElementById(
+                "registerPassword"
+            )
+            .value;
 
-const confirmation =
-document.getElementById("registerPasswordConfirm")
-.value;
-
-
-/* PSEUDO */
-
-if(!/^[a-zA-Z0-9_-]{3,20}$/.test(username)){
-
-showAuthMessage(
-"❌ Le pseudo doit contenir 3 à 20 caractères : lettres, chiffres, _ ou -."
-);
-
-return;
-
-}
-
-
-/* MOT DE PASSE */
-
-if(password.length < 6){
-
-showAuthMessage(
-"❌ Le mot de passe doit contenir au moins 6 caractères."
-);
-
-return;
-
-}
-
-if(password !== confirmation){
-
-showAuthMessage(
-"❌ Les mots de passe ne correspondent pas."
-);
-
-return;
-
-}
+    const confirmation =
+        document
+            .getElementById(
+                "registerPasswordConfirm"
+            )
+            .value;
 
 
-/* CRÉATION SUPABASE */
+    if(
+        !/^[a-zA-Z0-9_-]{3,20}$/
+            .test(username)
+    ){
 
-showAuthMessage(
-"⏳ Création du compte...",
-false
-);
+        showAuthMessage(
+            "❌ Le pseudo doit contenir 3 à 20 caractères : lettres, chiffres, _ ou -."
+        );
 
-const { data,error } =
-await supabaseClient.auth.signUp({
-
-email,
-password
-
-});
+        return;
+    }
 
 
-if(error){
+    if(password.length < 6){
 
-showAuthMessage(
-"❌ "+translateAuthError(error.message)
-);
+        showAuthMessage(
+            "❌ Le mot de passe doit contenir au moins 6 caractères."
+        );
 
-return;
-
-}
-
-
-/* COMPTE CRÉÉ */
-
-if(!data.user){
-
-showAuthMessage(
-"❌ Impossible de créer le compte."
-);
-
-return;
-
-}
+        return;
+    }
 
 
-/*
-   Si Supabase demande une confirmation
-   par e-mail, il n'y aura pas encore
-   de session.
-*/
+    if(password !== confirmation){
 
-if(!data.session){
+        showAuthMessage(
+            "❌ Les mots de passe ne correspondent pas."
+        );
 
-showAuthMessage(
-"✅ Compte créé ! Vérifie ton e-mail puis connecte-toi.",
-false
-);
-
-return;
-
-}
+        return;
+    }
 
 
-/* SESSION DISPONIBLE */
-
-currentUser = data.user;
-currentUsername = username;
-
-saveData = defaultSave();
-
-const { error:saveError } =
-await supabaseClient
-.from("game_saves")
-.insert({
-
-id:currentUser.id,
-username:username,
-money:saveData.money,
-total_earned:saveData.totalEarned,
-xp:saveData.xp,
-level:saveData.level,
-prestige:saveData.prestige,
-prestige_shards:saveData.prestigeShards,
-upgrades:saveData.upgrades
-
-});
+    showAuthMessage(
+        "⏳ Création du compte...",
+        false
+    );
 
 
-if(saveError){
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.signUp({
 
-/*
-   Le compte existe quand même.
-   On tente de récupérer/créer la sauvegarde.
-*/
+            email,
+            password,
 
-console.error(saveError);
+            options:{
+                data:{
+                    username:username
+                }
+            }
 
-showAuthMessage(
-"⚠️ Compte créé, mais problème avec la sauvegarde."
-);
+        });
 
-return;
 
-}
+    if(error){
 
-enterGame();
+        showAuthMessage(
+            "❌ "+
+            translateAuthError(
+                error.message
+            )
+        );
 
+        return;
+    }
+
+
+    if(!data.user){
+
+        showAuthMessage(
+            "❌ Impossible de créer le compte."
+        );
+
+        return;
+    }
+
+
+    if(!data.session){
+
+        showAuthMessage(
+            "✅ Compte créé ! Vérifie ton e-mail puis connecte-toi.",
+            false
+        );
+
+        return;
+    }
+
+
+    currentUser =
+        data.user;
+
+    currentUsername =
+        username;
+
+    saveData =
+        defaultSave();
+
+
+    const {
+        error:saveError
+    } =
+        await supabaseClient
+            .from("game_saves")
+            .insert({
+
+                id:currentUser.id,
+
+                username:username,
+
+                money:saveData.money,
+
+                total_earned:
+                    saveData.totalEarned,
+
+                xp:saveData.xp,
+
+                level:saveData.level,
+
+                prestige:
+                    saveData.prestige,
+
+                prestige_shards:
+                    saveData.prestigeShards,
+
+                upgrades:
+                    saveData.upgrades
+
+            });
+
+
+    if(saveError){
+
+        console.error(
+            "Erreur création sauvegarde:",
+            saveError
+        );
+
+        /*
+           Le compte Supabase existe.
+           On tente quand même de charger la partie.
+        */
+
+        showAuthMessage(
+            "⚠️ Compte créé, mais la sauvegarde n'a pas pu être créée."
+        );
+
+        return;
+    }
+
+
+    enterGame();
 }
 
 
@@ -2036,589 +2748,1553 @@ enterGame();
 
 async function login(){
 
-const email =
-document.getElementById("loginEmail")
-.value
-.trim();
+    const email =
+        document
+            .getElementById(
+                "loginEmail"
+            )
+            .value
+            .trim();
 
-const password =
-document.getElementById("loginPassword")
-.value;
+    const password =
+        document
+            .getElementById(
+                "loginPassword"
+            )
+            .value;
 
-showAuthMessage(
-"⏳ Connexion...",
-false
-);
 
-const { data,error } =
-await supabaseClient.auth.signInWithPassword({
+    showAuthMessage(
+        "⏳ Connexion...",
+        false
+    );
 
-email,
-password
 
-});
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth
+            .signInWithPassword({
 
-if(error){
+                email,
+                password
 
-showAuthMessage(
-"❌ "+translateAuthError(error.message)
-);
+            });
 
-return;
 
+    if(error){
+
+        showAuthMessage(
+            "❌ "+
+            translateAuthError(
+                error.message
+            )
+        );
+
+        return;
+    }
+
+
+    currentUser =
+        data.user;
+
+    await loadGame();
 }
-
-currentUser = data.user;
-
-await loadGame();
-
-}
-
-
 
 
 /* =========================================================
    ADMIN
 ========================================================= */
 
-function setAdminMessage(message, error=false){
-    const el = document.getElementById("adminMessage");
+function setAdminMessage(
+    message,
+    error=false
+){
+
+    const el =
+        document.getElementById(
+            "adminMessage"
+        );
+
     if(!el) return;
-    el.textContent = message || "";
-    el.style.color = error ? "#ff8d8d" : "#aeb0bd";
+
+    el.textContent =
+        message || "";
+
+    el.style.color =
+        error
+        ? "#ff8d8d"
+        : "#aeb0bd";
 }
+
 
 async function checkAdmin(){
-    if(!currentUser) return false;
 
-    try{
-        const {data,error} = await supabaseClient.rpc("is_admin");
-
-        if(error){
-            console.error("Erreur vérification admin:", error);
-            isAdmin = false;
-            return false;
-        }
-
-        isAdmin = data === true;
-
-        const button = document.getElementById("adminButton");
-        if(button){
-            button.classList.toggle("show", isAdmin);
-        }
-
-        return isAdmin;
-    }catch(error){
-        console.error(error);
-        isAdmin = false;
-        return false;
-    }
-}
-
-function closeAdminPanel(){
-    document.getElementById("adminPanel")?.classList.remove("show");
-}
-
-function openAdminPanel(){
-    if(!isAdmin) return;
-    document.getElementById("adminPanel")?.classList.add("show");
-    loadAdminPlayers();
-}
-
-function escapeAdminHtml(value){
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-}
-
-function getPlayerId(player){
-    return player.id || player.user_id || player.target_id;
-}
-
-function getPlayerName(player){
-    return player.username ||
-           player.name ||
-           player.email ||
-           getPlayerId(player) ||
-           "Joueur";
-}
-
-function isPlayerBanned(player){
-    return player.banned === true ||
-           player.is_banned === true ||
-           player.status === "banned";
-}
-
-function renderAdminPlayers(){
-    const body = document.getElementById("adminPlayersBody");
-    const search = (document.getElementById("adminSearch")?.value || "").trim().toLowerCase();
-
-    if(!body) return;
-
-    const totalEl = document.getElementById("adminTotalPlayers");
-const activeEl = document.getElementById("adminActivePlayers");
-const bannedEl = document.getElementById("adminBannedPlayers");
-
-const bannedCount = adminPlayers.filter(isPlayerBanned).length;
-if(totalEl) totalEl.textContent = adminPlayers.length.toLocaleString("fr-FR");
-if(activeEl) activeEl.textContent = Math.max(0, adminPlayers.length - bannedCount).toLocaleString("fr-FR");
-if(bannedEl) bannedEl.textContent = bannedCount.toLocaleString("fr-FR");
-
-const filtered = adminPlayers.filter(player => {
-        const text = [
-            getPlayerName(player),
-            getPlayerId(player),
-            player.email || ""
-        ].join(" ").toLowerCase();
-
-        return !search || text.includes(search);
-    });
-
-    if(!filtered.length){
-        body.innerHTML = '<tr><td colspan="8">Aucun joueur trouvé.</td></tr>';
-        return;
-    }
-
-    body.innerHTML = filtered.map(player => {
-        const id = getPlayerId(player);
-        const banned = isPlayerBanned(player);
-        const money = Number(player.money ?? 0);
-        const xp = Number(player.xp ?? 0);
-        const level = Number(player.level ?? 1);
-        const prestige = Number(player.prestige ?? 0);
-        const shards = Number(player.prestige_shards ?? player.prestigeShards ?? 0);
-
-        return `
-<tr>
-<td>
-    <div class="admin-player">${escapeAdminHtml(getPlayerName(player))}</div>
-    <div class="admin-muted">${escapeAdminHtml(id)}</div>
-</td>
-<td>${money.toLocaleString("fr-FR")}</td>
-<td>${xp.toLocaleString("fr-FR")}</td>
-<td>${level.toLocaleString("fr-FR")}</td>
-<td>${prestige.toLocaleString("fr-FR")}</td>
-<td>${shards.toLocaleString("fr-FR")}</td>
-<td>
-    <span class="admin-badge ${banned ? "banned" : "ok"}">
-        ${banned ? "BANNI" : "ACTIF"}
-    </span>
-</td>
-<td>
-    <div class="admin-row-actions">
-        <button class="admin-mini money" data-admin-action="money" data-player="${escapeAdminHtml(id)}">💰 +1M</button>
-        <button class="admin-mini xp" data-admin-action="xp" data-player="${escapeAdminHtml(id)}">⭐ +10K</button>
-        <button class="admin-mini shards" data-admin-action="shards" data-player="${escapeAdminHtml(id)}">💎 +10</button>
-        ${
-            banned
-            ? `<button class="admin-mini unban" data-admin-action="unban" data-player="${escapeAdminHtml(id)}">🔓 Débannir</button>`
-            : `<button class="admin-mini ban" data-admin-action="ban" data-player="${escapeAdminHtml(id)}">🔨 Bannir</button>`
-        }
-    </div>
-</td>
-</tr>`;
-    }).join("");
-}
-
-async function loadAdminPlayers(){
-    if(!isAdmin) return;
-
-    const body = document.getElementById("adminPlayersBody");
-    if(body){
-        body.innerHTML = '<tr><td colspan="8">⏳ Chargement des joueurs...</td></tr>';
-    }
-
-    setAdminMessage("⏳ Chargement...");
-
-    try{
-        const {data,error} = await supabaseClient.rpc("admin_list_players");
-
-        if(error){
-            console.error(error);
-            setAdminMessage("❌ Impossible de charger les joueurs : " + error.message, true);
-            return;
-        }
-
-        adminPlayers = Array.isArray(data) ? data : (data ? [data] : []);
-        renderAdminPlayers();
-        setAdminMessage(`${adminPlayers.length} joueur(s) chargé(s).`);
-    }catch(error){
-        console.error(error);
-        setAdminMessage("❌ Erreur lors du chargement.", true);
-    }
-}
-
-async function adminGiveMoney(playerId){
-    const amount = 1000000;
-
-    if(!confirm(`Donner ${amount.toLocaleString("fr-FR")} € à ce joueur ?`)) return;
-
-    setAdminMessage("⏳ Attribution de l'argent...");
-
-    const {error} = await supabaseClient.rpc("admin_give_money", {
-        target_id: playerId,
-        amount: amount
-    });
-
-    if(error){
-        console.error(error);
-        setAdminMessage("❌ " + error.message, true);
-        return;
-    }
-
-    setAdminMessage("✅ 1 000 000 € ajoutés.");
-    await loadAdminPlayers();
-}
-
-async function adminGiveXP(playerId){
-    const amount = 10000;
-
-    if(!confirm(`Donner ${amount.toLocaleString("fr-FR")} XP à ce joueur ?`)) return;
-
-    setAdminMessage("⏳ Attribution de l'XP...");
-
-    const {error} = await supabaseClient.rpc("admin_give_xp", {
-        target_id: playerId,
-        amount: amount
-    });
-
-    if(error){
-        console.error(error);
-        setAdminMessage("❌ " + error.message, true);
-        return;
-    }
-
-    setAdminMessage("✅ 10 000 XP ajoutés.");
-    await loadAdminPlayers();
-}
-
-async function adminGiveShards(playerId){
-    const amount = 10;
-
-    if(!confirm(`Donner ${amount} shards à ce joueur ?`)) return;
-
-    setAdminMessage("⏳ Attribution des shards...");
-
-    const {error} = await supabaseClient.rpc("admin_give_shards", {
-        target_id: playerId,
-        amount: amount
-    });
-
-    if(error){
-        console.error(error);
-        setAdminMessage("❌ " + error.message, true);
-        return;
-    }
-
-    setAdminMessage("✅ 10 shards ajoutés.");
-    await loadAdminPlayers();
-}
-
-async function adminBan(playerId){
-    const reason = prompt("Raison du bannissement :", "Violation des règles");
-    if(reason === null) return;
-
-    const durationText = prompt(
-        "Durée du bannissement en heures.\n\n" +
-        "Exemples : 1 = 1 heure, 24 = 1 jour, 168 = 7 jours.\n" +
-        "Laisse vide pour un bannissement permanent.",
-        "24"
-    );
-
-    if(durationText === null) return;
-
-    let durationHours = 0;
-
-    if(durationText.trim() !== ""){
-        durationHours = Number.parseInt(durationText.trim(), 10);
-
-        if(!Number.isInteger(durationHours) || durationHours < 1){
-            alert("❌ Durée invalide.");
-            return;
-        }
-    }
-
-    if(!confirm(
-        `Bannir ce joueur ?\n\nRaison : ${reason || "Aucune raison indiquée"}\n` +
-        `Durée : ${durationHours === 0 ? "Permanent" : durationHours + " heure(s)"}`
-    )) return;
-
-    setAdminMessage("⏳ Bannissement...");
-
-    const {error} = await supabaseClient.rpc("admin_ban_player", {
-        target_id: playerId,
-        ban_reason: reason || "Aucune raison indiquée",
-        duration_hours: durationHours
-    });
-
-    if(error){
-        console.error(error);
-        setAdminMessage("❌ " + error.message, true);
-        return;
-    }
-
-    setAdminMessage("✅ Joueur banni.");
-    await loadAdminPlayers();
-}
-
-async function adminUnban(playerId){
-    if(!confirm("Débannir ce joueur ?")) return;
-
-    setAdminMessage("⏳ Débannissement...");
-
-    const {error} = await supabaseClient.rpc("admin_unban_player", {
-        target_id: playerId
-    });
-
-    if(error){
-        console.error(error);
-        setAdminMessage("❌ " + error.message, true);
-        return;
-    }
-
-    setAdminMessage("✅ Joueur débanni.");
-    await loadAdminPlayers();
-}
-
-document.getElementById("adminButton")?.addEventListener("click", openAdminPanel);
-document.getElementById("adminClose")?.addEventListener("click", closeAdminPanel);
-document.getElementById("adminRefresh")?.addEventListener("click", loadAdminPlayers);
-document.getElementById("adminSearch")?.addEventListener("input", renderAdminPlayers);
-
-document.getElementById("adminPlayersBody")?.addEventListener("click", async event => {
-    const button = event.target.closest("[data-admin-action]");
-    if(!button) return;
-
-    const action = button.dataset.adminAction;
-    const playerId = button.dataset.player;
-
-    if(!playerId) return;
-
-    if(action === "money") await adminGiveMoney(playerId);
-    if(action === "xp") await adminGiveXP(playerId);
-    if(action === "shards") await adminGiveShards(playerId);
-    if(action === "ban") await adminBan(playerId);
-    if(action === "unban") await adminUnban(playerId);
-});
-
-
-/* =========================================================
-   VÉRIFICATION DU BAN
-========================================================= */
-
-async function checkBan(){
     if(!currentUser){
         return false;
     }
 
     try{
-        const { data, error } = await supabaseClient.rpc(
-            "is_user_banned",
-            {
-                uid: currentUser.id
-            }
-        );
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "is_admin"
+            );
+
 
         if(error){
-            console.error("Erreur vérification ban:", error);
-            isBanned = false;
+
+            console.error(
+                "Erreur vérification admin:",
+                error
+            );
+
+            isAdmin = false;
+
             return false;
         }
 
-        isBanned = data === true;
+
+        isAdmin =
+            data === true;
+
+
+        const button =
+            document.getElementById(
+                "adminButton"
+            );
+
+
+        if(button){
+
+            button.classList.toggle(
+                "show",
+                isAdmin
+            );
+
+        }
+
+
+        return isAdmin;
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        isAdmin = false;
+
+        return false;
+    }
+}
+
+
+function closeAdminPanel(){
+
+    document
+        .getElementById(
+            "adminPanel"
+        )
+        ?.classList.remove(
+            "show"
+        );
+}
+
+
+function openAdminPanel(){
+
+    if(!isAdmin){
+        return;
+    }
+
+    document
+        .getElementById(
+            "adminPanel"
+        )
+        ?.classList.add(
+            "show"
+        );
+
+    loadAdminPlayers();
+}
+
+
+function escapeAdminHtml(value){
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+function getPlayerId(player){
+
+    return (
+        player.id ||
+        player.user_id ||
+        player.target_id
+    );
+}
+
+
+function getPlayerName(player){
+
+    return (
+        player.username ||
+        player.name ||
+        player.email ||
+        getPlayerId(player) ||
+        "Joueur"
+    );
+}
+
+
+function isPlayerBanned(player){
+
+    return (
+        player.banned === true ||
+        player.is_banned === true ||
+        player.status === "banned"
+    );
+}
+
+
+function renderAdminPlayers(){
+
+    const body =
+        document.getElementById(
+            "adminPlayersBody"
+        );
+
+    const search =
+        (
+            document.getElementById(
+                "adminSearch"
+            )?.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if(!body){
+        return;
+    }
+
+
+    const totalEl =
+        document.getElementById(
+            "adminTotalPlayers"
+        );
+
+    const activeEl =
+        document.getElementById(
+            "adminActivePlayers"
+        );
+
+    const bannedEl =
+        document.getElementById(
+            "adminBannedPlayers"
+        );
+
+
+    const bannedCount =
+        adminPlayers.filter(
+            isPlayerBanned
+        ).length;
+
+
+    if(totalEl){
+
+        totalEl.textContent =
+            adminPlayers.length
+                .toLocaleString(
+                    getCurrencyLocale()
+                );
+
+    }
+
+
+    if(activeEl){
+
+        activeEl.textContent =
+            Math.max(
+                0,
+                adminPlayers.length -
+                bannedCount
+            )
+            .toLocaleString(
+                getCurrencyLocale()
+            );
+
+    }
+
+
+    if(bannedEl){
+
+        bannedEl.textContent =
+            bannedCount
+                .toLocaleString(
+                    getCurrencyLocale()
+                );
+
+    }
+
+
+    const filtered =
+        adminPlayers.filter(
+            player => {
+
+                const text = [
+
+                    getPlayerName(
+                        player
+                    ),
+
+                    getPlayerId(
+                        player
+                    ),
+
+                    player.email || ""
+
+                ]
+                .join(" ")
+                .toLowerCase();
+
+
+                return (
+                    !search ||
+                    text.includes(
+                        search
+                    )
+                );
+
+            }
+        );
+
+
+    if(!filtered.length){
+
+        body.innerHTML =
+            `
+            <tr>
+                <td colspan="8">
+                    Aucun joueur trouvé.
+                </td>
+            </tr>
+            `;
+
+        return;
+    }
+
+
+    body.innerHTML =
+        filtered.map(
+            player => {
+
+                const id =
+                    getPlayerId(
+                        player
+                    );
+
+                const banned =
+                    isPlayerBanned(
+                        player
+                    );
+
+                const money =
+                    Number(
+                        player.money ?? 0
+                    );
+
+                const xp =
+                    Number(
+                        player.xp ?? 0
+                    );
+
+                const level =
+                    Number(
+                        player.level ?? 1
+                    );
+
+                const prestige =
+                    Number(
+                        player.prestige ?? 0
+                    );
+
+                const shards =
+                    Number(
+                        player.prestige_shards ??
+                        player.prestigeShards ??
+                        0
+                    );
+
+
+                return `
+
+<tr>
+
+<td>
+
+    <div class="admin-player">
+        ${escapeAdminHtml(
+            getPlayerName(player)
+        )}
+    </div>
+
+    <div class="admin-muted">
+        ${escapeAdminHtml(id)}
+    </div>
+
+</td>
+
+<td>
+    ${money.toLocaleString(
+        getCurrencyLocale()
+    )}
+    ${getCurrencySymbol()}
+</td>
+
+<td>
+    ${xp.toLocaleString(
+        getCurrencyLocale()
+    )}
+</td>
+
+<td>
+    ${level.toLocaleString(
+        getCurrencyLocale()
+    )}
+</td>
+
+<td>
+    ${prestige.toLocaleString(
+        getCurrencyLocale()
+    )}
+</td>
+
+<td>
+    ${shards.toLocaleString(
+        getCurrencyLocale()
+    )}
+</td>
+
+<td>
+
+    <span class="admin-badge ${
+        banned
+        ? "banned"
+        : "ok"
+    }">
+
+        ${
+            banned
+            ? "BANNI"
+            : "ACTIF"
+        }
+
+    </span>
+
+</td>
+
+<td>
+
+    <div class="admin-row-actions">
+
+        <button
+            class="admin-mini money"
+            data-admin-action="money"
+            data-player="${escapeAdminHtml(id)}"
+        >
+            💰 +1M
+        </button>
+
+        <button
+            class="admin-mini xp"
+            data-admin-action="xp"
+            data-player="${escapeAdminHtml(id)}"
+        >
+            ⭐ +10K
+        </button>
+
+        <button
+            class="admin-mini shards"
+            data-admin-action="shards"
+            data-player="${escapeAdminHtml(id)}"
+        >
+            💎 +10
+        </button>
+
+        ${
+            banned
+
+            ?
+
+            `<button
+                class="admin-mini unban"
+                data-admin-action="unban"
+                data-player="${escapeAdminHtml(id)}"
+            >
+                🔓 Débannir
+            </button>`
+
+            :
+
+            `<button
+                class="admin-mini ban"
+                data-admin-action="ban"
+                data-player="${escapeAdminHtml(id)}"
+            >
+                🔨 Bannir
+            </button>`
+        }
+
+    </div>
+
+</td>
+
+</tr>
+
+`;
+
+            }
+        ).join("");
+}
+
+
+async function loadAdminPlayers(){
+
+    if(!isAdmin){
+        return;
+    }
+
+
+    const body =
+        document.getElementById(
+            "adminPlayersBody"
+        );
+
+
+    if(body){
+
+        body.innerHTML =
+            `
+            <tr>
+                <td colspan="8">
+                    ⏳ Chargement des joueurs...
+                </td>
+            </tr>
+            `;
+
+    }
+
+
+    setAdminMessage(
+        "⏳ Chargement..."
+    );
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "admin_list_players"
+            );
+
+
+        if(error){
+
+            console.error(error);
+
+            setAdminMessage(
+                "❌ Impossible de charger les joueurs : "+
+                error.message,
+                true
+            );
+
+            return;
+        }
+
+
+        adminPlayers =
+            Array.isArray(data)
+            ? data
+            : (
+                data
+                ? [data]
+                : []
+            );
+
+
+        renderAdminPlayers();
+
+
+        setAdminMessage(
+            `${adminPlayers.length} joueur(s) chargé(s).`
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        setAdminMessage(
+            "❌ Erreur lors du chargement.",
+            true
+        );
+
+    }
+}
+
+
+async function adminGiveMoney(playerId){
+
+console.log("=== ADMIN MONEY ===");
+console.log("playerId =", playerId);
+
+const amount = 1000000;
+
+const params = {
+    target_id: playerId,
+    amount: amount
+};
+
+console.log("RPC params =", params);
+
+const { data, error } =
+    await supabaseClient.rpc(
+        "admin_give_money",
+        params
+    );
+
+console.log("RPC data =", data);
+console.log("RPC error =", error);
+
+if(error){
+
+    console.error(error);
+
+    setAdminMessage(
+        "❌ " + error.message,
+        true
+    );
+
+    return;
+}
+const {
+    data: latestSave,
+    error: latestSaveError
+} = await supabaseClient
+    .from("game_saves")
+    .select(`
+        money,
+        total_earned,
+        xp,
+        level,
+        prestige,
+        prestige_shards,
+        upgrades
+    `)
+    .eq("id", currentUser.id)
+    .single();
+
+if(!latestSaveError && latestSave){
+
+    saveData.money =
+        Number(latestSave.money);
+
+    saveData.totalEarned =
+        Number(latestSave.total_earned);
+
+    saveData.xp =
+        Number(latestSave.xp);
+
+    saveData.level =
+        Number(latestSave.level);
+
+    saveData.prestige =
+        Number(latestSave.prestige);
+
+    saveData.prestigeShards =
+        Number(latestSave.prestige_shards);
+
+    saveData.upgrades =
+        latestSave.upgrades;
+
+}
+setAdminMessage(
+    `✅ 1 000 000 ${getCurrencySymbol()} ajoutés.`
+);
+
+await loadAdminPlayers();
+
+
+}
+
+
+async function adminGiveXP(
+    playerId
+){
+
+    const amount =
+        10000;
+
+
+    if(
+        !confirm(
+            `Donner ${amount.toLocaleString(
+                getCurrencyLocale()
+            )} XP à ce joueur ?`
+        )
+    ){
+        return;
+    }
+
+
+    setAdminMessage(
+        "⏳ Attribution de l'XP..."
+    );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.rpc(
+            "admin_give_xp",
+            {
+                target_id: playerId,
+                amount: amount
+            }
+        );
+
+
+    console.log(
+        "XP RPC =",
+        data
+    );
+
+    console.log(
+        "XP ERROR =",
+        error
+    );
+
+
+    if(error){
+
+        console.error(error);
+
+        setAdminMessage(
+            "❌ " + error.message,
+            true
+        );
+
+        return;
+    }
+
+
+    /*
+     * Relire la vraie valeur depuis Supabase
+     */
+    const {
+        data: latestSave,
+        error: latestSaveError
+    } =
+        await supabaseClient
+            .from("game_saves")
+            .select("xp")
+            .eq("id", playerId)
+            .single();
+
+
+    if(
+        !latestSaveError &&
+        latestSave
+    ){
+
+        /*
+         * Si c'est le joueur actuellement connecté,
+         * synchroniser la sauvegarde locale.
+         */
+        if(
+            currentUser &&
+            playerId === currentUser.id
+        ){
+
+            saveData.xp =
+                Number(
+                    latestSave.xp
+                );
+
+        }
+
+    }
+
+
+    setAdminMessage(
+        "✅ 10 000 XP ajoutés."
+    );
+
+
+    await loadAdminPlayers();
+}
+
+
+async function adminGiveShards(
+    playerId
+){
+
+    const amount =
+        10;
+
+
+    if(
+        !confirm(
+            `Donner ${amount} shards à ce joueur ?`
+        )
+    ){
+        return;
+    }
+
+
+    setAdminMessage(
+        "⏳ Attribution des shards..."
+    );
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.rpc(
+            "admin_give_shards",
+            {
+                target_id: playerId,
+                amount: amount
+            }
+        );
+
+
+    console.log(
+        "SHARDS RPC =",
+        data
+    );
+
+    console.log(
+        "SHARDS ERROR =",
+        error
+    );
+
+
+    if(error){
+
+        console.error(error);
+
+        setAdminMessage(
+            "❌ " + error.message,
+            true
+        );
+
+        return;
+    }
+
+
+    /*
+     * Relire la vraie valeur depuis Supabase
+     */
+    const {
+        data: latestSave,
+        error: latestSaveError
+    } =
+        await supabaseClient
+            .from("game_saves")
+            .select("prestige_shards")
+            .eq("id", playerId)
+            .single();
+
+
+    if(
+        !latestSaveError &&
+        latestSave
+    ){
+
+        /*
+         * Synchroniser la sauvegarde locale
+         * si on modifie le joueur connecté.
+         */
+        if(
+            currentUser &&
+            playerId === currentUser.id
+        ){
+
+            saveData.prestigeShards =
+                Number(
+                    latestSave.prestige_shards
+                );
+
+        }
+
+    }
+
+
+    setAdminMessage(
+        "✅ 10 shards ajoutés."
+    );
+
+
+    await loadAdminPlayers();
+}
+
+async function adminBan(
+    playerId
+){
+
+    const reason =
+        prompt(
+            "Raison du bannissement :",
+            "Violation des règles"
+        );
+
+
+    if(reason === null){
+        return;
+    }
+
+
+    const durationText =
+        prompt(
+
+            "Durée du bannissement en heures.\n\n"+
+            "Exemples : 1 = 1 heure, 24 = 1 jour, 168 = 7 jours.\n"+
+            "Laisse vide pour un bannissement permanent.",
+
+            "24"
+
+        );
+
+
+    if(durationText === null){
+        return;
+    }
+
+
+    let durationHours =
+        0;
+
+
+    if(
+        durationText.trim() !== ""
+    ){
+
+        durationHours =
+            Number.parseInt(
+                durationText.trim(),
+                10
+            );
+
+
+        if(
+            !Number.isInteger(
+                durationHours
+            ) ||
+            durationHours < 1
+        ){
+
+            alert(
+                "❌ Durée invalide."
+            );
+
+            return;
+        }
+
+    }
+
+
+    if(
+        !confirm(
+
+            `Bannir ce joueur ?\n\n`+
+
+            `Raison : ${
+                reason ||
+                "Aucune raison indiquée"
+            }\n`+
+
+            `Durée : ${
+                durationHours === 0
+                ? "Permanent"
+                : durationHours+" heure(s)"
+            }`
+
+        )
+    ){
+        return;
+    }
+
+
+    setAdminMessage(
+        "⏳ Bannissement..."
+    );
+
+
+    const {
+        error
+    } =
+        await supabaseClient.rpc(
+            "admin_ban_player",
+            {
+
+                target_id:playerId,
+
+                ban_reason:
+                    reason ||
+                    "Aucune raison indiquée",
+
+                duration_hours:
+                    durationHours
+
+            }
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        setAdminMessage(
+            "❌ "+error.message,
+            true
+        );
+
+        return;
+    }
+
+
+    setAdminMessage(
+        "✅ Joueur banni."
+    );
+
+
+    await loadAdminPlayers();
+}
+
+
+async function adminUnban(
+    playerId
+){
+
+    if(
+        !confirm(
+            "Débannir ce joueur ?"
+        )
+    ){
+        return;
+    }
+
+
+    setAdminMessage(
+        "⏳ Débannissement..."
+    );
+
+
+    const {
+        error
+    } =
+        await supabaseClient.rpc(
+            "admin_unban_player",
+            {
+                target_id:playerId
+            }
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        setAdminMessage(
+            "❌ "+error.message,
+            true
+        );
+
+        return;
+    }
+
+
+    setAdminMessage(
+        "✅ Joueur débanni."
+    );
+
+
+    await loadAdminPlayers();
+}
+
+
+document
+    .getElementById(
+        "adminButton"
+    )
+    ?.addEventListener(
+        "click",
+        openAdminPanel
+    );
+
+
+document
+    .getElementById(
+        "adminClose"
+    )
+    ?.addEventListener(
+        "click",
+        closeAdminPanel
+    );
+
+
+document
+    .getElementById(
+        "adminRefresh"
+    )
+    ?.addEventListener(
+        "click",
+        loadAdminPlayers
+    );
+
+
+document
+    .getElementById(
+        "adminSearch"
+    )
+    ?.addEventListener(
+        "input",
+        renderAdminPlayers
+    );
+
+
+document
+    .getElementById(
+        "adminPlayersBody"
+    )
+    ?.addEventListener(
+        "click",
+        async event => {
+
+            const button =
+                event.target.closest(
+                    "[data-admin-action]"
+                );
+
+
+            if(!button){
+                return;
+            }
+
+
+            const action =
+                button.dataset.adminAction;
+
+
+            const playerId =
+                button.dataset.player;
+
+
+            if(!playerId){
+                return;
+            }
+
+
+            if(action === "money"){
+                await adminGiveMoney(
+                    playerId
+                );
+            }
+
+            else if(action === "xp"){
+                await adminGiveXP(
+                    playerId
+                );
+            }
+
+            else if(action === "shards"){
+                await adminGiveShards(
+                    playerId
+                );
+            }
+
+            else if(action === "ban"){
+                await adminBan(
+                    playerId
+                );
+            }
+
+            else if(action === "unban"){
+                await adminUnban(
+                    playerId
+                );
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   BAN
+========================================================= */
+
+async function checkBan(){
+
+    if(!currentUser){
+        return false;
+    }
+
+
+    if(banCheckInProgress){
+        return false;
+    }
+
+
+    banCheckInProgress =
+        true;
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.rpc(
+                "is_user_banned",
+                {
+                    uid:currentUser.id
+                }
+            );
+
+
+        if(error){
+
+            console.error(
+                "Erreur vérification ban:",
+                error
+            );
+
+            isBanned = false;
+
+            return false;
+        }
+
+
+        isBanned =
+            data === true;
+
 
         if(isBanned){
-            console.warn("Utilisateur banni.");
 
-            // Déconnexion immédiate
+            console.warn(
+                "Utilisateur banni."
+            );
+
+
+            showBanScreen(
+                "Compte banni",
+                null
+            );
+
+
             await supabaseClient.auth.signOut();
+
 
             currentUser = null;
             currentUsername = null;
             saveData = null;
+            isAdmin = false;
 
-            showAuth();
-            showNotification(
-                "🚫 Votre compte est actuellement banni.",
-                "error"
-            );
 
             return true;
         }
 
+
         return false;
 
-    }catch(error){
-        console.error("Erreur vérification ban:", error);
+    }
+    catch(error){
+
+        console.error(
+            "Erreur vérification ban:",
+            error
+        );
+
         isBanned = false;
+
         return false;
+
+    }
+    finally{
+
+        banCheckInProgress =
+            false;
+
     }
 }
+
+
 /* =========================================================
-   ÉCRAN DE BAN
+   ÉCRAN BAN
 ========================================================= */
 
-function showBanScreen(reason,expiresAt){
+function showBanScreen(
+    reason,
+    expiresAt
+){
 
-document.getElementById("authScreen").style.display =
-"none";
+    document.getElementById(
+        "authScreen"
+    ).style.display =
+        "none";
 
-document.getElementById("gameScreen").style.display =
-"none";
 
-document.getElementById("banScreen").classList.add("show");
+    document.getElementById(
+        "gameScreen"
+    ).style.display =
+        "none";
 
-document.getElementById("banUsername").textContent =
-currentUsername ||
-currentUser?.email ||
-"Joueur";
 
-document.getElementById("banReason").textContent =
-reason ||
-"Aucune raison indiquée";
+    document
+        .getElementById(
+            "banScreen"
+        )
+        .classList.add(
+            "show"
+        );
 
-const expiration =
-document.getElementById("banExpiration");
 
-if(!expiresAt){
+    document.getElementById(
+        "banUsername"
+    ).textContent =
+        currentUsername ||
+        currentUser?.email ||
+        "Joueur";
 
-expiration.textContent =
-"Permanent";
 
-}
-else{
+    document.getElementById(
+        "banReason"
+    ).textContent =
+        reason ||
+        "Aucune raison indiquée";
 
-const date =
-new Date(expiresAt);
 
-expiration.textContent =
-date.toLocaleString(
-"fr-FR",
-{
-dateStyle:"medium",
-timeStyle:"short"
-}
-);
+    const expiration =
+        document.getElementById(
+            "banExpiration"
+        );
 
-}
 
+    if(!expiresAt){
+
+        expiration.textContent =
+            "Permanent";
+
+    }
+    else{
+
+        const date =
+            new Date(
+                expiresAt
+            );
+
+
+        expiration.textContent =
+            date.toLocaleString(
+                getCurrencyLocale(),
+                {
+                    dateStyle:"medium",
+                    timeStyle:"short"
+                }
+            );
+
+    }
 }
 
 
 /* =========================================================
-   CHARGER LA PARTIE
+   CHARGEMENT JEU
 ========================================================= */
 
 async function loadGame(){
 
-if(!currentUser){
-
-return;
-
-}
-
-if(await checkBan()){
-    return;
-}
-
-await checkAdmin();
-
-const { data,error } =
-await supabaseClient
-.from("game_saves")
-.select("*")
-.eq("id",currentUser.id)
-.maybeSingle();
-
-if(error){
-
-console.error(error);
-
-showAuthMessage(
-"❌ Impossible de charger la sauvegarde."
-);
-
-return;
-
-}
+    if(!currentUser){
+        return;
+    }
 
 
-/*
-   Si aucune sauvegarde n'existe,
-   on en crée une.
-*/
+    if(await checkBan()){
+        return;
+    }
 
-if(!data){
 
-saveData = defaultSave();
+    await checkAdmin();
 
-currentUsername =
-currentUser.user_metadata?.username ||
-currentUser.email?.split("@")[0] ||
-"Joueur";
 
-await save();
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("game_saves")
+            .select("*")
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .maybeSingle();
 
-}
-else{
 
-currentUsername =
-data.username ||
-currentUser.user_metadata?.username ||
-currentUser.email?.split("@")[0] ||
-"Joueur";
+    if(error){
 
-saveData =
-repairSave({
+        console.error(
+            "Erreur chargement:",
+            error
+        );
 
-money:data.money,
-totalEarned:data.total_earned,
-xp:data.xp,
-level:data.level,
-prestige:data.prestige,
-prestigeShards:data.prestige_shards,
-upgrades:data.upgrades
 
-});
+        showAuthMessage(
+            "❌ Impossible de charger la sauvegarde."
+        );
 
-}
 
-enterGame();
+        return;
+    }
 
+
+    if(!data){
+
+        currentUsername =
+            currentUser
+                .user_metadata
+                ?.username ||
+            currentUser.email
+                ?.split("@")[0] ||
+            "Joueur";
+
+
+        saveData =
+            defaultSave();
+
+
+        await save();
+
+    }
+
+    else{
+
+        currentUsername =
+            data.username ||
+            currentUser
+                .user_metadata
+                ?.username ||
+            currentUser.email
+                ?.split("@")[0] ||
+            "Joueur";
+
+
+        saveData =
+            repairSave({
+
+                money:data.money,
+
+                totalEarned:
+                    data.total_earned,
+
+                xp:data.xp,
+
+                level:data.level,
+
+                prestige:data.prestige,
+
+                prestigeShards:
+                    data.prestige_shards,
+
+                upgrades:data.upgrades
+
+            });
+
+    }
+
+
+    enterGame();
 }
 
 
 /* =========================================================
-   ENTRER DANS LE JEU
+   ENTRER JEU
 ========================================================= */
 
 function enterGame(){
 
-document.getElementById(
-"currentUsername"
-).textContent =
-currentUsername;
+    document.getElementById(
+        "currentUsername"
+    ).textContent =
+        currentUsername;
 
-document.getElementById(
-"authScreen"
-).style.display =
-"none";
 
-document.getElementById(
-"gameScreen"
-).style.display =
-"block";
+    document.getElementById(
+        "authScreen"
+    ).style.display =
+        "none";
 
-createShop();
-update();
 
-notify(
-"👋 Bienvenue "+currentUsername+" !"
-);
+    document.getElementById(
+        "banScreen"
+    ).classList.remove(
+        "show"
+    );
 
+
+    document.getElementById(
+        "gameScreen"
+    ).style.display =
+        "block";
+
+
+    createShop();
+
+    changeLanguage(
+        currentLang
+    );
+
+    update();
+
+
+    notify(
+        "👋 Bienvenue "+
+        currentUsername+
+        " !"
+    );
 }
 
 
@@ -2628,76 +4304,95 @@ notify(
 
 async function save(){
 
-if(
-!currentUser ||
-!saveData ||
-saveInProgress ||
-isBanned
-){
+    if(
+        !currentUser ||
+        !saveData ||
+        saveInProgress ||
+        isBanned
+    ){
+        return;
+    }
 
-return;
 
-}
+    saveInProgress =
+        true;
 
-saveInProgress = true;
 
-try{
+    try{
 
-const { error } =
-await supabaseClient
-.from("game_saves")
-.upsert({
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("game_saves")
+                .upsert(
 
-id:currentUser.id,
-username:currentUsername,
+                    {
 
-money:saveData.money,
+                        id:
+                            currentUser.id,
 
-total_earned:
-saveData.totalEarned,
+                        username:
+                            currentUsername,
 
-xp:saveData.xp,
+                        money:
+                            saveData.money,
 
-level:
-saveData.level,
+                        total_earned:
+                            saveData.totalEarned,
 
-prestige:
-saveData.prestige,
+                        xp:
+                            saveData.xp,
 
-prestige_shards:
-saveData.prestigeShards,
+                        level:
+                            saveData.level,
 
-upgrades:
-saveData.upgrades,
+                        prestige:
+                            saveData.prestige,
 
-updated_at:
-new Date().toISOString()
+                        prestige_shards:
+                            saveData.prestigeShards,
 
-},{
-onConflict:"id"
-});
+                        upgrades:
+                            saveData.upgrades,
 
-if(error){
+                        updated_at:
+                            new Date()
+                                .toISOString()
 
-console.error(
-"Erreur sauvegarde:",
-error
-);
+                    },
 
-}
+                    {
+                        onConflict:"id"
+                    }
 
-}
-catch(error){
+                );
 
-console.error(error);
 
-}
-finally{
+        if(error){
 
-saveInProgress = false;
+            console.error(
+                "Erreur sauvegarde:",
+                error
+            );
 
-}
+        }
 
+    }
+    catch(error){
+
+        console.error(
+            "Erreur sauvegarde:",
+            error
+        );
+
+    }
+    finally{
+
+        saveInProgress =
+            false;
+
+    }
 }
 
 
@@ -2706,77 +4401,186 @@ saveInProgress = false;
 ========================================================= */
 
 document
-.getElementById("logoutButton")
-.addEventListener(
-"click",
-async()=>{
+    .getElementById(
+        "logoutButton"
+    )
+    .addEventListener(
+        "click",
+        async()=>{
 
-await save();
+            await save();
 
-await supabaseClient.auth.signOut();
+            await supabaseClient
+                .auth
+                .signOut();
 
-currentUser = null;
-currentUsername = null;
-saveData = null;
+            currentUser = null;
+            currentUsername = null;
+            saveData = null;
+            isAdmin = false;
 
-location.reload();
+            location.reload();
 
-}
-);
-
+        }
+    );
 
 
 /* =========================================================
-   DÉCONNEXION APRÈS BAN
+   DÉCONNEXION BAN
 ========================================================= */
 
 document
-.getElementById("banLogoutButton")
-.addEventListener(
-"click",
-async()=>{
+    .getElementById(
+        "banLogoutButton"
+    )
+    .addEventListener(
+        "click",
+        async()=>{
 
-await supabaseClient.auth.signOut();
+            await supabaseClient
+                .auth
+                .signOut();
 
-currentUser = null;
-currentUsername = null;
-saveData = null;
-isBanned = false;
+            currentUser = null;
+            currentUsername = null;
+            saveData = null;
+            isBanned = false;
 
-location.reload();
+            location.reload();
 
-}
-);
+        }
+    );
 
 
 /* =========================================================
    ERREURS AUTH
 ========================================================= */
 
-function translateAuthError(message){
+function translateAuthError(
+    message
+){
 
-if(message.includes("Invalid login credentials")){
-    return "Identifiant ou mot de passe incorrect.";
+    if(
+        message.includes(
+            "Invalid login credentials"
+        )
+    ){
+
+        return "Identifiant ou mot de passe incorrect.";
+
+    }
+
+
+    if(
+        message.includes(
+            "Email not confirmed"
+        )
+    ){
+
+        return "Ton adresse e-mail n'est pas encore confirmée.";
+
+    }
+
+
+    if(
+        message.includes(
+            "User already registered"
+        )
+    ){
+
+        return "Cette adresse e-mail possède déjà un compte.";
+
+    }
+
+
+    if(
+        message.includes(
+            "Password should be at least"
+        )
+    ){
+
+        return "Le mot de passe est trop court.";
+
+    }
+
+
+    if(
+        message.includes(
+            "Unable to validate email"
+        )
+    ){
+
+        return "Adresse e-mail invalide.";
+
+    }
+
+
+    return message;
 }
 
-if(message.includes("Email not confirmed")){
-    return "Ton adresse e-mail n'est pas encore confirmée.";
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+function getCurrencySymbol(){
+
+    if(currentLang === "en"){
+        return "£";
+    }
+
+    if(currentLang === "ru"){
+        return "₽";
+    }
+
+    return "€";
 }
 
-if(message.includes("User already registered")){
-    return "Cette adresse e-mail possède déjà un compte.";
+
+function getCurrencyLocale(){
+
+    if(currentLang === "en"){
+        return "en-GB";
+    }
+
+    if(currentLang === "ru"){
+        return "ru-RU";
+    }
+
+    return "fr-FR";
 }
 
-if(message.includes("Password should be at least")){
-    return "Le mot de passe est trop court.";
+
+function currencyText(
+    number
+){
+
+    return (
+        formatNumber(number)+
+        " "+
+        getCurrencySymbol()
+    );
 }
 
-if(message.includes("Unable to validate email")){
-    return "Adresse e-mail invalide.";
-}
 
-return message;
+function updateCurrencySymbols(){
 
+    const symbol =
+        getCurrencySymbol();
+
+
+    document
+        .querySelectorAll(
+            ".currency-symbol"
+        )
+        .forEach(
+            element => {
+
+                element.textContent =
+                    symbol;
+
+            }
+        );
 }
 
 
@@ -2786,9 +4590,16 @@ return message;
 
 function getPrestigeMultiplier(){
 
-return 1 +
-saveData.prestigeShards * 0.25;
+    if(!saveData){
+        return 1;
+    }
 
+
+    return (
+        1 +
+        saveData.prestigeShards *
+        0.25
+    );
 }
 
 
@@ -2798,44 +4609,75 @@ saveData.prestigeShards * 0.25;
 
 function getBaseClickValue(){
 
-let value = 1;
+    if(!saveData){
+        return 1;
+    }
 
-for(const upgrade of upgradesData){
 
-value +=
-upgrade.click *
-saveData.upgrades[upgrade.id];
+    let value = 1;
 
-}
 
-return value;
+    for(
+        const upgrade
+        of upgradesData
+    ){
 
+        value +=
+            upgrade.click *
+            (
+                saveData
+                    .upgrades[
+                        upgrade.id
+                    ] || 0
+            );
+
+    }
+
+
+    return value;
 }
 
 
 function getClickValue(){
 
-return getBaseClickValue() *
-getPrestigeMultiplier();
-
+    return (
+        getBaseClickValue() *
+        getPrestigeMultiplier()
+    );
 }
 
 
 function getPerSecond(){
 
-let value = 0;
+    if(!saveData){
+        return 0;
+    }
 
-for(const upgrade of upgradesData){
 
-value +=
-upgrade.auto *
-saveData.upgrades[upgrade.id];
+    let value = 0;
 
-}
 
-return value *
-getPrestigeMultiplier();
+    for(
+        const upgrade
+        of upgradesData
+    ){
 
+        value +=
+            upgrade.auto *
+            (
+                saveData
+                    .upgrades[
+                        upgrade.id
+                    ] || 0
+            );
+
+    }
+
+
+    return (
+        value *
+        getPrestigeMultiplier()
+    );
 }
 
 
@@ -2843,21 +4685,26 @@ getPrestigeMultiplier();
    PRIX
 ========================================================= */
 
-function getPrice(upgrade){
+function getPrice(
+    upgrade
+){
 
-const owned =
-saveData.upgrades[upgrade.id];
+    const owned =
+        saveData
+            .upgrades[
+                upgrade.id
+            ] || 0;
 
-return Math.floor(
 
-upgrade.basePrice *
-Math.pow(
-upgrade.priceGrowth,
-owned
-)
+    return Math.floor(
 
-);
+        upgrade.basePrice *
+        Math.pow(
+            upgrade.priceGrowth,
+            owned
+        )
 
+    );
 }
 
 
@@ -2865,44 +4712,91 @@ owned
    FORMATAGE
 ========================================================= */
 
-function formatNumber(number){
+function formatNumber(
+    number
+){
 
-if(!Number.isFinite(number)){
-    return "∞";
-}
+    if(!Number.isFinite(number)){
+        return "∞";
+    }
 
-const abs = Math.abs(number);
 
-const units = [
+    const abs =
+        Math.abs(number);
 
-{value:1e18,name:"Qi"},
-{value:1e15,name:"Qa"},
-{value:1e12,name:"T"},
-{value:1e9,name:"Md"},
-{value:1e6,name:"M"},
-{value:1e3,name:"k"}
 
-];
+    const units = [
 
-for(const unit of units){
+        {
+            value:1e18,
+            name:"Qi"
+        },
 
-if(abs >= unit.value){
+        {
+            value:1e15,
+            name:"Qa"
+        },
 
-return (
-number / unit.value
-)
-.toFixed(2)
-.replace(".00","")
-.replace(".0","")
-+" "+unit.name;
+        {
+            value:1e12,
+            name:"T"
+        },
 
-}
+        {
+            value:1e9,
+            name:"Md"
+        },
 
-}
+        {
+            value:1e6,
+            name:"M"
+        },
 
-return Math.floor(number)
-.toLocaleString("fr-FR");
+        {
+            value:1e3,
+            name:"k"
+        }
 
+    ];
+
+
+    for(
+        const unit
+        of units
+    ){
+
+        if(
+            abs >= unit.value
+        ){
+
+            return (
+
+                number /
+                unit.value
+
+            )
+            .toFixed(2)
+            .replace(
+                ".00",
+                ""
+            )
+            .replace(
+                ".0",
+                ""
+            )+
+            " "+
+            unit.name;
+
+        }
+
+    }
+
+
+    return Math.floor(
+        number
+    ).toLocaleString(
+        getCurrencyLocale()
+    );
 }
 
 
@@ -2911,70 +4805,199 @@ return Math.floor(number)
 ========================================================= */
 
 const shopList =
-document.getElementById("shopList");
+    document.getElementById(
+        "shopList"
+    );
+
+
+function localizeUpgradeCurrency(
+    text
+){
+
+    if(
+        typeof text !== "string"
+    ){
+        return text;
+    }
+
+
+    return text.replace(
+        /\{CURRENCY\}/g,
+        getCurrencySymbol()
+    );
+}
+
+
+function getUpgradeTranslation(
+    upgrade
+){
+
+    const translated =
+        translations[
+            currentLang
+        ]
+        ?.items
+        ?.[
+            upgrade.id
+        ];
+
+
+    return {
+
+        name:
+            translated?.name ||
+            upgrade.name,
+
+        description:
+            localizeUpgradeCurrency(
+                translated?.desc ||
+                upgrade.description
+            )
+
+    };
+}
 
 
 function createShop(){
 
-shopList.innerHTML = "";
+    if(!shopList){
+        return;
+    }
 
-for(const upgrade of upgradesData){
 
-const card =
-document.createElement("div");
+    shopList.innerHTML =
+        "";
 
-card.className = "upgrade";
 
-card.innerHTML = `
+    const translation =
+        translations[
+            currentLang
+        ];
 
-<div class="owned">
-x<span id="${upgrade.id}Owned">0</span>
-</div>
 
-<div class="upgrade-top">
+    for(
+        const upgrade
+        of upgradesData
+    ){
 
-<div class="upgrade-icon">
-${upgrade.icon}
-</div>
+        const card =
+            document.createElement(
+                "div"
+            );
 
-<div>
 
-<h3 class="upgrade-name">
-${upgrade.name}
-</h3>
+        card.className =
+            "upgrade";
 
-<p class="upgrade-description">
-${upgrade.description}
-</p>
 
-</div>
+        const translated =
+            getUpgradeTranslation(
+                upgrade
+            );
 
-</div>
 
-<button
-class="buy"
-id="${upgrade.id}Buy">
+        card.innerHTML = `
 
-Acheter ·
-<span id="${upgrade.id}Price">0</span> €
+            <div class="owned">
+                x<span id="${upgrade.id}Owned">0</span>
+            </div>
 
-</button>
+            <div class="upgrade-top">
 
-`;
+                <div class="upgrade-icon">
+                    ${upgrade.icon}
+                </div>
 
-shopList.appendChild(card);
+                <div>
 
-document
-.getElementById(
-upgrade.id+"Buy"
-)
-.addEventListener(
-"click",
-()=>buyUpgrade(upgrade)
-);
+                    <h3 class="upgrade-name">
+                        ${escapeHtml(
+                            translated.name
+                        )}
+                    </h3>
 
+                    <p class="upgrade-description">
+                        ${escapeHtml(
+                            translated.description
+                        )}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <button
+                class="buy"
+                id="${upgrade.id}Buy"
+            >
+
+                ${translation.buy} ·
+
+                <span
+                    id="${upgrade.id}Price"
+                >
+                    0
+                </span>
+
+                <span class="currency-symbol">
+                    ${getCurrencySymbol()}
+                </span>
+
+            </button>
+
+        `;
+
+
+        shopList.appendChild(
+            card
+        );
+
+
+        document
+            .getElementById(
+                upgrade.id+
+                "Buy"
+            )
+            .addEventListener(
+                "click",
+                ()=>{
+                    buyUpgrade(
+                        upgrade
+                    );
+                }
+            );
+
+    }
 }
 
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
 }
 
 
@@ -2982,44 +5005,78 @@ upgrade.id+"Buy"
    ACHAT
 ========================================================= */
 
-function buyUpgrade(upgrade){
+function buyUpgrade(
+    upgrade
+){
 
-if(isBanned){
-    return;
-}
+    if(
+        isBanned ||
+        !saveData
+    ){
+        return;
+    }
 
-const price =
-getPrice(upgrade);
 
-if(saveData.money < price){
+    const price =
+        getPrice(
+            upgrade
+        );
 
-notify(
-"❌ Il te manque "+
-formatNumber(
-price-saveData.money
-)+
-" €"
-);
 
-return;
+    if(
+        saveData.money <
+        price
+    ){
 
-}
+        notify(
 
-saveData.money -= price;
+            "❌ "+
+            translations[
+                currentLang
+            ].notEnough+
+            " "+
+            formatNumber(
+                price -
+                saveData.money
+            )+
+            " "+
+            getCurrencySymbol()
 
-saveData.upgrades[
-upgrade.id
-]++;
+        );
 
-notify(
-upgrade.icon+
-" "+
-upgrade.name+
-" acheté !"
-);
+        return;
+    }
 
-update();
 
+    saveData.money -=
+        price;
+
+
+    saveData.upgrades[
+        upgrade.id
+    ]++;
+
+
+    const translated =
+        getUpgradeTranslation(
+            upgrade
+        );
+
+
+    notify(
+
+        upgrade.icon+
+        " "+
+        translated.name+
+        " "+
+        translations[
+            currentLang
+        ].bought
+
+    );
+
+
+    update();
 }
 
 
@@ -3027,43 +5084,67 @@ update();
    ARGENT
 ========================================================= */
 
-function addMoney(amount){
+function addMoney(
+    amount
+){
 
-if(isBanned){
-    return;
-}
+    if(
+        isBanned ||
+        !saveData ||
+        !Number.isFinite(amount) ||
+        amount <= 0
+    ){
+        return;
+    }
 
-saveData.money += amount;
 
-saveData.totalEarned += amount;
+    saveData.money +=
+        amount;
 
-saveData.xp += Math.max(
-1,
-Math.log10(amount+1)*4
-);
 
-let xpNeeded =
-getXpNeeded();
+    saveData.totalEarned +=
+        amount;
 
-while(saveData.xp >= xpNeeded){
 
-saveData.xp -= xpNeeded;
+    saveData.xp +=
+        Math.max(
+            1,
+            Math.log10(
+                amount + 1
+            ) * 4
+        );
 
-saveData.level++;
 
-xpNeeded =
-getXpNeeded();
+    let xpNeeded =
+        getXpNeeded();
 
-notify(
-"⭐ Niveau "+
-saveData.level+
-" atteint !"
-);
 
-}
+    while(
+        saveData.xp >=
+        xpNeeded
+    ){
 
-update();
+        saveData.xp -=
+            xpNeeded;
 
+
+        saveData.level++;
+
+
+        xpNeeded =
+            getXpNeeded();
+
+
+        notify(
+            "⭐ Niveau "+
+            saveData.level+
+            " atteint !"
+        );
+
+    }
+
+
+    update();
 }
 
 
@@ -3073,14 +5154,15 @@ update();
 
 function getXpNeeded(){
 
-return Math.floor(
-100 *
-Math.pow(
-saveData.level,
-1.35
-)
-);
+    return Math.floor(
 
+        100 *
+        Math.pow(
+            saveData.level,
+            1.35
+        )
+
+    );
 }
 
 
@@ -3089,48 +5171,76 @@ saveData.level,
 ========================================================= */
 
 document
-.getElementById("clickButton")
-.addEventListener(
-"click",
-event=>{
+    .getElementById(
+        "clickButton"
+    )
+    .addEventListener(
+        "click",
+        event => {
 
-if(isBanned){
-    return;
-}
+            if(
+                isBanned ||
+                !saveData
+            ){
+                return;
+            }
 
-const gain =
-getClickValue();
 
-addMoney(gain);
+            const gain =
+                getClickValue();
 
-const floating =
-document.createElement("div");
 
-floating.className =
-"floating";
+            saveData.clicks++;
 
-floating.textContent =
-"+"+
-formatNumber(gain)+
-" €";
 
-floating.style.left =
-event.clientX+"px";
+            addMoney(
+                gain
+            );
 
-floating.style.top =
-event.clientY+"px";
 
-document.body.appendChild(
-floating
-);
+            const floating =
+                document.createElement(
+                    "div"
+                );
 
-setTimeout(
-()=>floating.remove(),
-850
-);
 
-}
-);
+            floating.className =
+                "floating";
+
+
+            floating.textContent =
+                "+"+
+                formatNumber(
+                    gain
+                )+
+                " "+
+                getCurrencySymbol();
+
+
+            floating.style.left =
+                event.clientX+
+                "px";
+
+
+            floating.style.top =
+                event.clientY+
+                "px";
+
+
+            document.body.appendChild(
+                floating
+            );
+
+
+            setTimeout(
+                ()=>{
+                    floating.remove();
+                },
+                850
+            );
+
+        }
+    );
 
 
 /* =========================================================
@@ -3138,109 +5248,151 @@ setTimeout(
 ========================================================= */
 
 const PRESTIGE_REQUIREMENT =
-1000000;
+    1000000;
 
 
 function getPrestigeGain(){
 
-if(
-saveData.totalEarned <
-PRESTIGE_REQUIREMENT
-){
+    if(
+        !saveData ||
+        saveData.totalEarned <
+        PRESTIGE_REQUIREMENT
+    ){
 
-return 0;
+        return 0;
+    }
 
-}
 
-return Math.max(
-1,
-Math.floor(
-Math.sqrt(
-saveData.totalEarned /
-PRESTIGE_REQUIREMENT
-)
-)
-);
+    return Math.max(
 
+        1,
+
+        Math.floor(
+
+            Math.sqrt(
+
+                saveData.totalEarned /
+                PRESTIGE_REQUIREMENT
+
+            )
+
+        )
+
+    );
 }
 
 
 async function prestige(){
 
-if(isBanned){
-    return;
-}
+    if(
+        isBanned ||
+        !saveData
+    ){
+        return;
+    }
 
-const gain =
-getPrestigeGain();
 
-if(gain <= 0){
+    const gain =
+        getPrestigeGain();
 
-notify(
-"🔒 Atteins au moins 1 M€ de gains."
-);
 
-return;
+    if(gain <= 0){
 
-}
+        notify(
 
-const confirmPrestige =
-confirm(
+            "🔒 Atteins au moins "+
+            formatNumber(
+                PRESTIGE_REQUIREMENT
+            )+
+            " "+
+            getCurrencySymbol()+
+            " de gains."
 
-"Faire une Renaissance ?\n\n"+
-"Tu vas perdre ton argent, tes niveaux et tes améliorations.\n\n"+
-"Tu conserveras tes Éclats de Renaissance et gagneras +"+
-gain+
-" éclat(s).\n\n"+
-"Chaque éclat donne +25 % à tous tes revenus."
+        );
 
-);
+        return;
+    }
 
-if(!confirmPrestige){
-    return;
-}
 
-saveData.prestige++;
+    const confirmPrestige =
+        confirm(
 
-saveData.prestigeShards +=
-gain;
+            "Faire une Renaissance ?\n\n"+
+            "Tu vas perdre ton argent, tes niveaux et tes améliorations.\n\n"+
+            "Tu conserveras tes Éclats de Renaissance et gagneras +"+
+            gain+
+            " éclat(s).\n\n"+
+            "Chaque éclat donne +25 % à tous tes revenus."
 
-saveData.money = 0;
+        );
 
-saveData.totalEarned = 0;
 
-saveData.xp = 0;
+    if(!confirmPrestige){
+        return;
+    }
 
-saveData.level = 1;
 
-for(const upgrade of upgradesData){
+    saveData.prestige++;
 
-saveData.upgrades[
-upgrade.id
-] = 0;
 
-}
+    saveData.prestigeShards +=
+        gain;
 
-await save();
 
-notify(
-"♻️ Renaissance "+
-saveData.prestige+
-" ! Multiplicateur x"+
-getPrestigeMultiplier().toFixed(2)
-);
+    saveData.money =
+        0;
 
-update();
 
+    saveData.totalEarned =
+        0;
+
+
+    saveData.xp =
+        0;
+
+
+    saveData.level =
+        1;
+
+
+    for(
+        const upgrade
+        of upgradesData
+    ){
+
+        saveData.upgrades[
+            upgrade.id
+        ] = 0;
+
+    }
+
+
+    await save();
+
+
+    notify(
+
+        "♻️ Renaissance "+
+        saveData.prestige+
+        " ! Multiplicateur x"+
+        getPrestigeMultiplier()
+            .toFixed(2)
+
+    );
+
+
+    update();
 }
 
 
 document
-.getElementById("prestigeButton")
-.addEventListener(
-"click",
-prestige
-);
+    .getElementById(
+        "prestigeButton"
+    )
+    .addEventListener(
+        "click",
+        prestige
+    );
 
 
 /* =========================================================
@@ -3249,151 +5401,250 @@ prestige
 
 function update(){
 
-if(!saveData){
-    return;
-}
-
-const click =
-getClickValue();
-
-const perSecond =
-getPerSecond();
-
-const multiplier =
-getPrestigeMultiplier();
+    if(!saveData){
+        return;
+    }
 
 
-document.getElementById("money")
-.textContent =
-formatNumber(saveData.money);
-
-document.getElementById("clickValue")
-.textContent =
-formatNumber(click);
-
-document.getElementById("perClick")
-.textContent =
-formatNumber(click);
-
-document.getElementById("perSecond")
-.textContent =
-formatNumber(perSecond);
-
-document.getElementById("level")
-.textContent =
-saveData.level;
-
-document.getElementById("prestigeLevel")
-.textContent =
-saveData.prestige;
-
-document.getElementById("prestigeShards")
-.textContent =
-saveData.prestigeShards;
-
-document.getElementById("globalMultiplier")
-.textContent =
-multiplier.toFixed(2);
-
-document.getElementById("totalEarned")
-.textContent =
-formatNumber(saveData.totalEarned);
+    const click =
+        getClickValue();
 
 
-/* AMÉLIORATIONS */
-
-let upgradeCount = 0;
-
-for(const upgrade of upgradesData){
-
-const owned =
-saveData.upgrades[
-upgrade.id
-];
-
-upgradeCount += owned;
-
-const price =
-getPrice(upgrade);
-
-document.getElementById(
-upgrade.id+"Owned"
-).textContent =
-owned;
-
-document.getElementById(
-upgrade.id+"Price"
-).textContent =
-formatNumber(price);
-
-document.getElementById(
-upgrade.id+"Buy"
-).disabled =
-saveData.money < price;
-
-}
-
-document.getElementById(
-"upgradeCount"
-).textContent =
-upgradeCount;
+    const perSecond =
+        getPerSecond();
 
 
-/* XP */
-
-const xpNeeded =
-getXpNeeded();
-
-document.getElementById("xp")
-.textContent =
-Math.floor(saveData.xp);
-
-document.getElementById("xpMax")
-.textContent =
-xpNeeded;
-
-document.getElementById("xpProgress")
-.style.width =
-Math.min(
-saveData.xp/xpNeeded*100,
-100
-)+"%";
+    const multiplier =
+        getPrestigeMultiplier();
 
 
-/* PRESTIGE */
+    document.getElementById(
+        "money"
+    ).textContent =
+        formatNumber(
+            saveData.money
+        );
 
-const prestigeGain =
-getPrestigeGain();
 
-document.getElementById(
-"prestigeGain"
-).textContent =
-prestigeGain;
+    document.getElementById(
+        "clickValue"
+    ).textContent =
+        formatNumber(
+            click
+        );
 
-const prestigeButton =
-document.getElementById(
-"prestigeButton"
-);
 
-if(prestigeGain > 0){
+    document.getElementById(
+        "perClick"
+    ).textContent =
+        formatNumber(
+            click
+        );
 
-prestigeButton.disabled = false;
 
-prestigeButton.textContent =
-"♻️ Renaissance · +"+
-prestigeGain+
-" éclat(s)";
+    document.getElementById(
+        "perSecond"
+    ).textContent =
+        formatNumber(
+            perSecond
+        );
 
-}
-else{
 
-prestigeButton.disabled = true;
+    document.getElementById(
+        "level"
+    ).textContent =
+        saveData.level;
 
-prestigeButton.textContent =
-"🔒 Renaissance à 1 M€ de gains";
 
-}
+    document.getElementById(
+        "prestigeLevel"
+    ).textContent =
+        saveData.prestige;
 
+
+    document.getElementById(
+        "prestigeShards"
+    ).textContent =
+        saveData.prestigeShards;
+
+
+    document.getElementById(
+        "globalMultiplier"
+    ).textContent =
+        multiplier.toFixed(
+            2
+        );
+
+
+    document.getElementById(
+        "totalEarned"
+    ).textContent =
+        formatNumber(
+            saveData.totalEarned
+        );
+
+
+    let upgradeCount =
+        0;
+
+
+    for(
+        const upgrade
+        of upgradesData
+    ){
+
+        const owned =
+            saveData.upgrades[
+                upgrade.id
+            ] || 0;
+
+
+        upgradeCount +=
+            owned;
+
+
+        const price =
+            getPrice(
+                upgrade
+            );
+
+
+        const ownedElement =
+            document.getElementById(
+                upgrade.id+
+                "Owned"
+            );
+
+
+        const priceElement =
+            document.getElementById(
+                upgrade.id+
+                "Price"
+            );
+
+
+        const buyElement =
+            document.getElementById(
+                upgrade.id+
+                "Buy"
+            );
+
+
+        if(ownedElement){
+
+            ownedElement.textContent =
+                owned;
+
+        }
+
+
+        if(priceElement){
+
+            priceElement.textContent =
+                formatNumber(
+                    price
+                );
+
+        }
+
+
+        if(buyElement){
+
+            buyElement.disabled =
+                saveData.money <
+                price;
+
+        }
+
+    }
+
+
+    document.getElementById(
+        "upgradeCount"
+    ).textContent =
+        upgradeCount;
+
+
+    const xpNeeded =
+        getXpNeeded();
+
+
+    document.getElementById(
+        "xp"
+    ).textContent =
+        Math.floor(
+            saveData.xp
+        );
+
+
+    document.getElementById(
+        "xpMax"
+    ).textContent =
+        xpNeeded;
+
+
+    document.getElementById(
+        "xpProgress"
+    ).style.width =
+
+        Math.min(
+
+            saveData.xp /
+            xpNeeded *
+            100,
+
+            100
+
+        )+
+        "%";
+
+
+    const prestigeGain =
+        getPrestigeGain();
+
+
+    document.getElementById(
+        "prestigeGain"
+    ).textContent =
+        prestigeGain;
+
+
+    const prestigeButton =
+        document.getElementById(
+            "prestigeButton"
+        );
+
+
+    if(prestigeGain > 0){
+
+        prestigeButton.disabled =
+            false;
+
+
+        prestigeButton.textContent =
+
+            "♻️ Renaissance · +"+
+            prestigeGain+
+            " éclat(s)";
+
+    }
+    else{
+
+        prestigeButton.disabled =
+            true;
+
+
+        prestigeButton.textContent =
+
+            "🔒 Renaissance à "+
+            formatNumber(
+                PRESTIGE_REQUIREMENT
+            )+
+            " "+
+            getCurrencySymbol()+
+            " de gains";
+
+    }
 }
 
 
@@ -3402,30 +5653,41 @@ prestigeButton.textContent =
 ========================================================= */
 
 setInterval(
-()=>{
+    ()=>{
 
-if(!saveData || isBanned){
-    return;
-}
+        if(
+            !saveData ||
+            isBanned
+        ){
+            return;
+        }
 
-const income =
-getPerSecond();
 
-if(income > 0){
+        const income =
+            getPerSecond();
 
-const gain =
-income/10;
 
-saveData.money += gain;
+        if(income > 0){
 
-saveData.totalEarned += gain;
+            const gain =
+                income /
+                10;
 
-update();
 
-}
+            saveData.money +=
+                gain;
 
-},
-100
+
+            saveData.totalEarned +=
+                gain;
+
+
+            update();
+
+        }
+
+    },
+    100
 );
 
 
@@ -3434,12 +5696,12 @@ update();
 ========================================================= */
 
 setInterval(
-()=>{
+    ()=>{
 
-save();
+        save();
 
-},
-3000
+    },
+    3000
 );
 
 
@@ -3447,33 +5709,186 @@ save();
    NOTIFICATIONS
 ========================================================= */
 
-function notify(text){
+function notify(
+    text
+){
 
-const box =
-document.getElementById(
-"notification"
-);
+    const box =
+        document.getElementById(
+            "notification"
+        );
 
-box.textContent =
-text;
 
-box.classList.add("show");
+    box.textContent =
+        text;
 
-clearTimeout(
-notificationTimeout
-);
 
-notificationTimeout =
-setTimeout(
-()=>{
+    box.classList.add(
+        "show"
+    );
 
-box.classList.remove("show");
 
-},
-2000
-);
+    clearTimeout(
+        notificationTimeout
+    );
 
+
+    notificationTimeout =
+        setTimeout(
+            ()=>{
+
+                box.classList.remove(
+                    "show"
+                );
+
+            },
+            2000
+        );
 }
+
+
+/* =========================================================
+   CHANGEMENT DE LANGUE
+========================================================= */
+
+function changeLanguage(
+    lang
+){
+
+    if(
+        !translations[lang]
+    ){
+        return;
+    }
+
+
+    currentLang =
+        lang;
+
+
+    localStorage.setItem(
+        "clicker_language",
+        lang
+    );
+
+
+    document.documentElement
+        .lang =
+        lang;
+
+
+    const t =
+        translations[
+            currentLang
+        ];
+
+
+    const selector =
+        document.getElementById(
+            "languageSelect"
+        );
+
+
+    if(selector){
+        selector.value =
+            currentLang;
+    }
+
+
+    updateCurrencySymbols();
+
+
+    const moneyTitle =
+        document.querySelector(
+            ".money-title"
+        );
+
+
+    if(moneyTitle){
+        moneyTitle.textContent =
+            t.empire;
+    }
+
+
+    const statLabels =
+        document.querySelectorAll(
+            ".stat-label"
+        );
+
+
+    if(
+        statLabels.length >= 4
+    ){
+
+        statLabels[0].textContent =
+            t.perClick;
+
+        statLabels[1].textContent =
+            t.perSecond;
+
+        statLabels[2].textContent =
+            t.upgrades;
+
+        statLabels[3].textContent =
+            t.totalEarned;
+
+    }
+
+
+    const shopHeading =
+        document.querySelector(
+            ".shop-header h2"
+        );
+
+
+    if(shopHeading){
+
+        shopHeading.textContent =
+            "🛒 "+
+            t.shopTitle;
+
+    }
+
+
+    const shopSub =
+        document.querySelector(
+            ".shop-subtitle"
+        );
+
+
+    if(shopSub){
+
+        shopSub.textContent =
+            t.shopSubtitle;
+
+    }
+
+
+    createShop();
+
+
+    update();
+}
+
+
+/* =========================================================
+   SELECTEUR DE LANGUE
+========================================================= */
+
+document
+    .getElementById(
+        "languageSelect"
+    )
+    .addEventListener(
+        "change",
+        event => {
+
+            changeLanguage(
+                event.target.value
+            );
+
+        }
+    );
 
 
 /* =========================================================
@@ -3482,37 +5897,73 @@ box.classList.remove("show");
 
 async function start(){
 
-const {
-    data:{
-        session
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+        if(error){
+
+            console.error(
+                "Erreur session Supabase:",
+                error
+            );
+
+            showAuthMessage(
+                "❌ Impossible de vérifier la session."
+            );
+
+            return;
+        }
+
+
+        const session =
+            data?.session;
+
+
+        if(session){
+
+            currentUser =
+                session.user;
+
+
+            await loadGame();
+
+        }
+        else{
+
+            document.getElementById(
+                "authScreen"
+            ).style.display =
+                "flex";
+
+
+            document.getElementById(
+                "gameScreen"
+            ).style.display =
+                "none";
+
+        }
+
     }
-} =
-await supabaseClient
-.auth
-.getSession();
+    catch(error){
 
-if(session){
+        console.error(
+            "Erreur démarrage:",
+            error
+        );
 
-currentUser =
-session.user;
+        showAuthMessage(
+            "❌ Erreur de connexion à Supabase."
+        );
 
-await loadGame();
-
-}
-else{
-
-document.getElementById(
-"authScreen"
-).style.display =
-"flex";
-
-document.getElementById(
-"gameScreen"
-).style.display =
-"none";
-
-}
-
+    }
 }
 
 
@@ -3521,59 +5972,107 @@ document.getElementById(
 ========================================================= */
 
 document
-.getElementById("loginTab")
-.addEventListener(
-"click",
-()=>{
+    .getElementById(
+        "loginTab"
+    )
+    .addEventListener(
+        "click",
+        ()=>{
+
+            document
+                .getElementById(
+                    "loginTab"
+                )
+                .classList.add(
+                    "active"
+                );
+
+
+            document
+                .getElementById(
+                    "registerTab"
+                )
+                .classList.remove(
+                    "active"
+                );
+
+
+            document
+                .getElementById(
+                    "loginForm"
+                )
+                .classList.add(
+                    "active"
+                );
+
+
+            document
+                .getElementById(
+                    "registerForm"
+                )
+                .classList.remove(
+                    "active"
+                );
+
+
+            showAuthMessage(
+                ""
+            );
+
+        }
+    );
+
 
 document
-.getElementById("loginTab")
-.classList.add("active");
+    .getElementById(
+        "registerTab"
+    )
+    .addEventListener(
+        "click",
+        ()=>{
 
-document
-.getElementById("registerTab")
-.classList.remove("active");
-
-document
-.getElementById("loginForm")
-.classList.add("active");
-
-document
-.getElementById("registerForm")
-.classList.remove("active");
-
-showAuthMessage("");
-
-}
-);
+            document
+                .getElementById(
+                    "registerTab"
+                )
+                .classList.add(
+                    "active"
+                );
 
 
-document
-.getElementById("registerTab")
-.addEventListener(
-"click",
-()=>{
+            document
+                .getElementById(
+                    "loginTab"
+                )
+                .classList.remove(
+                    "active"
+                );
 
-document
-.getElementById("registerTab")
-.classList.add("active");
 
-document
-.getElementById("loginTab")
-.classList.remove("active");
+            document
+                .getElementById(
+                    "registerForm"
+                )
+                .classList.add(
+                    "active"
+                );
 
-document
-.getElementById("registerForm")
-.classList.add("active");
 
-document
-.getElementById("loginForm")
-.classList.remove("active");
+            document
+                .getElementById(
+                    "loginForm"
+                )
+                .classList.remove(
+                    "active"
+                );
 
-showAuthMessage("");
 
-}
-);
+            showAuthMessage(
+                ""
+            );
+
+        }
+    );
 
 
 /* =========================================================
@@ -3581,87 +6080,122 @@ showAuthMessage("");
 ========================================================= */
 
 document
-.getElementById("loginForm")
-.addEventListener(
-"submit",
-async event=>{
+    .getElementById(
+        "loginForm"
+    )
+    .addEventListener(
+        "submit",
+        async event => {
 
-event.preventDefault();
+            event.preventDefault();
 
-await login();
+            await login();
 
-}
-);
+        }
+    );
 
 
 document
-.getElementById("registerForm")
-.addEventListener(
-"submit",
-async event=>{
+    .getElementById(
+        "registerForm"
+    )
+    .addEventListener(
+        "submit",
+        async event => {
 
-event.preventDefault();
+            event.preventDefault();
 
-await register();
+            await register();
 
-}
-);
+        }
+    );
 
 
 /* =========================================================
-   CHANGEMENT DE SESSION
+   SESSION
 ========================================================= */
 
 supabaseClient
-.auth
-.onAuthStateChange(
-async(event,session)=>{
+    .auth
+    .onAuthStateChange(
+        async(
+            event,
+            session
+        )=>{
 
-if(event === "SIGNED_OUT"){
+            if(
+                event ===
+                "SIGNED_OUT"
+            ){
 
-currentUser = null;
-currentUsername = null;
-saveData = null;
-isAdmin = false;
-adminPlayers = [];
+                currentUser =
+                    null;
 
-document.getElementById("adminButton")?.classList.remove("show");
-closeAdminPanel();
+                currentUsername =
+                    null;
 
-}
+                saveData =
+                    null;
 
-}
-);
+                isAdmin =
+                    false;
 
+                adminPlayers =
+                    [];
+
+                document
+                    .getElementById(
+                        "adminButton"
+                    )
+                    ?.classList
+                    .remove(
+                        "show"
+                    );
+
+                closeAdminPanel();
+
+            }
+
+        }
+    );
 
 
 /* =========================================================
-   SURVEILLANCE DU BAN
+   SURVEILLANCE BAN
 ========================================================= */
 
 setInterval(
-async()=>{
+    async()=>{
 
-if(
-currentUser &&
-!isBanned &&
-document.getElementById(
-"gameScreen"
-).style.display !== "none"
-){
+        if(
 
-await checkBan();
+            currentUser &&
 
-}
+            !isBanned &&
 
-},
-5000
+            document.getElementById(
+                "gameScreen"
+            ).style.display !==
+                "none"
+
+        ){
+
+            await checkBan();
+
+        }
+
+    },
+    5000
 );
 
 
 /* =========================================================
-   DÉMARRAGE
+   INITIALISATION
 ========================================================= */
+
+changeLanguage(
+    currentLang
+);
 
 start();
 
@@ -3669,4 +6203,3 @@ start();
 
 </body>
 </html>
-```
