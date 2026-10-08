@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="gabrielber" content="width=device-width, initial-scale=1.0">
-<title>€ Clicker</title>
+<title id="pageTitle">€ Clicker</title>
 
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1011,6 +1011,20 @@ header{
 .shard-buy:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
 .shard-buy:disabled{cursor:not-allowed;color:#646170;background:#292731}
 
+
+/* ================= MAINTENANCE DES RÉACTEURS ================= */
+.reactor-maintenance{margin-top:10px;padding:10px 11px;border-radius:11px;background:rgba(255,180,70,.045);border:1px solid rgba(255,180,70,.13)}
+.reactor-maintenance-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.reactor-maintenance-label{font-size:9px;font-weight:900;color:#aaa6b4;text-transform:uppercase;letter-spacing:.5px}
+.reactor-condition{font-size:10px;font-weight:900}
+.reactor-condition-bar{height:6px;border-radius:99px;overflow:hidden;background:#25232b}
+.reactor-condition-fill{height:100%;width:100%;border-radius:99px;transition:width .3s ease}
+.reactor-maintenance-info{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
+.reactor-maintenance-cost{font-size:9px;color:#777487}
+.reactor-maintenance-btn{padding:7px 9px;border:0;border-radius:8px;cursor:pointer;color:white;background:linear-gradient(90deg,#9b6331,#c7883d);font-size:9px;font-weight:900}
+.reactor-maintenance-btn:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.reactor-maintenance-btn:disabled{cursor:not-allowed;color:#65616d;background:#292731}
+
 /* ================= MOBILE ================= */
 
 @media(max-width:900px){
@@ -1096,7 +1110,7 @@ header{
     <div class="auth-box">
 
         <div class="auth-logo">
-            € <span>CLICKER</span>
+            <span class="brand-currency-symbol">€</span> <span>CLICKER</span>
         </div>
 
         <div class="auth-subtitle">
@@ -1217,7 +1231,7 @@ header{
         <h1 class="ban-title">Compte banni</h1>
 
         <div class="ban-text">
-            Ton accès à € Clicker a été suspendu.
+            Ton accès à <span class="brand-currency-name">€ Clicker</span> a été suspendu.
             Tu ne peux plus jouer ni modifier ta sauvegarde
             tant que cette sanction est active.
         </div>
@@ -1264,7 +1278,7 @@ header{
                 <div>
                     <h2 class="admin-title">Administration</h2>
                     <div class="admin-subtitle">
-                        Gestion des joueurs · € Clicker
+                        Gestion des joueurs · <span class="brand-currency-name">€ Clicker</span>
                     </div>
                 </div>
 
@@ -1381,7 +1395,7 @@ header{
     <header>
 
         <div class="logo">
-            € <span>CLICKER</span>
+            <span class="brand-currency-symbol">€</span> <span>CLICKER</span>
         </div>
 
         <div class="header-stats">
@@ -1777,6 +1791,16 @@ const translations = {
                 desc:"+2 500 {CURRENCY} par clic et +250 {CURRENCY}/s"
             },
 
+            akimov: {
+                name:"Akimov",
+                desc:"+20% de rendement"
+            },
+
+            diatlov: {
+                name:"Diatlov",
+                desc:"+100% de production — risque de catastrophe"
+            },
+
             ai: {
                 name:"Intelligence artificielle",
                 desc:"+750 000 {CURRENCY} par seconde"
@@ -1915,6 +1939,16 @@ const translations = {
                 desc:"+2,500 {CURRENCY} per click and +250 {CURRENCY}/s"
             },
 
+            akimov: {
+                name:"Akimov",
+                desc:"+20% efficiency"
+            },
+
+            diatlov: {
+                name:"Dyatlov",
+                desc:"+100% production — catastrophe risk"
+            },
+
             ai: {
                 name:"Artificial Intelligence",
                 desc:"+750,000 {CURRENCY} per second"
@@ -2051,6 +2085,16 @@ const translations = {
             chernobyl: {
                 name:"Чернобыль",
                 desc:"+2 500 {CURRENCY} за клик и +250 {CURRENCY}/с"
+            },
+
+            akimov: {
+                name:"Акимов",
+                desc:"+20% эффективности"
+            },
+
+            diatlov: {
+                name:"Дятлов",
+                desc:"+100% производства — риск катастрофы"
             },
 
             ai: {
@@ -2432,6 +2476,13 @@ function defaultSave(){
         spent:0
     };
 
+    upgrades._maintenance = {
+        rbmk1000:100,
+        rbmk1500:100,
+        chernobyl:100,
+        lastTick:Date.now()
+    };
+
     return {
 
         money:0,
@@ -2563,6 +2614,20 @@ function repairSave(data){
             if(Number.isFinite(value) && value >= 0){
                 fresh.upgrades._shardShop[key] = Math.floor(value);
             }
+        }
+    }
+
+    if(data.upgrades && data.upgrades._maintenance && typeof data.upgrades._maintenance === "object"){
+        const maintenance = data.upgrades._maintenance;
+        for(const key of ["rbmk1000","rbmk1500","chernobyl"]){
+            const value = Number(maintenance[key]);
+            if(Number.isFinite(value)){
+                fresh.upgrades._maintenance[key] = Math.max(0, Math.min(100, value));
+            }
+        }
+        const lastTick = Number(maintenance.lastTick);
+        if(Number.isFinite(lastTick) && lastTick > 0){
+            fresh.upgrades._maintenance.lastTick = lastTick;
         }
     }
 
@@ -4360,6 +4425,8 @@ async function save(){
     }
 
 
+    updateMaintenance();
+
     saveInProgress =
         true;
 
@@ -4614,6 +4681,8 @@ function updateCurrencySymbols(){
     const symbol =
         getCurrencySymbol();
 
+    const currencyName =
+        symbol + " Clicker";
 
     document
         .querySelectorAll(
@@ -4627,6 +4696,35 @@ function updateCurrencySymbols(){
 
             }
         );
+
+    document
+        .querySelectorAll(
+            ".brand-currency-symbol"
+        )
+        .forEach(
+            element => {
+
+                element.textContent =
+                    symbol;
+
+            }
+        );
+
+    document
+        .querySelectorAll(
+            ".brand-currency-name"
+        )
+        .forEach(
+            element => {
+
+                element.textContent =
+                    currencyName;
+
+            }
+        );
+
+    document.title =
+        currencyName;
 }
 
 
@@ -4649,6 +4747,98 @@ function getPrestigeMultiplier(){
 
 
 /* =========================================================
+   MAINTENANCE DES RÉACTEURS
+========================================================= */
+
+const reactorMaintenanceIds = ["rbmk1000","rbmk1500","chernobyl"];
+
+function getMaintenanceState(){
+    if(!saveData){return {rbmk1000:100,rbmk1500:100,chernobyl:100,lastTick:Date.now()};}
+    if(!saveData.upgrades._maintenance || typeof saveData.upgrades._maintenance !== "object") saveData.upgrades._maintenance={rbmk1000:100,rbmk1500:100,chernobyl:100,lastTick:Date.now()};
+    const state=saveData.upgrades._maintenance;
+    for(const id of reactorMaintenanceIds){
+        const value=Number(state[id]);
+        state[id]=Number.isFinite(value)?Math.max(0,Math.min(100,value)):100;
+    }
+    if(!Number.isFinite(Number(state.lastTick)) || Number(state.lastTick)<=0) state.lastTick=Date.now();
+    return state;
+}
+
+function isMaintenanceReactor(id){return reactorMaintenanceIds.includes(id);}
+
+function getReactorEfficiency(id){
+    if(!isMaintenanceReactor(id)) return 1;
+    const owned=Number(saveData?.upgrades?.[id]||0);
+    if(owned<=0) return 1;
+    return Math.max(0,Math.min(1,Number(getMaintenanceState()[id]||0)/100));
+}
+
+function getMaintenanceCost(upgrade){
+    const condition=Number(getMaintenanceState()[upgrade.id]||0);
+    const owned=Number(saveData?.upgrades?.[upgrade.id]||0);
+    if(owned<=0 || condition>=100) return 0;
+    return Math.max(1,Math.ceil(upgrade.basePrice*owned*0.08*((100-condition)/100)));
+}
+
+function updateMaintenance(){
+    if(!saveData || isBanned) return false;
+    const state=getMaintenanceState();
+    const now=Date.now();
+    const last=Number(state.lastTick)||now;
+    const elapsedMinutes=Math.max(0,Math.min(10,(now-last)/60000));
+    if(elapsedMinutes<=0){state.lastTick=now;return false;}
+    let changed=false;
+    for(const id of reactorMaintenanceIds){
+        const owned=Number(saveData.upgrades[id]||0);
+        if(owned<=0) continue;
+        const wearPerMinute=0.75*(1+Math.min(owned-1,20)*0.03);
+        const before=Number(state[id]||0);
+        state[id]=Math.max(0,before-wearPerMinute*elapsedMinutes);
+        if(state[id]!==before) changed=true;
+    }
+    state.lastTick=now;
+    return changed;
+}
+
+function maintainReactor(upgrade){
+    if(isBanned || !saveData || !isMaintenanceReactor(upgrade.id)) return;
+    const state=getMaintenanceState();
+    const condition=Number(state[upgrade.id]||0);
+    const owned=Number(saveData.upgrades[upgrade.id]||0);
+    if(owned<=0) return;
+    if(condition>=100){notify("🛠️ "+upgrade.name+" est déjà à 100 %.");return;}
+    const cost=getMaintenanceCost(upgrade);
+    if(saveData.money<cost){notify("❌ Maintenance : il te manque "+formatNumber(cost-saveData.money)+" "+getCurrencySymbol()+".");return;}
+    saveData.money-=cost;
+    state[upgrade.id]=100;
+    state.lastTick=Date.now();
+    notify("🛠️ "+upgrade.name+" entretenu à 100 % !");
+    update();
+}
+
+function getMaintenanceColor(condition){
+    if(condition<=20) return "#ff5f5f";
+    if(condition<=50) return "#ffb347";
+    return "#62e89b";
+}
+
+function updateReactorMaintenanceUI(upgrade){
+    if(!isMaintenanceReactor(upgrade.id)) return;
+    const state=getMaintenanceState();
+    const owned=Number(saveData?.upgrades?.[upgrade.id]||0);
+    const condition=owned>0?Number(state[upgrade.id]||0):100;
+    const fill=document.getElementById(upgrade.id+"ConditionFill");
+    const label=document.getElementById(upgrade.id+"Condition");
+    const cost=document.getElementById(upgrade.id+"MaintenanceCost");
+    const button=document.getElementById(upgrade.id+"Maintenance");
+    if(fill){fill.style.width=Math.max(0,Math.min(100,condition))+"%";fill.style.background=getMaintenanceColor(condition);}
+    if(label){label.textContent=owned>0?condition.toFixed(1)+" %":"Aucun réacteur";label.style.color=getMaintenanceColor(condition);}
+    if(cost){const price=getMaintenanceCost(upgrade);cost.textContent=price>0?formatNumber(price)+" "+getCurrencySymbol():"Aucune maintenance";}
+    if(button){const price=getMaintenanceCost(upgrade);button.disabled=owned<=0||condition>=100||saveData.money<price;button.textContent=condition>=100?"✓ 100 %":"🛠️ Maintenir";}
+}
+
+
+/* =========================================================
    GAINS
 ========================================================= */
 
@@ -4667,14 +4857,13 @@ function getBaseClickValue(){
         of upgradesData
     ){
 
+        const owned = saveData.upgrades[upgrade.id] || 0;
+        const efficiency = getReactorEfficiency(upgrade.id);
+
         value +=
             upgrade.click *
-            (
-                saveData
-                    .upgrades[
-                        upgrade.id
-                    ] || 0
-            );
+            owned *
+            efficiency;
 
     }
 
@@ -4708,14 +4897,13 @@ function getPerSecond(){
         of upgradesData
     ){
 
+        const owned = saveData.upgrades[upgrade.id] || 0;
+        const efficiency = getReactorEfficiency(upgrade.id);
+
         value +=
             upgrade.auto *
-            (
-                saveData
-                    .upgrades[
-                        upgrade.id
-                    ] || 0
-            );
+            owned *
+            efficiency;
 
     }
 
@@ -5013,6 +5201,10 @@ function createShop(){
                     );
                 }
             );
+
+        if(isMaintenanceReactor(upgrade.id)){
+            document.getElementById(upgrade.id+"Maintenance").addEventListener("click",()=>maintainReactor(upgrade));
+        }
 
     }
 }
@@ -5492,6 +5684,13 @@ async function prestige(){
 
     }
 
+    saveData.upgrades._maintenance = {
+        rbmk1000:100,
+        rbmk1500:100,
+        chernobyl:100,
+        lastTick:Date.now()
+    };
+
 
     await save();
 
@@ -5682,6 +5881,8 @@ function update(){
 
         }
 
+        updateReactorMaintenanceUI(upgrade);
+
     }
 
 
@@ -5788,6 +5989,11 @@ setInterval(
             isBanned
         ){
             return;
+        }
+
+        const maintenanceChanged = updateMaintenance();
+        if(maintenanceChanged){
+            update();
         }
 
 
