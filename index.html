@@ -993,6 +993,24 @@ header{
     font-weight:900;
 }
 
+
+/* ================= BOUTIQUE DES ÉCLATS ================= */
+.shard-shop-box{margin-top:22px;padding:20px;border-radius:18px;background:radial-gradient(circle at 85% 15%,rgba(153,120,255,.18),transparent 42%),rgba(124,108,255,.045);border:1px solid rgba(157,130,255,.25)}
+.shard-shop-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.shard-shop-title{margin:0;color:#d7ccff;font-size:19px;font-weight:900}
+.shard-shop-balance{padding:7px 10px;border-radius:10px;color:#f0d9ff;background:rgba(167,121,255,.12);border:1px solid rgba(167,121,255,.22);font-size:11px;font-weight:900}
+.shard-shop-desc{margin:0 0 13px;color:#89849b;font-size:11px;line-height:1.5}
+.shard-shop-list{display:grid;gap:9px}
+.shard-item{padding:13px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}
+.shard-item-top{display:flex;align-items:center;gap:10px}
+.shard-item-icon{width:39px;height:39px;flex:0 0 auto;display:grid;place-items:center;border-radius:11px;background:rgba(157,130,255,.12);border:1px solid rgba(157,130,255,.18);font-size:19px}
+.shard-item-name{margin:0;color:#eeeaff;font-size:12px;font-weight:900}
+.shard-item-desc{margin:3px 0 0;color:#777487;font-size:10px;line-height:1.35}
+.shard-item-owned{margin-left:auto;color:#c7b9ff;font-size:10px;font-weight:900}
+.shard-buy{width:100%;margin-top:10px;padding:9px;border:0;border-radius:9px;cursor:pointer;color:white;background:linear-gradient(90deg,#6954cf,#8b72ff);font-size:10px;font-weight:900}
+.shard-buy:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.shard-buy:disabled{cursor:not-allowed;color:#646170;background:#292731}
+
 /* ================= MOBILE ================= */
 
 @media(max-width:900px){
@@ -1573,7 +1591,17 @@ header{
                     Renaissance indisponible
                 </button>
 
+            
+
+            <div class="shard-shop-box">
+                <div class="shard-shop-header">
+                    <h3 class="shard-shop-title">✨ Boutique des Éclats</h3>
+                    <div class="shard-shop-balance">✨ <span id="shardShopBalance">0</span></div>
+                </div>
+                <p class="shard-shop-desc">Dépense tes Éclats de Renaissance pour débloquer des bonus permanents. Les améliorations achetées survivent aux prochaines Renaissances.</p>
+                <div class="shard-shop-list" id="shardShopList"></div>
             </div>
+</div>
 
         </section>
 
@@ -2397,6 +2425,13 @@ function defaultSave(){
         upgrades[upgrade.id] = 0;
     }
 
+    upgrades._shardShop = {
+        power:0,
+        click:0,
+        auto:0,
+        spent:0
+    };
+
     return {
 
         money:0,
@@ -2519,6 +2554,16 @@ function repairSave(data){
 
         }
 
+    }
+
+    if(data.upgrades && data.upgrades._shardShop && typeof data.upgrades._shardShop === "object"){
+        const shardShop = data.upgrades._shardShop;
+        for(const key of ["power","click","auto","spent"]){
+            const value = Number(shardShop[key]);
+            if(Number.isFinite(value) && value >= 0){
+                fresh.upgrades._shardShop[key] = Math.floor(value);
+            }
+        }
     }
 
     return fresh;
@@ -4282,6 +4327,7 @@ function enterGame(){
 
 
     createShop();
+    createShardShop();
 
     changeLanguage(
         currentLang
@@ -4594,12 +4640,11 @@ function getPrestigeMultiplier(){
         return 1;
     }
 
+    const state = getShardShopState();
+    const totalShards = saveData.prestigeShards + Number(state.spent || 0);
+    const shopPower = Number(state.power || 0);
 
-    return (
-        1 +
-        saveData.prestigeShards *
-        0.25
-    );
+    return 1 + totalShards * 0.25 + shopPower * 0.05;
 }
 
 
@@ -4640,10 +4685,11 @@ function getBaseClickValue(){
 
 function getClickValue(){
 
-    return (
-        getBaseClickValue() *
-        getPrestigeMultiplier()
-    );
+    const state = getShardShopState();
+
+    return getBaseClickValue() *
+        getPrestigeMultiplier() *
+        (1 + Number(state.click || 0) * 0.10);
 }
 
 
@@ -4674,10 +4720,11 @@ function getPerSecond(){
     }
 
 
-    return (
-        value *
-        getPrestigeMultiplier()
-    );
+    const state = getShardShopState();
+
+    return value *
+        getPrestigeMultiplier() *
+        (1 + Number(state.auto || 0) * 0.10);
 }
 
 
@@ -4968,6 +5015,85 @@ function createShop(){
             );
 
     }
+}
+
+
+/* =========================================================
+   BOUTIQUE DES ÉCLATS
+========================================================= */
+
+const shardShopList = document.getElementById("shardShopList");
+
+const shardShopData = [
+    {id:"power",icon:"🌟",name:{fr:"Cœur de Renaissance",en:"Rebirth Core",ru:"Ядро Возрождения"},desc:{fr:"+5% à tous les revenus par niveau",en:"+5% to all income per level",ru:"+5% ко всему доходу за уровень"},cost:5,growth:2,max:20},
+    {id:"click",icon:"✨",name:{fr:"Clic céleste",en:"Celestial Click",ru:"Небесный клик"},desc:{fr:"+10% aux revenus des clics par niveau",en:"+10% click income per level",ru:"+10% дохода от кликов за уровень"},cost:8,growth:3,max:10},
+    {id:"auto",icon:"⚙️",name:{fr:"Flux éternel",en:"Eternal Flow",ru:"Вечный поток"},desc:{fr:"+10% aux revenus automatiques par niveau",en:"+10% automatic income per level",ru:"+10% автоматического дохода за уровень"},cost:8,growth:3,max:10}
+];
+
+function getShardShopState(){
+    if(!saveData){return {power:0,click:0,auto:0,spent:0};}
+    if(!saveData.upgrades._shardShop || typeof saveData.upgrades._shardShop !== "object"){
+        saveData.upgrades._shardShop={power:0,click:0,auto:0,spent:0};
+    }
+    return saveData.upgrades._shardShop;
+}
+
+function getShardShopPrice(item){
+    const state=getShardShopState();
+    return item.cost + Number(state[item.id]||0)*item.growth;
+}
+
+function getShardShopText(item){
+    return {name:item.name[currentLang]||item.name.fr,desc:item.desc[currentLang]||item.desc.fr};
+}
+
+function createShardShop(){
+    if(!shardShopList || !saveData){return;}
+    shardShopList.innerHTML="";
+    for(const item of shardShopData){
+        const state=getShardShopState();
+        const owned=Number(state[item.id]||0);
+        const price=getShardShopPrice(item);
+        const text=getShardShopText(item);
+        const card=document.createElement("div");
+        card.className="shard-item";
+        card.innerHTML=`<div class="shard-item-top"><div class="shard-item-icon">${item.icon}</div><div><h4 class="shard-item-name">${escapeHtml(text.name)}</h4><p class="shard-item-desc">${escapeHtml(text.desc)}</p></div><div class="shard-item-owned">${owned}/${item.max}</div></div><button class="shard-buy" id="shardBuy_${item.id}">${owned>=item.max?"✓ MAX":"✨ Acheter · "+price+" Éclat(s)"}</button>`;
+        shardShopList.appendChild(card);
+        document.getElementById("shardBuy_"+item.id).addEventListener("click",()=>buyShardUpgrade(item));
+    }
+    updateShardShop();
+}
+
+function updateShardShop(){
+    if(!saveData){return;}
+    const state=getShardShopState();
+    const balance=document.getElementById("shardShopBalance");
+    if(balance){balance.textContent=saveData.prestigeShards;}
+    for(const item of shardShopData){
+        const owned=Number(state[item.id]||0);
+        const price=getShardShopPrice(item);
+        const button=document.getElementById("shardBuy_"+item.id);
+        if(!button){continue;}
+        button.disabled=owned>=item.max || saveData.prestigeShards<price;
+        button.textContent=owned>=item.max?"✓ MAX":"✨ Acheter · "+price+" Éclat(s)";
+        const ownedElement=button.parentElement.querySelector(".shard-item-owned");
+        if(ownedElement){ownedElement.textContent=owned+"/"+item.max;}
+    }
+}
+
+function buyShardUpgrade(item){
+    if(isBanned || !saveData){return;}
+    const state=getShardShopState();
+    const owned=Number(state[item.id]||0);
+    if(owned>=item.max){notify("✨ Cette amélioration est au maximum.");return;}
+    const price=getShardShopPrice(item);
+    if(saveData.prestigeShards<price){notify("❌ Il te manque "+(price-saveData.prestigeShards)+" Éclat(s).");return;}
+    saveData.prestigeShards-=price;
+    state[item.id]=owned+1;
+    state.spent=Number(state.spent||0)+price;
+    const text=getShardShopText(item);
+    notify("✨ "+text.name+" niveau "+state[item.id]+" !");
+    update();
 }
 
 
@@ -5645,6 +5771,8 @@ function update(){
             " de gains";
 
     }
+
+    updateShardShop();
 }
 
 
@@ -5796,6 +5924,7 @@ function changeLanguage(
 
 
     updateCurrencySymbols();
+    createShardShop();
 
 
     const moneyTitle =
