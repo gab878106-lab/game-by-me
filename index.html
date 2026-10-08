@@ -4842,39 +4842,78 @@ function updateReactorMaintenanceUI(upgrade){
    GAINS
 ========================================================= */
 
+function getPersonnelMultiplier(){
+
+    if(!saveData){
+        return 1;
+    }
+
+    let multiplier = 1;
+
+    const akimov =
+        Number(saveData.upgrades.akimov || 0);
+
+    const diatlov =
+        Number(saveData.upgrades.diatlov || 0);
+
+    if(akimov > 0){
+        multiplier *=
+            1 +
+            0.20 * akimov;
+    }
+
+    if(diatlov > 0){
+        multiplier *=
+            Math.pow(2, diatlov);
+    }
+
+    return multiplier;
+}
+
+
 function getBaseClickValue(){
 
     if(!saveData){
         return 1;
     }
 
-
     let value = 1;
-
 
     for(
         const upgrade
         of upgradesData
     ){
 
-        const owned = saveData.upgrades[upgrade.id] || 0;
-        const efficiency = getReactorEfficiency(upgrade.id);
+        const owned =
+            saveData.upgrades[upgrade.id] || 0;
+
+        if(
+            upgrade.special === "akimov" ||
+            upgrade.special === "diatlov"
+        ){
+            continue;
+        }
+
+        const efficiency =
+            getReactorEfficiency(
+                upgrade.id
+            );
 
         value +=
             upgrade.click *
             owned *
             efficiency;
-
     }
 
-
-    return value;
+    return value *
+        getPersonnelMultiplier();
 }
 
 
 function getClickValue(){
 
-    const state = getShardShopState();
+    const state =
+        getShardShopState();
 
     return getBaseClickValue() *
         getPrestigeMultiplier() *
@@ -4888,29 +4927,39 @@ function getPerSecond(){
         return 0;
     }
 
-
     let value = 0;
-
 
     for(
         const upgrade
         of upgradesData
     ){
 
-        const owned = saveData.upgrades[upgrade.id] || 0;
-        const efficiency = getReactorEfficiency(upgrade.id);
+        const owned =
+            saveData.upgrades[upgrade.id] || 0;
+
+        if(
+            upgrade.special === "akimov" ||
+            upgrade.special === "diatlov"
+        ){
+            continue;
+        }
+
+        const efficiency =
+            getReactorEfficiency(
+                upgrade.id
+            );
 
         value +=
             upgrade.auto *
             owned *
             efficiency;
-
     }
 
-
-    const state = getShardShopState();
+    const state =
+        getShardShopState();
 
     return value *
+        getPersonnelMultiplier() *
         getPrestigeMultiplier() *
         (1 + Number(state.auto || 0) * 0.10);
 }
@@ -5161,6 +5210,24 @@ function createShop(){
 
             </div>
 
+            ${isMaintenanceReactor(upgrade.id) ? `
+                <div class="reactor-maintenance">
+                    <div class="reactor-maintenance-head">
+                        <span class="reactor-maintenance-label">🛠️ Maintenance</span>
+                        <span class="reactor-condition" id="${upgrade.id}Condition">100 %</span>
+                    </div>
+                    <div class="reactor-condition-bar">
+                        <div class="reactor-condition-fill" id="${upgrade.id}ConditionFill"></div>
+                    </div>
+                    <div class="reactor-maintenance-info">
+                        <span class="reactor-maintenance-cost" id="${upgrade.id}MaintenanceCost">Aucune maintenance</span>
+                        <button class="reactor-maintenance-btn" id="${upgrade.id}Maintenance" type="button">
+                            🛠️ Maintenir
+                        </button>
+                    </div>
+                </div>
+            ` : ""}
+
             <button
                 class="buy"
                 id="${upgrade.id}Buy"
@@ -5203,7 +5270,15 @@ function createShop(){
             );
 
         if(isMaintenanceReactor(upgrade.id)){
-            document.getElementById(upgrade.id+"Maintenance").addEventListener("click",()=>maintainReactor(upgrade));
+            const maintenanceButton =
+                document.getElementById(upgrade.id+"Maintenance");
+
+            if(maintenanceButton){
+                maintenanceButton.addEventListener(
+                    "click",
+                    ()=>maintainReactor(upgrade)
+                );
+            }
         }
 
     }
@@ -5369,6 +5444,23 @@ function buyUpgrade(
     saveData.money -=
         price;
 
+
+    const ownedBefore =
+        Number(
+            saveData.upgrades[upgrade.id] || 0
+        );
+
+    if(
+        upgrade.maxOwned &&
+        ownedBefore >= upgrade.maxOwned
+    ){
+        notify(
+            "❌ "+
+            getUpgradeTranslation(upgrade).name+
+            " est déjà au maximum."
+        );
+        return;
+    }
 
     saveData.upgrades[
         upgrade.id
@@ -5875,7 +5967,12 @@ function update(){
 
         if(buyElement){
 
+            const maxReached =
+                upgrade.maxOwned &&
+                owned >= upgrade.maxOwned;
+
             buyElement.disabled =
+                maxReached ||
                 saveData.money <
                 price;
 
