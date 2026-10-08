@@ -1012,18 +1012,17 @@ header{
 .shard-buy:disabled{cursor:not-allowed;color:#646170;background:#292731}
 
 
-/* ================= MAINTENANCE DES RÉACTEURS ================= */
-.reactor-maintenance{margin-top:10px;padding:10px 11px;border-radius:11px;background:rgba(255,180,70,.045);border:1px solid rgba(255,180,70,.13)}
-.reactor-maintenance-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
-.reactor-maintenance-label{font-size:9px;font-weight:900;color:#aaa6b4;text-transform:uppercase;letter-spacing:.5px}
-.reactor-condition{font-size:10px;font-weight:900}
-.reactor-condition-bar{height:6px;border-radius:99px;overflow:hidden;background:#25232b}
-.reactor-condition-fill{height:100%;width:100%;border-radius:99px;transition:width .3s ease}
-.reactor-maintenance-info{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
-.reactor-maintenance-cost{font-size:9px;color:#777487}
-.reactor-maintenance-btn{padding:7px 9px;border:0;border-radius:8px;cursor:pointer;color:white;background:linear-gradient(90deg,#9b6331,#c7883d);font-size:9px;font-weight:900}
-.reactor-maintenance-btn:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
-.reactor-maintenance-btn:disabled{cursor:not-allowed;color:#65616d;background:#292731}
+/* ================= FONCTIONNEMENT / RISQUE RÉACTEURS ================= */
+.reactor-operation{margin-top:10px;padding:10px 11px;border-radius:11px;background:rgba(255,120,70,.045);border:1px solid rgba(255,120,70,.14)}
+.reactor-operation-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.reactor-operation-label{font-size:9px;font-weight:900;color:#aaa6b4;text-transform:uppercase;letter-spacing:.5px}
+.reactor-risk{font-size:10px;font-weight:900}
+.reactor-risk-bar{height:6px;border-radius:99px;overflow:hidden;background:#25232b}
+.reactor-risk-fill{height:100%;width:0;border-radius:99px;transition:width .3s ease}
+.reactor-operation-info{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
+.reactor-operation-status{font-size:9px;color:#777487}
+.reactor-operation-status strong{font-weight:900}
+.employee-badge{display:inline-flex;align-items:center;gap:4px;margin-top:7px;padding:5px 7px;border-radius:7px;background:rgba(100,180,255,.06);border:1px solid rgba(100,180,255,.11);font-size:8px;color:#8ea9c4}
 
 /* ================= MOBILE ================= */
 
@@ -1801,6 +1800,11 @@ const translations = {
                 desc:"+100% de production — risque de catastrophe"
             },
 
+            employeeUntrained: { name:"Employé non formé", desc:"Recrute un employé peu formé : aucun bonus, risque d’incident accru" },
+            employeeBasic: { name:"Employé débutant", desc:"+3% de production et légère réduction du risque" },
+            employeeTrained: { name:"Employé formé", desc:"+8% de production et réduction du risque" },
+            employeeExpert: { name:"Ingénieur expert", desc:"+15% de production et forte réduction du risque" },
+
             ai: {
                 name:"Intelligence artificielle",
                 desc:"+750 000 {CURRENCY} par seconde"
@@ -1949,6 +1953,11 @@ const translations = {
                 desc:"+100% production — catastrophe risk"
             },
 
+            employeeUntrained: { name:"Untrained employee", desc:"No bonus, but increases incident risk" },
+            employeeBasic: { name:"Junior employee", desc:"+3% production and slight risk reduction" },
+            employeeTrained: { name:"Trained employee", desc:"+8% production and risk reduction" },
+            employeeExpert: { name:"Expert engineer", desc:"+15% production and strong risk reduction" },
+
             ai: {
                 name:"Artificial Intelligence",
                 desc:"+750,000 {CURRENCY} per second"
@@ -2096,6 +2105,11 @@ const translations = {
                 name:"Дятлов",
                 desc:"+100% производства — риск катастрофы"
             },
+
+            employeeUntrained: { name:"Неподготовленный сотрудник", desc:"Без бонуса, но повышает риск аварии" },
+            employeeBasic: { name:"Начинающий сотрудник", desc:"+3% к производству и небольшое снижение риска" },
+            employeeTrained: { name:"Обученный сотрудник", desc:"+8% к производству и снижение риска" },
+            employeeExpert: { name:"Инженер-эксперт", desc:"+15% к производству и сильное снижение риска" },
 
             ai: {
                 name:"Искусственный интеллект",
@@ -2452,6 +2466,58 @@ const upgradesData = [
         special:"diatlov",
         maxOwned:1,
         category:"personnel"
+    },
+
+    {
+        id:"employeeUntrained",
+        icon:"👷",
+        name:"Employé non formé",
+        description:"Recrute un employé peu formé : aucun bonus, risque d'incident accru",
+        basePrice:50000,
+        priceGrowth:1.25,
+        click:0,
+        auto:0,
+        special:"employee",
+        category:"personnel"
+    },
+
+    {
+        id:"employeeBasic",
+        icon:"🧑‍🔧",
+        name:"Employé débutant",
+        description:"+3% de production et légère réduction du risque",
+        basePrice:150000,
+        priceGrowth:1.28,
+        click:0,
+        auto:0,
+        special:"employee",
+        category:"personnel"
+    },
+
+    {
+        id:"employeeTrained",
+        icon:"👨‍🔧",
+        name:"Employé formé",
+        description:"+8% de production et réduction du risque",
+        basePrice:500000,
+        priceGrowth:1.30,
+        click:0,
+        auto:0,
+        special:"employee",
+        category:"personnel"
+    },
+
+    {
+        id:"employeeExpert",
+        icon:"👨‍🔬",
+        name:"Ingénieur expert",
+        description:"+15% de production et forte réduction du risque",
+        basePrice:2000000,
+        priceGrowth:1.32,
+        click:0,
+        auto:0,
+        special:"employee",
+        category:"personnel"
     }
 
 ];
@@ -2476,11 +2542,12 @@ function defaultSave(){
         spent:0
     };
 
-    upgrades._maintenance = {
-        rbmk1000:100,
-        rbmk1500:100,
-        chernobyl:100,
-        lastTick:Date.now()
+    upgrades._operation = {
+        rbmk1000:0,
+        rbmk1500:0,
+        chernobyl:0,
+        lastTick:Date.now(),
+        explosions:0
     };
 
     return {
@@ -2617,17 +2684,34 @@ function repairSave(data){
         }
     }
 
-    if(data.upgrades && data.upgrades._maintenance && typeof data.upgrades._maintenance === "object"){
+    if(data.upgrades && data.upgrades._operation && typeof data.upgrades._operation === "object"){
+        const operation = data.upgrades._operation;
+        for(const key of ["rbmk1000","rbmk1500","chernobyl"]){
+            const value = Number(operation[key]);
+            if(Number.isFinite(value)){
+                fresh.upgrades._operation[key] = Math.max(0, Math.min(100, value));
+            }
+        }
+        const lastTick = Number(operation.lastTick);
+        if(Number.isFinite(lastTick) && lastTick > 0){
+            fresh.upgrades._operation.lastTick = lastTick;
+        }
+        const explosions = Number(operation.explosions);
+        if(Number.isFinite(explosions) && explosions >= 0){
+            fresh.upgrades._operation.explosions = Math.floor(explosions);
+        }
+    } else if(data.upgrades && data.upgrades._maintenance && typeof data.upgrades._maintenance === "object"){
+        // Compatibilité : les anciennes sauvegardes convertissent l'usure en risque.
         const maintenance = data.upgrades._maintenance;
         for(const key of ["rbmk1000","rbmk1500","chernobyl"]){
             const value = Number(maintenance[key]);
             if(Number.isFinite(value)){
-                fresh.upgrades._maintenance[key] = Math.max(0, Math.min(100, value));
+                fresh.upgrades._operation[key] = Math.max(0, Math.min(100, 100 - value));
             }
         }
         const lastTick = Number(maintenance.lastTick);
         if(Number.isFinite(lastTick) && lastTick > 0){
-            fresh.upgrades._maintenance.lastTick = lastTick;
+            fresh.upgrades._operation.lastTick = lastTick;
         }
     }
 
@@ -4425,7 +4509,7 @@ async function save(){
     }
 
 
-    updateMaintenance();
+    updateReactorOperation();
 
     saveInProgress =
         true;
@@ -4747,96 +4831,191 @@ function getPrestigeMultiplier(){
 
 
 /* =========================================================
-   MAINTENANCE DES RÉACTEURS
+   FONCTIONNEMENT DES RÉACTEURS / RISQUE D'EXPLOSION
 ========================================================= */
 
-const reactorMaintenanceIds = ["rbmk1000","rbmk1500","chernobyl"];
+const reactorOperationIds = ["rbmk1000","rbmk1500","chernobyl"];
 
-function getMaintenanceState(){
-    if(!saveData){return {rbmk1000:100,rbmk1500:100,chernobyl:100,lastTick:Date.now()};}
-    if(!saveData.upgrades._maintenance || typeof saveData.upgrades._maintenance !== "object") saveData.upgrades._maintenance={rbmk1000:100,rbmk1500:100,chernobyl:100,lastTick:Date.now()};
-    const state=saveData.upgrades._maintenance;
-    for(const id of reactorMaintenanceIds){
+const reactorRiskBase = {
+    rbmk1000:0.045,
+    rbmk1500:0.075,
+    chernobyl:0.12
+};
+
+function getOperationState(){
+    if(!saveData){
+        return {rbmk1000:0,rbmk1500:0,chernobyl:0,lastTick:Date.now(),explosions:0};
+    }
+    if(!saveData.upgrades._operation || typeof saveData.upgrades._operation !== "object"){
+        saveData.upgrades._operation={rbmk1000:0,rbmk1500:0,chernobyl:0,lastTick:Date.now(),explosions:0};
+    }
+    const state=saveData.upgrades._operation;
+    for(const id of reactorOperationIds){
         const value=Number(state[id]);
-        state[id]=Number.isFinite(value)?Math.max(0,Math.min(100,value)):100;
+        state[id]=Number.isFinite(value)?Math.max(0,Math.min(100,value)):0;
     }
     if(!Number.isFinite(Number(state.lastTick)) || Number(state.lastTick)<=0) state.lastTick=Date.now();
+    if(!Number.isFinite(Number(state.explosions)) || Number(state.explosions)<0) state.explosions=0;
     return state;
 }
 
-function isMaintenanceReactor(id){return reactorMaintenanceIds.includes(id);}
+function isOperationReactor(id){
+    return reactorOperationIds.includes(id);
+}
+
+function getEmployeeStats(){
+    if(!saveData) return {production:0,risk:0,total:0};
+
+    const employees = [
+        {id:"employeeUntrained",production:0,risk:0.12},
+        {id:"employeeBasic",production:0.03,risk:-0.02},
+        {id:"employeeTrained",production:0.08,risk:-0.06},
+        {id:"employeeExpert",production:0.15,risk:-0.12}
+    ];
+
+    let production=0;
+    let risk=0;
+    let total=0;
+
+    for(const employee of employees){
+        const owned=Number(saveData.upgrades[employee.id]||0);
+        total+=owned;
+        production+=employee.production*owned;
+        risk+=employee.risk*owned;
+    }
+
+    return {production,risk,total};
+}
+
+function getEmployeeProductionMultiplier(){
+    return 1 + getEmployeeStats().production;
+}
+
+function getEmployeeRiskModifier(){
+    return getEmployeeStats().risk;
+}
+
+function getReactorRisk(id){
+    if(!isOperationReactor(id) || !saveData) return 0;
+    return Math.max(0,Math.min(100,Number(getOperationState()[id]||0)));
+}
 
 function getReactorEfficiency(id){
-    if(!isMaintenanceReactor(id)) return 1;
+    // Le réacteur continue toujours de produire : le risque n'est plus une panne.
+    return isOperationReactor(id) ? 1 : 1;
+}
+
+function getRiskLabel(risk){
+    if(risk < 15) return "🟢 Stable";
+    if(risk < 35) return "🟡 Vigilance";
+    if(risk < 60) return "🟠 Risqué";
+    if(risk < 80) return "🔴 Critique";
+    return "☢️ Danger extrême";
+}
+
+function getRiskColor(risk){
+    if(risk < 15) return "#62e89b";
+    if(risk < 35) return "#d9d35d";
+    if(risk < 60) return "#ffb347";
+    if(risk < 80) return "#ff765f";
+    return "#ff3f55";
+}
+
+function reactorExplosionChancePerMinute(id){
     const owned=Number(saveData?.upgrades?.[id]||0);
-    if(owned<=0) return 1;
-    return Math.max(0,Math.min(1,Number(getMaintenanceState()[id]||0)/100));
+    if(owned<=0) return 0;
+
+    const risk=getReactorRisk(id);
+    const employeeModifier=getEmployeeRiskModifier();
+    const modifier=Math.max(0.35,1+employeeModifier);
+
+    // Le risque est volontairement un mécanisme de jeu : plus il monte, plus l'explosion devient probable.
+    return Math.max(0,Math.min(0.25,(risk/100)*0.0025*modifier));
 }
 
-function getMaintenanceCost(upgrade){
-    const condition=Number(getMaintenanceState()[upgrade.id]||0);
-    const owned=Number(saveData?.upgrades?.[upgrade.id]||0);
-    if(owned<=0 || condition>=100) return 0;
-    return Math.max(1,Math.ceil(upgrade.basePrice*owned*0.08*((100-condition)/100)));
+function triggerReactorExplosion(id){
+    if(!saveData) return;
+
+    const state=getOperationState();
+    const upgrade=upgradesData.find(item=>item.id===id);
+    if(!upgrade) return;
+
+    const owned=Number(saveData.upgrades[id]||0);
+    if(owned<=0) return;
+
+    // Une explosion retire un exemplaire du réacteur et une partie de l'argent.
+    saveData.upgrades[id]=Math.max(0,owned-1);
+    state[id]=0;
+    state.explosions=Math.floor(Number(state.explosions||0))+1;
+    const loss=Math.min(saveData.money,Math.max(0,saveData.money*0.10));
+    saveData.money-=loss;
+
+    notify("💥 INCIDENT : "+upgrade.name+" a explosé ! Réacteur perdu, -10 % d'argent.");
 }
 
-function updateMaintenance(){
+function updateReactorOperation(){
     if(!saveData || isBanned) return false;
-    const state=getMaintenanceState();
+
+    const state=getOperationState();
     const now=Date.now();
     const last=Number(state.lastTick)||now;
     const elapsedMinutes=Math.max(0,Math.min(10,(now-last)/60000));
     if(elapsedMinutes<=0){state.lastTick=now;return false;}
+
     let changed=false;
-    for(const id of reactorMaintenanceIds){
+
+    for(const id of reactorOperationIds){
         const owned=Number(saveData.upgrades[id]||0);
-        if(owned<=0) continue;
-        const wearPerMinute=0.75*(1+Math.min(owned-1,20)*0.03);
+        if(owned<=0){
+            state[id]=0;
+            continue;
+        }
+
+        const riskGain=reactorRiskBase[id]*(1+Math.min(owned-1,20)*0.04);
         const before=Number(state[id]||0);
-        state[id]=Math.max(0,before-wearPerMinute*elapsedMinutes);
+        state[id]=Math.min(100,before+riskGain*elapsedMinutes);
         if(state[id]!==before) changed=true;
+
+        const chance=reactorExplosionChancePerMinute(id);
+        if(chance>0){
+            const probability=1-Math.pow(1-chance,elapsedMinutes);
+            if(Math.random()<probability){
+                triggerReactorExplosion(id);
+                changed=true;
+            }
+        }
     }
+
     state.lastTick=now;
     return changed;
 }
 
-function maintainReactor(upgrade){
-    if(isBanned || !saveData || !isMaintenanceReactor(upgrade.id)) return;
-    const state=getMaintenanceState();
-    const condition=Number(state[upgrade.id]||0);
-    const owned=Number(saveData.upgrades[upgrade.id]||0);
-    if(owned<=0) return;
-    if(condition>=100){notify("🛠️ "+upgrade.name+" est déjà à 100 %.");return;}
-    const cost=getMaintenanceCost(upgrade);
-    if(saveData.money<cost){notify("❌ Maintenance : il te manque "+formatNumber(cost-saveData.money)+" "+getCurrencySymbol()+".");return;}
-    saveData.money-=cost;
-    state[upgrade.id]=100;
-    state.lastTick=Date.now();
-    notify("🛠️ "+upgrade.name+" entretenu à 100 % !");
-    update();
-}
+function updateReactorOperationUI(upgrade){
+    if(!isOperationReactor(upgrade.id)) return;
 
-function getMaintenanceColor(condition){
-    if(condition<=20) return "#ff5f5f";
-    if(condition<=50) return "#ffb347";
-    return "#62e89b";
-}
-
-function updateReactorMaintenanceUI(upgrade){
-    if(!isMaintenanceReactor(upgrade.id)) return;
-    const state=getMaintenanceState();
     const owned=Number(saveData?.upgrades?.[upgrade.id]||0);
-    const condition=owned>0?Number(state[upgrade.id]||0):100;
-    const fill=document.getElementById(upgrade.id+"ConditionFill");
-    const label=document.getElementById(upgrade.id+"Condition");
-    const cost=document.getElementById(upgrade.id+"MaintenanceCost");
-    const button=document.getElementById(upgrade.id+"Maintenance");
-    if(fill){fill.style.width=Math.max(0,Math.min(100,condition))+"%";fill.style.background=getMaintenanceColor(condition);}
-    if(label){label.textContent=owned>0?condition.toFixed(1)+" %":"Aucun réacteur";label.style.color=getMaintenanceColor(condition);}
-    if(cost){const price=getMaintenanceCost(upgrade);cost.textContent=price>0?formatNumber(price)+" "+getCurrencySymbol():"Aucune maintenance";}
-    if(button){const price=getMaintenanceCost(upgrade);button.disabled=owned<=0||condition>=100||saveData.money<price;button.textContent=condition>=100?"✓ 100 %":"🛠️ Maintenir";}
-}
+    const risk=owned>0?getReactorRisk(upgrade.id):0;
+    const fill=document.getElementById(upgrade.id+"RiskFill");
+    const label=document.getElementById(upgrade.id+"Risk");
+    const status=document.getElementById(upgrade.id+"OperationStatus");
+    const chance=document.getElementById(upgrade.id+"ExplosionChance");
 
+    if(fill){
+        fill.style.width=Math.max(0,Math.min(100,risk))+"%";
+        fill.style.background=getRiskColor(risk);
+    }
+    if(label){
+        label.textContent=owned>0?risk.toFixed(1)+" %":"Arrêté";
+        label.style.color=getRiskColor(risk);
+    }
+    if(status){
+        status.innerHTML=owned>0?"⚙️ "+getRiskLabel(risk):"⏹️ Aucun réacteur";
+    }
+    if(chance){
+        const perMinute=reactorExplosionChancePerMinute(upgrade.id)*100;
+        chance.textContent=owned>0?"Risque d'incident : "+perMinute.toFixed(3)+" %/min":"Aucun risque";
+    }
+}
 
 /* =========================================================
    GAINS
@@ -4867,6 +5046,8 @@ function getPersonnelMultiplier(){
             Math.pow(2, diatlov);
     }
 
+    multiplier *= getEmployeeProductionMultiplier();
+
     return multiplier;
 }
 
@@ -4889,7 +5070,8 @@ function getBaseClickValue(){
 
         if(
             upgrade.special === "akimov" ||
-            upgrade.special === "diatlov"
+            upgrade.special === "diatlov" ||
+            upgrade.special === "employee"
         ){
             continue;
         }
@@ -4939,7 +5121,8 @@ function getPerSecond(){
 
         if(
             upgrade.special === "akimov" ||
-            upgrade.special === "diatlov"
+            upgrade.special === "diatlov" ||
+            upgrade.special === "employee"
         ){
             continue;
         }
@@ -5210,20 +5393,18 @@ function createShop(){
 
             </div>
 
-            ${isMaintenanceReactor(upgrade.id) ? `
-                <div class="reactor-maintenance">
-                    <div class="reactor-maintenance-head">
-                        <span class="reactor-maintenance-label">🛠️ Maintenance</span>
-                        <span class="reactor-condition" id="${upgrade.id}Condition">100 %</span>
+            ${isOperationReactor(upgrade.id) ? `
+                <div class="reactor-operation">
+                    <div class="reactor-operation-head">
+                        <span class="reactor-operation-label">⚙️ Fonctionnement</span>
+                        <span class="reactor-risk" id="${upgrade.id}Risk">0.0 %</span>
                     </div>
-                    <div class="reactor-condition-bar">
-                        <div class="reactor-condition-fill" id="${upgrade.id}ConditionFill"></div>
+                    <div class="reactor-risk-bar">
+                        <div class="reactor-risk-fill" id="${upgrade.id}RiskFill"></div>
                     </div>
-                    <div class="reactor-maintenance-info">
-                        <span class="reactor-maintenance-cost" id="${upgrade.id}MaintenanceCost">Aucune maintenance</span>
-                        <button class="reactor-maintenance-btn" id="${upgrade.id}Maintenance" type="button">
-                            🛠️ Maintenir
-                        </button>
+                    <div class="reactor-operation-info">
+                        <span class="reactor-operation-status" id="${upgrade.id}OperationStatus">⚙️ Stable</span>
+                        <span class="reactor-operation-status" id="${upgrade.id}ExplosionChance">Risque d'incident : 0.000 %/min</span>
                     </div>
                 </div>
             ` : ""}
@@ -5269,17 +5450,7 @@ function createShop(){
                 }
             );
 
-        if(isMaintenanceReactor(upgrade.id)){
-            const maintenanceButton =
-                document.getElementById(upgrade.id+"Maintenance");
 
-            if(maintenanceButton){
-                maintenanceButton.addEventListener(
-                    "click",
-                    ()=>maintainReactor(upgrade)
-                );
-            }
-        }
 
     }
 }
@@ -5410,6 +5581,26 @@ function buyUpgrade(
     }
 
 
+    const ownedBefore =
+        Number(
+            saveData.upgrades[upgrade.id] || 0
+        );
+
+    /* Les personnages uniques (Akimov / Diatlov) doivent
+       être vérifiés AVANT de retirer l'argent. */
+    if(
+        upgrade.maxOwned &&
+        ownedBefore >= upgrade.maxOwned
+    ){
+        notify(
+            "❌ "+
+            getUpgradeTranslation(upgrade).name+
+            " est déjà recruté."
+        );
+        return;
+    }
+
+
     const price =
         getPrice(
             upgrade
@@ -5444,23 +5635,6 @@ function buyUpgrade(
     saveData.money -=
         price;
 
-
-    const ownedBefore =
-        Number(
-            saveData.upgrades[upgrade.id] || 0
-        );
-
-    if(
-        upgrade.maxOwned &&
-        ownedBefore >= upgrade.maxOwned
-    ){
-        notify(
-            "❌ "+
-            getUpgradeTranslation(upgrade).name+
-            " est déjà au maximum."
-        );
-        return;
-    }
 
     saveData.upgrades[
         upgrade.id
@@ -5776,11 +5950,12 @@ async function prestige(){
 
     }
 
-    saveData.upgrades._maintenance = {
-        rbmk1000:100,
-        rbmk1500:100,
-        chernobyl:100,
-        lastTick:Date.now()
+    saveData.upgrades._operation = {
+        rbmk1000:0,
+        rbmk1500:0,
+        chernobyl:0,
+        lastTick:Date.now(),
+        explosions:0
     };
 
 
@@ -5976,9 +6151,21 @@ function update(){
                 saveData.money <
                 price;
 
+            if(maxReached){
+                buyElement.textContent = "✓ Déjà recruté";
+            }else{
+                buyElement.innerHTML =
+                    translations[currentLang].buy+
+                    " · <span id=\""+upgrade.id+"Price\">"+
+                    formatNumber(price)+
+                    "</span> <span class=\"currency-symbol\">"+
+                    getCurrencySymbol()+
+                    "</span>";
+            }
+
         }
 
-        updateReactorMaintenanceUI(upgrade);
+        updateReactorOperationUI(upgrade);
 
     }
 
@@ -6088,8 +6275,8 @@ setInterval(
             return;
         }
 
-        const maintenanceChanged = updateMaintenance();
-        if(maintenanceChanged){
+        const reactorChanged = updateReactorOperation();
+        if(reactorChanged){
             update();
         }
 
