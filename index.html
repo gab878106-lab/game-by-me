@@ -272,28 +272,126 @@ header{
 }
 
 #clickButton{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
     width:235px;
     height:235px;
+    border:8px solid #651515;
     border-radius:50%;
-    border:0;
     cursor:pointer;
-    color:white;
+    color:#fff4e8;
     font-weight:900;
-    font-size:27px;
-    background:radial-gradient(circle at 35% 28%,#9389ff,#5d50ea 52%,#322798);
+    background:radial-gradient(circle at 35% 25%,#ff7777,#d71920 48%,#7f080e 82%);
     box-shadow:
-        0 0 30px rgba(108,92,255,.6),
-        0 0 100px rgba(108,92,255,.23),
-        inset 0 0 35px rgba(255,255,255,.14);
-    transition:.1s;
+        0 0 0 4px #2b0a0a,
+        0 0 30px rgba(255,35,35,.55),
+        0 0 85px rgba(220,20,20,.24),
+        inset 0 0 28px rgba(60,0,0,.45);
+    text-shadow:0 2px 4px rgba(0,0,0,.6);
+    transition:transform .1s,filter .1s;
 }
 
 #clickButton:hover{
     transform:scale(1.03);
+    filter:brightness(1.12);
 }
 
 #clickButton:active{
     transform:scale(.91);
+}
+
+/* AZ-5 : impulsion d'urgence à chaque clic */
+#clickButton{
+    position:relative;
+    isolation:isolate;
+}
+#clickButton::before{
+    content:"";
+    position:absolute;
+    inset:-17px;
+    border:3px solid rgba(255,45,45,0);
+    border-radius:50%;
+    pointer-events:none;
+    z-index:-1;
+}
+#clickButton.az5-pressed::before{
+    animation:az5Shock .55s ease-out;
+}
+#clickButton.az5-pressed{
+    animation:az5ButtonPulse .42s ease-out;
+}
+body.az5-alarm::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9998;
+    pointer-events:none;
+    background:rgba(255,0,0,0);
+    animation:az5ScreenFlash .42s ease-out;
+}
+.az5-alert{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    max-width:calc(100vw - 28px);
+    padding:12px 18px;
+    border:2px solid #ff7777;
+    border-radius:10px;
+    background:linear-gradient(135deg,#7f080e,#260306);
+    color:#fff;
+    font-weight:900;
+    letter-spacing:1px;
+    text-align:center;
+    box-shadow:0 0 28px rgba(255,0,0,.7);
+    animation:az5Alert .95s ease-out forwards;
+    pointer-events:none;
+}
+@keyframes az5Shock{
+    0%{inset:-3px;border-color:rgba(255,70,70,.95);opacity:1}
+    100%{inset:-35px;border-color:rgba(255,30,30,0);opacity:0}
+}
+@keyframes az5ButtonPulse{
+    0%,100%{filter:brightness(1)}
+    20%{filter:brightness(1.65)}
+    45%{filter:brightness(.82)}
+    70%{filter:brightness(1.35)}
+}
+@keyframes az5ScreenFlash{
+    0%,100%{background:rgba(255,0,0,0)}
+    18%{background:rgba(255,0,0,.19)}
+    38%{background:rgba(255,0,0,.04)}
+    58%{background:rgba(255,0,0,.14)}
+}
+@keyframes az5Alert{
+    0%{opacity:0;top:0}
+    12%,65%{opacity:1;top:18px}
+    100%{opacity:0;top:8px}
+}
+@media (prefers-reduced-motion:reduce){
+    #clickButton.az5-pressed,
+    #clickButton.az5-pressed::before,
+    body.az5-alarm::after,
+    .az5-alert{animation-duration:.01ms!important}
+}
+
+.az5-symbol{
+    font-size:42px;
+    line-height:1;
+}
+
+.az5-label{
+    font-size:32px;
+    letter-spacing:2px;
+}
+
+.az5-gain{
+    font-size:17px;
+    color:#ffe0bd;
 }
 
 .floating{
@@ -1104,6 +1202,244 @@ header{
         flex:1;
     }
 }
+
+
+/* =========================================================
+   SKALA — esthétique terminal industriel soviétique
+   Habillage visuel uniquement : aucune logique du jeu modifiée.
+========================================================= */
+:root{
+    --skala-bg:#030906;
+    --skala-panel:#07130d;
+    --skala-panel-2:#0a1a11;
+    --skala-line:#28583a;
+    --skala-green:#a5ffb5;
+    --skala-green-bright:#58ff82;
+    --skala-dim:#6eaa7d;
+    --skala-amber:#ffc85a;
+    --skala-red:#ff4141;
+}
+html{
+    background:var(--skala-bg);
+    color-scheme:dark;
+}
+body{
+    color:var(--skala-green)!important;
+    font-family:"Courier New",Consolas,monospace!important;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(94,255,135,.035) 0px,
+            rgba(94,255,135,.035) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+        radial-gradient(ellipse at center, #0a1a10 0%, #030906 78%)!important;
+    text-shadow:0 0 5px rgba(88,255,130,.16);
+}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9997;
+    pointer-events:none;
+    opacity:.12;
+    background:repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,.55) 3px,
+        rgba(0,0,0,.55) 4px
+    );
+}
+button,input,select,textarea{
+    font-family:"Courier New",Consolas,monospace!important;
+}
+button,input,select,textarea,
+.panel,.auth-box,.ban-box,.admin-window,
+.prestige-box,.super-rebirth-box,.shard-shop-box,
+.upgrade,.shard-item,.stat,.admin-stat{
+    border-radius:2px!important;
+}
+.panel,.auth-box,.ban-box,.admin-window,
+.prestige-box,.super-rebirth-box,.shard-shop-box{
+    color:var(--skala-green)!important;
+    background:linear-gradient(145deg,rgba(7,19,12,.98),rgba(3,10,6,.98))!important;
+    border:1px solid var(--skala-line)!important;
+    box-shadow:inset 0 0 0 1px rgba(88,255,130,.035),0 0 18px rgba(20,110,48,.09)!important;
+    backdrop-filter:none!important;
+}
+.authScreen,#authScreen,#banScreen{
+    background:var(--skala-bg)!important;
+}
+.auth-logo,.logo,.admin-logo{
+    color:var(--skala-green-bright)!important;
+    text-shadow:0 0 12px rgba(88,255,130,.35)!important;
+    letter-spacing:3px!important;
+}
+.auth-subtitle,.auth-note,.shop-subtitle,.prestige-desc,
+.shard-shop-desc,.admin-subtitle,.admin-muted,
+.upgrade-description,.shard-item-desc{
+    color:var(--skala-dim)!important;
+}
+.auth-label,.label,.stat-label,.money-title,
+.prestige-title,.shard-shop-title,.admin-title,
+.admin-stat-label,.reactor-operation-label{
+    color:var(--skala-green)!important;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+.auth-input,.admin-search,.admin-search-wrap input,
+input,select,textarea{
+    color:var(--skala-green)!important;
+    background:#020704!important;
+    border:1px solid var(--skala-line)!important;
+    outline-color:var(--skala-green-bright)!important;
+    box-shadow:inset 0 0 8px rgba(0,0,0,.55)!important;
+}
+input::placeholder,textarea::placeholder{
+    color:#547d5e!important;
+}
+button,.buy,.shard-buy,.auth-submit,.logout,
+.maintenance-button,.admin-btn,.auth-tab,
+#prestigeButton,#superPrestigeButton{
+    color:var(--skala-green)!important;
+    background:linear-gradient(#102819,#07140b)!important;
+    border:1px solid #39734b!important;
+    box-shadow:inset 0 0 0 1px rgba(165,255,181,.035)!important;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    transition:background .12s linear,border-color .12s linear,filter .12s linear!important;
+}
+button:hover,.buy:hover,.shard-buy:hover,.auth-submit:hover,
+.logout:hover,.maintenance-button:hover,.admin-btn:hover{
+    background:#173c23!important;
+    border-color:var(--skala-green-bright)!important;
+    filter:brightness(1.08);
+}
+button:disabled,.buy:disabled,.shard-buy:disabled{
+    color:#55715c!important;
+    background:#08100b!important;
+    border-color:#203b29!important;
+    opacity:.62;
+}
+.auth-tab.active,.auth-tab[aria-selected="true"]{
+    color:#020704!important;
+    background:var(--skala-green-bright)!important;
+    border-color:var(--skala-green-bright)!important;
+    text-shadow:none!important;
+}
+.header-pill,.language-pill,.user-pill,.employee-badge,
+.admin-badge,.owned,.header-stats{
+    color:var(--skala-green)!important;
+    background:#07150b!important;
+    border:1px solid var(--skala-line)!important;
+    box-shadow:none!important;
+}
+.money,.stat-value,.admin-stat-value,.prestige-stat,
+.shard-shop-balance,.xp-info{
+    color:var(--skala-green-bright)!important;
+    text-shadow:0 0 7px rgba(88,255,130,.18);
+}
+.stats,.header-stats,.admin-stats{
+    gap:8px!important;
+}
+.stat,.admin-stat{
+    color:var(--skala-green)!important;
+    background:rgba(5,17,9,.9)!important;
+    border:1px solid var(--skala-line)!important;
+    box-shadow:inset 0 0 12px rgba(0,0,0,.2)!important;
+}
+.stat-icon,.upgrade-icon,.shard-item-icon{
+    filter:saturate(.65);
+}
+.upgrade,.shard-item,.admin-player,.admin-table-wrap{
+    color:var(--skala-green)!important;
+    background:linear-gradient(90deg,rgba(8,24,13,.97),rgba(4,13,7,.97))!important;
+    border:1px solid #214b30!important;
+    box-shadow:none!important;
+}
+.upgrade:hover,.shard-item:hover{
+    border-color:#58a96d!important;
+    background:#0b2112!important;
+}
+.upgrade-name,.shard-item-name,.admin-player strong{
+    color:#c1ffcc!important;
+}
+.upgrade-description,.shard-item-desc{
+    line-height:1.5;
+}
+.shop-header,.reactor-operation-head,.shard-shop-header,.admin-top{
+    border-bottom:1px dashed var(--skala-line)!important;
+}
+.xp-box,.xp-progress,.reactor-risk-bar{
+    background:#020704!important;
+    border:1px solid var(--skala-line)!important;
+    border-radius:0!important;
+}
+.xp-progress>*, .reactor-risk-fill{
+    border-radius:0!important;
+}
+.xp-progress{
+    box-shadow:inset 0 0 5px #000!important;
+}
+#clickButton{
+    border:2px solid #ff4141!important;
+    background:radial-gradient(circle at 50% 35%,#b51c1c 0%,#650707 66%,#260303 100%)!important;
+    color:#fff!important;
+    box-shadow:0 0 14px rgba(255,30,30,.25),inset 0 0 0 2px rgba(255,255,255,.05)!important;
+    text-shadow:0 0 8px rgba(255,255,255,.3)!important;
+}
+#clickButton:hover{
+    border-color:#ff7777!important;
+    background:radial-gradient(circle at 50% 35%,#d52424 0%,#7c0808 66%,#310303 100%)!important;
+}
+.az5-alert{
+    font-family:"Courier New",Consolas,monospace!important;
+    border:2px solid #ff4141!important;
+    border-radius:0!important;
+    background:#260303!important;
+    box-shadow:0 0 24px rgba(255,0,0,.35)!important;
+}
+#notification,.auth-message,.admin-message{
+    border-radius:0!important;
+    font-family:"Courier New",Consolas,monospace!important;
+}
+table,.admin-table{
+    border-collapse:collapse!important;
+    color:var(--skala-green)!important;
+}
+th,td,.admin-table th,.admin-table td{
+    border-color:var(--skala-line)!important;
+}
+th,.admin-table th{
+    color:#c1ffcc!important;
+    background:#0b2112!important;
+    text-transform:uppercase;
+}
+.admin-toolbar,.admin-content{
+    color:var(--skala-green)!important;
+}
+::selection{
+    color:#020704!important;
+    background:var(--skala-green-bright)!important;
+}
+a{
+    color:var(--skala-green-bright)!important;
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+        transition:none!important;
+        animation-duration:.01ms!important;
+    }
+}
+@media(max-width:600px){
+    body::before{opacity:.07}
+    .panel,.auth-box,.ban-box,.admin-window{
+        box-shadow:inset 0 0 0 1px rgba(88,255,130,.025)!important;
+    }
+}
+
 </style>
 </head>
 
@@ -1470,11 +1806,16 @@ header{
 
             <div class="click-zone">
 
-                <button id="clickButton">
-
-                    +<span id="clickValue">1</span>
-                    <span class="currency-symbol">€</span>
-
+                <button id="clickButton"
+                        type="button"
+                        aria-label="AZ-5 : cliquer pour produire des MW"
+                        title="AZ-5 — commande de production SKALA">
+                    <span class="az5-symbol" aria-hidden="true">☢</span>
+                    <span class="az5-label">AZ-5</span>
+                    <span class="az5-gain">
+                        +<span id="clickValue">1</span>
+                        <span class="currency-symbol">€</span>
+                    </span>
                 </button>
 
             </div>
@@ -2547,8 +2888,8 @@ for(let i=1;i<=1000;i++){
         icon:["🏭","🛰️","🧪","⚙️","🌐","🔋","🧬","💠"][i%8],
         name:"Extension d’empire "+i,
         description:"Amélioration progressive : production renforcée",
-        basePrice:Math.min(1e250,Math.pow(10,15+i*.025)),
-        priceGrowth:1.035+(i%12)*.001,
+        basePrice:Math.min(1e300,Math.pow(10,15+i*.12)),
+        priceGrowth:1.045+(i%12)*.002,
         click:amount*.1,
         auto:amount,
         category:"industry",
@@ -4782,15 +5123,10 @@ function translateAuthError(
 
 function getCurrencySymbol(){
 
-    if(currentLang === "en"){
-        return "£";
-    }
-
-    if(currentLang === "ru"){
-        return "₽";
-    }
-
-    return "€";
+    // Unité d'affichage SKALA : la production est exprimée en MW
+    // dans toutes les langues. Les valeurs internes de sauvegarde
+    // restent inchangées pour préserver les parties existantes.
+    return "MW";
 }
 
 
@@ -4826,7 +5162,7 @@ function updateCurrencySymbols(){
         getCurrencySymbol();
 
     const currencyName =
-        symbol + " Clicker";
+        "SKALA · MW Clicker";
 
     document
         .querySelectorAll(
@@ -5273,38 +5609,20 @@ function formatNumber(
         Math.abs(number);
 
 
+    // Notation compacte dès 100, puis suffixes usuels et notation exponentielle.
     const units = [
-
-        {
-            value:1e18,
-            name:"Qi"
-        },
-
-        {
-            value:1e15,
-            name:"Qa"
-        },
-
-        {
-            value:1e12,
-            name:"T"
-        },
-
-        {
-            value:1e9,
-            name:"Md"
-        },
-
-        {
-            value:1e6,
-            name:"M"
-        },
-
-        {
-            value:1e3,
-            name:"k"
-        }
-
+        {value:1e300,name:"e300"}, {value:1e270,name:"e270"},
+        {value:1e240,name:"e240"}, {value:1e210,name:"e210"},
+        {value:1e180,name:"e180"}, {value:1e150,name:"e150"},
+        {value:1e120,name:"e120"}, {value:1e100,name:"e100"},
+        {value:1e90,name:"e90"}, {value:1e80,name:"e80"},
+        {value:1e70,name:"e70"}, {value:1e60,name:"e60"},
+        {value:1e50,name:"e50"}, {value:1e40,name:"e40"},
+        {value:1e30,name:"e30"}, {value:1e24,name:"e24"},
+        {value:1e21,name:"e21"}, {value:1e18,name:"Qi"},
+        {value:1e15,name:"Qa"}, {value:1e12,name:"T"},
+        {value:1e9,name:"Md"}, {value:1e6,name:"M"},
+        {value:1e3,name:"k"}, {value:1e2,name:"h"}
     ];
 
 
@@ -5854,6 +6172,29 @@ document
             }
 
 
+            // Effets visuels AZ-5 : ils ne modifient pas les gains du clic.
+            const az5Button = event.currentTarget;
+            az5Button.classList.remove("az5-pressed");
+            document.body.classList.remove("az5-alarm");
+            void az5Button.offsetWidth; // relance l'animation si on clique rapidement
+            az5Button.classList.add("az5-pressed");
+            document.body.classList.add("az5-alarm");
+
+            const oldAlert = document.getElementById("az5Alert");
+            if (oldAlert) oldAlert.remove();
+            const az5Alert = document.createElement("div");
+            az5Alert.id = "az5Alert";
+            az5Alert.className = "az5-alert";
+            az5Alert.setAttribute("role", "status");
+            az5Alert.textContent = "☢ AZ-5 ACTIVÉ — IMPULSION D'URGENCE ☢";
+            document.body.appendChild(az5Alert);
+
+            window.setTimeout(() => {
+                az5Button.classList.remove("az5-pressed");
+                document.body.classList.remove("az5-alarm");
+                az5Alert.remove();
+            }, 1000);
+
             const gain =
                 getClickValue();
 
@@ -5916,7 +6257,7 @@ document
 ========================================================= */
 
 const PRESTIGE_REQUIREMENT =
-    1000000;
+    1e12;
 
 
 function getPrestigeGain(){
@@ -6100,13 +6441,13 @@ function createOverpeterShop(){
     }
 }
 function getSuperPrestigeGain(){
-    if(!saveData||Number(saveData.prestige||0)<10||Number(saveData.totalEarned||0)<1e15)return 0;
-    return Math.max(1,Math.floor(Math.sqrt(Number(saveData.totalEarned)/1e15)));
+    if(!saveData||Number(saveData.prestige||0)<10||Number(saveData.totalEarned||0)<1e24)return 0;
+    return Math.max(1,Math.floor(Math.sqrt(Number(saveData.totalEarned)/1e24)));
 }
 async function superPrestige(){
     if(!saveData||isBanned)return;
     const gain=getSuperPrestigeGain();
-    if(gain<=0){notify("🔒 Il faut au moins 10 Renaissances et 1 Qa de gains pour la Super Renaissance.");return;}
+    if(gain<=0){notify("🔒 Il faut au moins 10 Renaissances et 1e24 de gains pour la Super Renaissance.");return;}
     const promptText=currentLang==="en"?"Launch a Super Rebirth? Money, levels and normal upgrades will reset. Rebirth shards and Overpeter bonuses are kept. You gain "+gain+" Overpeter fragment(s).":currentLang==="ru"?"Начать Супер-возрождение? Деньги, уровни и обычные улучшения сбросятся. Осколки возрождения и бонусы Оверпетер сохранятся. Вы получите фрагменты: "+gain+".":"Lancer une Super Renaissance ? L'argent, les niveaux et les améliorations normales seront réinitialisés. Les Éclats et bonus Overpeter seront conservés. Tu gagneras "+gain+" fragment(s) Overpeter.";
     if(!confirm("🌌 "+promptText))return;
     saveData.superPrestige=Number(saveData.superPrestige||0)+1;
@@ -6150,7 +6491,7 @@ function update(){
     if(superButton){
         const gain=getSuperPrestigeGain();
         superButton.disabled=gain<=0;
-        superButton.textContent=gain>0?(currentLang==="en"?"🌌 Super Rebirth · +":"🌌 Super Renaissance · +")+formatNumber(gain)+(currentLang==="ru"?" фрагм.":" fragment(s)"):(currentLang==="en"?"🔒 Requires 10 Rebirths + 1 Qa earned":currentLang==="ru"?"🔒 Нужно 10 возрождений + 1 Qa":"🔒 Super Renaissance · 10 Renaissances + 1 Qa de gains");
+        superButton.textContent=gain>0?(currentLang==="en"?"🌌 Super Rebirth · +":"🌌 Super Renaissance · +")+formatNumber(gain)+(currentLang==="ru"?" фрагм.":" fragment(s)"):(currentLang==="en"?"🔒 Requires 10 Rebirths + 1e24 earned":currentLang==="ru"?"🔒 Нужно 10 возрождений + 1e24":"🔒 Super Renaissance · 10 Renaissances + 1e24 de gains");
     }
     createOverpeterShop();
 
