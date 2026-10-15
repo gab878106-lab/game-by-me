@@ -448,6 +448,13 @@ header{
     background:#292a31;
 }
 
+.super-rebirth-box{margin-top:18px;padding:16px;border:1px solid rgba(160,120,255,.45);border-radius:16px;background:linear-gradient(135deg,rgba(87,45,145,.22),rgba(15,20,45,.8))}
+.super-rebirth-box p{color:#aaa9c5;line-height:1.5;font-size:12px}
+#superPrestigeButton{width:100%;padding:13px;border:0;border-radius:12px;cursor:pointer;font-weight:900;color:white;background:linear-gradient(90deg,#7c3aed,#2563eb)}
+#superPrestigeButton:disabled{opacity:.45;cursor:not-allowed}
+.maintenance-button{width:100%;margin-top:8px;padding:8px;border:1px solid rgba(80,200,160,.5);border-radius:9px;background:rgba(30,130,95,.15);color:inherit;cursor:pointer;font-weight:700}
+.maintenance-button:disabled{opacity:.45;cursor:not-allowed}
+
 /* ================= SHOP ================= */
 
 .shop-header{
@@ -1149,7 +1156,7 @@ header{
                 required
             >
 
-            <button class="auth-submit" type="submit">
+            <button class="auth-submit" id="loginSubmit" type="button">
                 🔑 Se connecter
             </button>
 
@@ -1202,7 +1209,7 @@ header{
                 required
             >
 
-            <button class="auth-submit" type="submit">
+            <button class="auth-submit" id="registerSubmit" type="button">
                 🚀 Créer mon compte
             </button>
 
@@ -1613,6 +1620,16 @@ header{
                 </div>
                 <p class="shard-shop-desc">Dépense tes Éclats de Renaissance pour débloquer des bonus permanents. Les améliorations achetées survivent aux prochaines Renaissances.</p>
                 <div class="shard-shop-list" id="shardShopList"></div>
+            </div>
+            <div class="super-rebirth-box">
+                <div class="prestige-title">🌌 Super Renaissance</div>
+                <p id="superPrestigeDescription">Réinitialise la progression normale pour gagner des Fragments Overpeter. Les bonus Overpeter restent acquis.</p>
+                <div class="prestige-info">
+                    <div class="prestige-stat"><strong id="superPrestigeLevel">0</strong><span id="superPrestigeLabel">SUPER RENAISSANCES</span></div>
+                    <div class="prestige-stat"><strong id="overpeterShards">0</strong><span id="overpeterShardsLabel">FRAGMENTS OVERPETER</span></div>
+                </div>
+                <button id="superPrestigeButton" type="button" disabled>🔒 Super Renaissance indisponible</button>
+                <div class="shard-shop-list" id="overpeterShopList"></div>
             </div>
 </div>
 
@@ -2522,6 +2539,33 @@ const upgradesData = [
 
 ];
 
+// 1 000 améliorations normales générées pour prolonger la progression.
+for(let i=1;i<=1000;i++){
+    const amount=Math.min(1e100,Math.pow(10,Math.min(100,3+i*0.08)));
+    upgradesData.push({
+        id:"empireUpgrade"+String(i).padStart(4,"0"),
+        icon:["🏭","🛰️","🧪","⚙️","🌐","🔋","🧬","💠"][i%8],
+        name:"Extension d’empire "+i,
+        description:"Amélioration progressive : production renforcée",
+        basePrice:Math.min(1e250,Math.pow(10,15+i*.025)),
+        priceGrowth:1.035+(i%12)*.001,
+        click:amount*.1,
+        auto:amount,
+        category:"industry",
+        generatedUpgrade:true,
+        tierIndex:i
+    });
+}
+// Upgrades Overpeter : prix géants, dont 10^60 et au-delà.
+for(let i=1;i<=12;i++){
+    upgradesData.push({
+        id:"overpeter"+i,icon:"🪐",name:"Overpeter Ω-"+String(i).padStart(2,"0"),
+        description:"Production cosmique · prix exponentiel",
+        basePrice:Math.pow(10,Math.min(300,53+i*20)),priceGrowth:1.25,
+        click:Math.pow(10,Math.min(240,35+i*12)),auto:Math.pow(10,Math.min(250,40+i*14)),
+        category:"overpeter",generatedUpgrade:true,tierIndex:1000+i
+    });
+}
 
 /* =========================================================
    SAVE PAR DÉFAUT
@@ -2550,6 +2594,8 @@ function defaultSave(){
         explosions:0
     };
 
+    upgrades._overpeter={superPrestige:0,overpeterShards:0,overpeterShop:{power:0,click:0,auto:0,spent:0}};
+
     return {
 
         money:0,
@@ -2566,6 +2612,9 @@ function defaultSave(){
         prestige:0,
 
         prestigeShards:0,
+        superPrestige:0,
+        overpeterShards:0,
+        overpeterShop:{power:0,click:0,auto:0,spent:0},
 
         clicks:0,
 
@@ -2636,6 +2685,16 @@ function repairSave(data){
             Math.floor(Number(data.prestige));
     }
 
+    const overpeterData=(data.upgrades&&data.upgrades._overpeter)||{};
+    const superPrestige=Number(data.superPrestige??overpeterData.superPrestige??0);
+    if(Number.isFinite(superPrestige)&&superPrestige>=0) fresh.superPrestige=Math.floor(superPrestige);
+    const overpeterShards=Number(data.overpeterShards??overpeterData.overpeterShards??0);
+    if(Number.isFinite(overpeterShards)&&overpeterShards>=0) fresh.overpeterShards=Math.floor(overpeterShards);
+    const savedOverpeterShop=data.overpeterShop||overpeterData.overpeterShop;
+    if(savedOverpeterShop&&typeof savedOverpeterShop==="object"){
+        for(const key of ["power","click","auto","spent"]){const v=Number(savedOverpeterShop[key]||0);if(Number.isFinite(v)&&v>=0)fresh.overpeterShop[key]=Math.floor(v);}
+    }
+    fresh.upgrades._overpeter={superPrestige:fresh.superPrestige,overpeterShards:fresh.overpeterShards,overpeterShop:fresh.overpeterShop};
     const shards =
         data.prestigeShards ??
         data.prestige_shards;
@@ -4510,6 +4569,7 @@ async function save(){
 
 
     updateReactorOperation();
+    saveData.upgrades._overpeter={superPrestige:Number(saveData.superPrestige||0),overpeterShards:Number(saveData.overpeterShards||0),overpeterShop:saveData.overpeterShop||{power:0,click:0,auto:0,spent:0}};
 
     saveInProgress =
         true;
@@ -4826,7 +4886,9 @@ function getPrestigeMultiplier(){
     const totalShards = saveData.prestigeShards + Number(state.spent || 0);
     const shopPower = Number(state.power || 0);
 
-    return 1 + totalShards * 0.25 + shopPower * 0.05;
+    const superLevels=Number(saveData.superPrestige||0);
+    const overpeterPower=Number(saveData.overpeterShop?.power||0);
+    return (1+totalShards*.25+shopPower*.05)*Math.pow(2,superLevels)*Math.pow(2,overpeterPower);
 }
 
 
@@ -4990,6 +5052,22 @@ function updateReactorOperation(){
     return changed;
 }
 
+function performReactorMaintenance(id){
+    if(!saveData||isBanned)return;
+    const upgrade=upgradesData.find(item=>item.id===id);
+    const owned=Number(saveData.upgrades[id]||0);
+    if(!upgrade||owned<=0){notify("❌ Aucun réacteur à entretenir.");return;}
+    const state=getOperationState();
+    const price=Math.max(1,Math.floor(upgrade.basePrice*.05));
+    if(saveData.money<price){notify("❌ Fonds insuffisants pour la maintenance : "+formatNumber(price)+" "+getCurrencySymbol()+".");return;}
+    if(Number(state[id]||0)<=0){notify("✅ Le réacteur n'a pas besoin de maintenance.");return;}
+    saveData.money-=price;
+    state[id]=Math.max(0,Number(state[id]||0)-35);
+    state.lastTick=Date.now();
+    notify("🔧 Maintenance terminée : le réacteur reste en fonctionnement, risque réduit de 35 points.");
+    update();
+}
+
 function updateReactorOperationUI(upgrade){
     if(!isOperationReactor(upgrade.id)) return;
 
@@ -4999,6 +5077,14 @@ function updateReactorOperationUI(upgrade){
     const label=document.getElementById(upgrade.id+"Risk");
     const status=document.getElementById(upgrade.id+"OperationStatus");
     const chance=document.getElementById(upgrade.id+"ExplosionChance");
+    const maintenanceButton=document.getElementById(upgrade.id+"Maintenance");
+    if(maintenanceButton){
+        const cost=Math.max(1,Math.floor(upgrade.basePrice*.05));
+        maintenanceButton.disabled=owned<=0||!saveData||saveData.money<cost||risk<=0;
+        const labels={fr:"🔧 Maintenance",en:"🔧 Maintenance",ru:"🔧 Техобслуживание"};
+        const currency=currentLang==="ru"?"":(" "+getCurrencySymbol());
+        maintenanceButton.textContent=(labels[currentLang]||labels.fr)+" · "+formatNumber(cost)+currency+" (−35%)";
+    }
 
     if(fill){
         fill.style.width=Math.max(0,Math.min(100,risk))+"%";
@@ -5097,9 +5183,10 @@ function getClickValue(){
     const state =
         getShardShopState();
 
+    const overpeterClick=1+Number(saveData.overpeterShop?.click||0)*2.5;
     return getBaseClickValue() *
         getPrestigeMultiplier() *
-        (1 + Number(state.click || 0) * 0.10);
+        (1 + Number(state.click || 0) * 0.10) * overpeterClick;
 }
 
 
@@ -5141,10 +5228,11 @@ function getPerSecond(){
     const state =
         getShardShopState();
 
+    const overpeterAuto=1+Number(saveData.overpeterShop?.auto||0)*2.5;
     return value *
         getPersonnelMultiplier() *
         getPrestigeMultiplier() *
-        (1 + Number(state.auto || 0) * 0.10);
+        (1 + Number(state.auto || 0) * 0.10) * overpeterAuto;
 }
 
 
@@ -5163,15 +5251,8 @@ function getPrice(
             ] || 0;
 
 
-    return Math.floor(
-
-        upgrade.basePrice *
-        Math.pow(
-            upgrade.priceGrowth,
-            owned
-        )
-
-    );
+    const raw=upgrade.basePrice*Math.pow(upgrade.priceGrowth,owned);
+    return Math.floor(Math.min(1e300,Number.isFinite(raw)?raw:1e300));
 }
 
 
@@ -5309,18 +5390,20 @@ function getUpgradeTranslation(
         ];
 
 
+    let generatedName=upgrade.name;
+    let generatedDescription=upgrade.description;
+    if(upgrade.generatedUpgrade){
+        if(currentLang==="en"){
+            generatedName=upgrade.category==="overpeter"?"Overpeter Ω-"+String(upgrade.tierIndex-1000).padStart(2,"0"):"Empire Expansion "+upgrade.tierIndex;
+            generatedDescription=upgrade.category==="overpeter"?"Cosmic production · exponential price":"Progressive upgrade: increased production";
+        }else if(currentLang==="ru"){
+            generatedName=upgrade.category==="overpeter"?"Оверпетер Ω-"+String(upgrade.tierIndex-1000).padStart(2,"0"):"Расширение империи "+upgrade.tierIndex;
+            generatedDescription=upgrade.category==="overpeter"?"Космическое производство · экспоненциальная цена":"Улучшение: увеличение производства";
+        }
+    }
     return {
-
-        name:
-            translated?.name ||
-            upgrade.name,
-
-        description:
-            localizeUpgradeCurrency(
-                translated?.desc ||
-                upgrade.description
-            )
-
+        name:translated?.name||generatedName,
+        description:localizeUpgradeCurrency(translated?.desc||generatedDescription)
     };
 }
 
@@ -5406,6 +5489,7 @@ function createShop(){
                         <span class="reactor-operation-status" id="${upgrade.id}OperationStatus">⚙️ Stable</span>
                         <span class="reactor-operation-status" id="${upgrade.id}ExplosionChance">Risque d'incident : 0.000 %/min</span>
                     </div>
+                    <button class="maintenance-button" id="${upgrade.id}Maintenance" type="button">🔧 Maintenance · réduction du risque</button>
                 </div>
             ` : ""}
 
@@ -5444,13 +5528,13 @@ function createShop(){
             .addEventListener(
                 "click",
                 ()=>{
-                    buyUpgrade(
-                        upgrade
-                    );
+                    buyUpgrade(upgrade);
                 }
             );
 
-
+        if(isOperationReactor(upgrade.id)){
+            document.getElementById(upgrade.id+"Maintenance").addEventListener("click",()=>performReactorMaintenance(upgrade.id));
+        }
 
     }
 }
@@ -5988,6 +6072,55 @@ document
 
 
 /* =========================================================
+   SUPER RENAISSANCE & BOUTIQUE OVERPETER
+========================================================= */
+const overpeterShopItems=[
+    {id:"power",name:{fr:"Singularité Overpeter",en:"Overpeter Singularity",ru:"Сингулярность Оверпетер"},desc:{fr:"Double le multiplicateur global par niveau",en:"Doubles the global multiplier per level",ru:"Удваивает общий множитель за уровень"},cost:1,growth:3,max:100},
+    {id:"click",name:{fr:"Clic omniversel",en:"Omniversal Click",ru:"Вселенский клик"},desc:{fr:"Bonus permanent aux clics",en:"Permanent click bonus",ru:"Постоянный бонус к кликам"},cost:2,growth:4,max:100},
+    {id:"auto",name:{fr:"Flux Overpeter",en:"Overpeter Flow",ru:"Поток Оверпетер"},desc:{fr:"Bonus permanent à la production automatique",en:"Permanent automatic-income bonus",ru:"Постоянный бонус к автоматическому доходу"},cost:2,growth:4,max:100}
+];
+function getOverpeterShopPrice(item){return Math.floor(item.cost*Math.pow(item.growth,Number(saveData?.overpeterShop?.[item.id]||0)));}
+function createOverpeterShop(){
+    const list=document.getElementById("overpeterShopList");
+    if(!list||!saveData)return;
+    list.innerHTML="";
+    for(const item of overpeterShopItems){
+        const level=Number(saveData.overpeterShop?.[item.id]||0),price=getOverpeterShopPrice(item);
+        const title=item.name[currentLang]||item.name.fr,desc=item.desc[currentLang]||item.desc.fr;
+        const card=document.createElement("div");card.className="shard-item";
+        card.innerHTML="<div class='shard-item-top'><div><h4 class='shard-item-name'>"+escapeHtml(title)+"</h4><p class='shard-item-desc'>"+escapeHtml(desc)+"</p></div><div class='shard-item-owned'>"+level+"/"+item.max+"</div></div><button class='shard-buy' type='button'>"+(currentLang==="ru"?"Купить":currentLang==="en"?"Buy":"Acheter")+" · "+formatNumber(price)+" fragment(s)</button>";
+        const button=card.querySelector("button");button.disabled=level>=item.max||saveData.overpeterShards<price;
+        button.addEventListener("click",()=>{
+            if(!saveData||saveData.overpeterShards<price||level>=item.max)return;
+            saveData.overpeterShards-=price;saveData.overpeterShop[item.id]=level+1;
+            saveData.overpeterShop.spent=Number(saveData.overpeterShop.spent||0)+price;
+            notify("🌌 "+title+" · niveau "+(level+1));update();
+        });
+        list.appendChild(card);
+    }
+}
+function getSuperPrestigeGain(){
+    if(!saveData||Number(saveData.prestige||0)<10||Number(saveData.totalEarned||0)<1e15)return 0;
+    return Math.max(1,Math.floor(Math.sqrt(Number(saveData.totalEarned)/1e15)));
+}
+async function superPrestige(){
+    if(!saveData||isBanned)return;
+    const gain=getSuperPrestigeGain();
+    if(gain<=0){notify("🔒 Il faut au moins 10 Renaissances et 1 Qa de gains pour la Super Renaissance.");return;}
+    const promptText=currentLang==="en"?"Launch a Super Rebirth? Money, levels and normal upgrades will reset. Rebirth shards and Overpeter bonuses are kept. You gain "+gain+" Overpeter fragment(s).":currentLang==="ru"?"Начать Супер-возрождение? Деньги, уровни и обычные улучшения сбросятся. Осколки возрождения и бонусы Оверпетер сохранятся. Вы получите фрагменты: "+gain+".":"Lancer une Super Renaissance ? L'argent, les niveaux et les améliorations normales seront réinitialisés. Les Éclats et bonus Overpeter seront conservés. Tu gagneras "+gain+" fragment(s) Overpeter.";
+    if(!confirm("🌌 "+promptText))return;
+    saveData.superPrestige=Number(saveData.superPrestige||0)+1;
+    saveData.overpeterShards=Number(saveData.overpeterShards||0)+gain;
+    saveData.prestige=0;saveData.money=0;saveData.totalEarned=0;saveData.xp=0;saveData.level=1;saveData.clicks=0;
+    for(const upgrade of upgradesData)saveData.upgrades[upgrade.id]=0;
+    saveData.upgrades._shardShop=saveData.upgrades._shardShop||{power:0,click:0,auto:0,spent:0};
+    saveData.upgrades._operation={rbmk1000:0,rbmk1500:0,chernobyl:0,lastTick:Date.now(),explosions:0};
+    await save();notify("🌌 Super Renaissance "+saveData.superPrestige+" ! +"+gain+" fragment(s) Overpeter.");update();
+}
+const superPrestigeButton=document.getElementById("superPrestigeButton");
+if(superPrestigeButton)superPrestigeButton.addEventListener("click",superPrestige);
+
+/* =========================================================
    AFFICHAGE
 ========================================================= */
 
@@ -6008,6 +6141,18 @@ function update(){
 
     const multiplier =
         getPrestigeMultiplier();
+
+    const superLevel=document.getElementById("superPrestigeLevel");
+    const overpeterBalance=document.getElementById("overpeterShards");
+    const superButton=document.getElementById("superPrestigeButton");
+    if(superLevel)superLevel.textContent=Number(saveData.superPrestige||0);
+    if(overpeterBalance)overpeterBalance.textContent=formatNumber(Number(saveData.overpeterShards||0));
+    if(superButton){
+        const gain=getSuperPrestigeGain();
+        superButton.disabled=gain<=0;
+        superButton.textContent=gain>0?(currentLang==="en"?"🌌 Super Rebirth · +":"🌌 Super Renaissance · +")+formatNumber(gain)+(currentLang==="ru"?" фрагм.":" fragment(s)"):(currentLang==="en"?"🔒 Requires 10 Rebirths + 1 Qa earned":currentLang==="ru"?"🔒 Нужно 10 возрождений + 1 Qa":"🔒 Super Renaissance · 10 Renaissances + 1 Qa de gains");
+    }
+    createOverpeterShop();
 
 
     document.getElementById(
@@ -6699,35 +6844,31 @@ document
 ========================================================= */
 
 document
-    .getElementById(
-        "loginForm"
-    )
-    .addEventListener(
-        "submit",
-        async event => {
-
-            event.preventDefault();
-
+    .getElementById("loginSubmit")
+    .addEventListener("click", async () => {
+        const form = document.getElementById("loginForm");
+        if (!form.reportValidity()) return;
+        try {
             await login();
-
+        } catch (error) {
+            console.error("Erreur de connexion Supabase:", error);
+            showAuthMessage("❌ Connexion impossible. Vérifie la connexion réseau et la console.");
         }
-    );
+    });
 
 
 document
-    .getElementById(
-        "registerForm"
-    )
-    .addEventListener(
-        "submit",
-        async event => {
-
-            event.preventDefault();
-
+    .getElementById("registerSubmit")
+    .addEventListener("click", async () => {
+        const form = document.getElementById("registerForm");
+        if (!form.reportValidity()) return;
+        try {
             await register();
-
+        } catch (error) {
+            console.error("Erreur d'inscription Supabase:", error);
+            showAuthMessage("❌ Inscription impossible. Vérifie la connexion réseau et la console.");
         }
-    );
+    });
 
 
 /* =========================================================
