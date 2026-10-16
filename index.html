@@ -1614,6 +1614,27 @@ body{
     #authScreen,#banScreen{background-size:cover,135vw auto!important}
 }
 
+
+
+/* SKALA RANDOM SYSTEM NOTICES — notifications CRT non intrusives */
+#skala-notice-stack{position:fixed;z-index:99999;top:76px;right:20px;width:min(390px,calc(100vw - 28px));display:flex;flex-direction:column;gap:10px;pointer-events:none;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.skala-notice{position:relative;pointer-events:auto;overflow:hidden;background:rgba(2,13,6,.96);color:#a6ffb5;border:1px solid rgba(114,255,145,.65);box-shadow:0 0 18px rgba(72,255,112,.13),inset 0 0 18px rgba(72,255,112,.05);padding:13px 38px 14px 15px;animation:skala-notice-in .32s ease-out both;backdrop-filter:blur(5px)}
+.skala-notice:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,rgba(114,255,145,.055) 1px,transparent 2px,transparent 4px);pointer-events:none}
+.skala-notice:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#72ff91;box-shadow:0 0 10px #72ff91}
+.skala-notice-head{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:#72ff91;margin-bottom:7px}
+.skala-notice-led{width:7px;height:7px;flex:none;border-radius:50%;background:#72ff91;box-shadow:0 0 8px currentColor;animation:skala-led 1.8s steps(2,end) infinite}
+.skala-notice-title{font-weight:800;font-size:13px;letter-spacing:.5px;margin-bottom:5px;text-shadow:0 0 7px rgba(114,255,145,.25)}
+.skala-notice-msg{font-size:12px;line-height:1.55;color:#c7ffd0;overflow-wrap:anywhere}
+.skala-notice-time{font-size:9px;opacity:.55;margin-top:9px;letter-spacing:1px}
+.skala-notice-close{position:absolute;right:8px;top:7px;border:1px solid rgba(114,255,145,.3);background:transparent;color:#a6ffb5;font:inherit;font-size:15px;width:24px;height:24px;cursor:pointer;z-index:2}
+.skala-notice-close:hover{background:rgba(114,255,145,.15)}
+.skala-notice.warning{border-color:rgba(255,196,91,.75);color:#ffe2a4}.skala-notice.warning:after{background:#ffc45b;box-shadow:0 0 10px #ffc45b}.skala-notice.warning .skala-notice-head{color:#ffc45b}.skala-notice.warning .skala-notice-led{background:#ffc45b}.skala-notice.warning .skala-notice-title,.skala-notice.warning .skala-notice-msg,.skala-notice.warning .skala-notice-close{color:#ffe2a4}
+.skala-notice.alert{border-color:rgba(255,103,103,.78);color:#ffb0a7}.skala-notice.alert:after{background:#ff6767;box-shadow:0 0 10px #ff6767}.skala-notice.alert .skala-notice-head{color:#ff6767}.skala-notice.alert .skala-notice-led{background:#ff6767}.skala-notice.alert .skala-notice-title,.skala-notice.alert .skala-notice-msg,.skala-notice.alert .skala-notice-close{color:#ffb0a7}
+@keyframes skala-notice-in{from{opacity:0;transform:translateX(22px) scale(.98)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes skala-led{50%{opacity:.35}}
+@media(max-width:600px){#skala-notice-stack{top:12px;right:10px;width:calc(100vw - 20px)}.skala-notice{padding:11px 36px 12px 13px}}
+@media(prefers-reduced-motion:reduce){.skala-notice,.skala-notice-led{animation:none!important}}
+
 </style>
 </head>
 
@@ -7473,6 +7494,84 @@ changeLanguage(
 );
 
 start();
+
+
+
+/* =========================================================
+   SKALA — NOTIFICATIONS ALEATOIRES DU SYSTEME
+   Ambiance narrative uniquement : aucun effet sur les ressources.
+========================================================= */
+(()=>{
+  const messages={
+    fr:[
+      ['INFO','LIAISON SKALA STABLE','Les télémesures du bloc sont reçues. Surveillance automatique maintenue.','ok'],
+      ['RAPPORT','CYCLE DE CONTRÔLE TERMINÉ','Les indicateurs ont été actualisés. Aucun acquittement requis.','ok'],
+      ['MAINTENANCE','RAPPEL DE MAINTENANCE','Le journal recommande de vérifier l’état des équipements auxiliaires.','warning'],
+      ['TÉLÉMESURE','ÉCART DE MESURE MINEUR','Une valeur simulée fluctue légèrement. Le système poursuit l’observation.','warning'],
+      ['ARCHIVE','NOUVELLE ENTRÉE ARCHIVÉE','Un rapport de quart a été ajouté au journal local de la console.','ok'],
+      ['SYSTÈME','SYNCHRONISATION DES HORLOGES','Les horodatages de l’interface viennent d’être resynchronisés.','ok'],
+      ['RÉSEAU','CANAL DE DONNÉES DISPONIBLE','Le canal de communication simulé répond normalement.','ok'],
+      ['AVERTISSEMENT','SIGNAL DE CONTRÔLE À RELIRE','Un indicateur de démonstration demande une seconde lecture. Ceci est un événement fictif du jeu.','warning'],
+      ['DIAGNOSTIC','AUTODIAGNOSTIC TERMINÉ','Les contrôles logiciels de routine sont terminés. Aucune action dans le jeu n’a été effectuée.','ok'],
+      ['ALERTE SIMULÉE','VARIATION DU SIGNAL','Variation fictive détectée dans la télémétrie de démonstration. Vérifiez les indicateurs du jeu.','alert'],
+      ['OPÉRATEUR','RAPPEL DE QUART','Pensez à consulter le tableau de bord avant de lancer une nouvelle séquence.','warning'],
+      ['SKALA','CONSOLE EN MODE VEILLE ACTIVE','Le terminal reste opérationnel. Prochaine interrogation automatique programmée.','ok']
+    ],
+    en:[
+      ['INFO','SKALA LINK STABLE','Unit telemetry received. Automatic monitoring remains active.','ok'],
+      ['REPORT','CONTROL CYCLE COMPLETE','Indicators have been refreshed. No acknowledgement required.','ok'],
+      ['MAINTENANCE','MAINTENANCE REMINDER','The log recommends checking auxiliary equipment status.','warning'],
+      ['TELEMETRY','MINOR MEASUREMENT DEVIATION','A simulated value is fluctuating slightly. Monitoring continues.','warning'],
+      ['ARCHIVE','NEW ENTRY ARCHIVED','A shift report has been added to the console log.','ok'],
+      ['SYSTEM','CLOCK SYNCHRONIZATION','Interface timestamps have been synchronized.','ok'],
+      ['NETWORK','DATA CHANNEL AVAILABLE','The simulated communications channel is responding normally.','ok'],
+      ['WARNING','CONTROL SIGNAL REVIEW','A demo indicator requests a second look. This is a fictional game event.','warning'],
+      ['DIAGNOSTIC','SELF-TEST COMPLETE','Routine software checks are complete. No game action was performed.','ok'],
+      ['SIMULATED ALERT','SIGNAL VARIATION','A fictional variation appeared in demo telemetry. Check the game indicators.','alert'],
+      ['OPERATOR','SHIFT REMINDER','Review the dashboard before starting another sequence.','warning'],
+      ['SKALA','CONSOLE STANDBY ACTIVE','The terminal remains operational. Next automatic poll is scheduled.','ok']
+    ],
+    ru:[
+      ['ИНФО','СВЯЗЬ SKALA СТАБИЛЬНА','Телеметрия блока получена. Автоматическое наблюдение продолжается.','ok'],
+      ['ОТЧЁТ','ЦИКЛ КОНТРОЛЯ ЗАВЕРШЁН','Показатели обновлены. Подтверждение не требуется.','ok'],
+      ['ОБСЛУЖИВАНИЕ','НАПОМИНАНИЕ ОБ ОБСЛУЖИВАНИИ','Журнал рекомендует проверить вспомогательное оборудование.','warning'],
+      ['ТЕЛЕМЕТРИЯ','НЕБОЛЬШОЕ ОТКЛОНЕНИЕ','Смоделированное значение слегка колеблется. Наблюдение продолжается.','warning'],
+      ['АРХИВ','ЗАПИСЬ СОХРАНЕНА','Отчёт смены добавлен в журнал консоли.','ok'],
+      ['СИСТЕМА','СИНХРОНИЗАЦИЯ ЧАСОВ','Временные метки интерфейса синхронизированы.','ok'],
+      ['СЕТЬ','КАНАЛ ДАННЫХ ДОСТУПЕН','Смоделированный канал связи работает нормально.','ok'],
+      ['ПРЕДУПРЕЖДЕНИЕ','ПРОВЕРЬТЕ СИГНАЛ','Тестовый индикатор требует повторной проверки. Это вымышленное событие игры.','warning'],
+      ['ДИАГНОСТИКА','САМОПРОВЕРКА ЗАВЕРШЕНА','Плановая программная проверка завершена. Действий в игре не выполнено.','ok'],
+      ['УЧЕБНАЯ ТРЕВОГА','ИЗМЕНЕНИЕ СИГНАЛА','В демонстрационной телеметрии появилось вымышленное изменение. Проверьте показатели игры.','alert'],
+      ['ОПЕРАТОР','НАПОМИНАНИЕ О СМЕНЕ','Проверьте панель перед запуском следующего цикла.','warning'],
+      ['SKALA','КОНСОЛЬ АКТИВНА','Терминал работает. Следующий автоматический опрос запланирован.','ok']
+    ]
+  };
+  let stack, timer, last=-1;
+  const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+  function currentLanguage(){const l=String(window.currentLang||document.documentElement.lang||'fr').toLowerCase();return l.startsWith('ru')?'ru':l.startsWith('en')?'en':'fr'}
+  function getStack(){if(!stack){stack=document.createElement('div');stack.id='skala-notice-stack';stack.setAttribute('aria-live','polite');stack.setAttribute('aria-label','SKALA system notifications');document.body.appendChild(stack)}return stack}
+  function showNotice(){
+    if(document.hidden){schedule(rand(25000,55000));return}
+    const list=messages[currentLanguage()]||messages.fr;
+    let i=rand(0,list.length-1);if(list.length>1&&i===last)i=(i+1)%list.length;last=i;
+    const [category,title,message,type]=list[i];
+    const card=document.createElement('section');card.className='skala-notice '+type;card.setAttribute('role','status');
+    const head=document.createElement('div');head.className='skala-notice-head';
+    const led=document.createElement('span');led.className='skala-notice-led';
+    const label=document.createElement('span');label.textContent='SKALA // '+category;
+    head.append(led,label);
+    const close=document.createElement('button');close.className='skala-notice-close';close.type='button';close.setAttribute('aria-label','Fermer la notification');close.textContent='×';close.onclick=()=>card.remove();
+    const h=document.createElement('div');h.className='skala-notice-title';h.textContent=title;
+    const body=document.createElement('div');body.className='skala-notice-msg';body.textContent=message;
+    const stamp=document.createElement('div');stamp.className='skala-notice-time';stamp.textContent='SYS.LOG / '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    card.append(head,close,h,body,stamp);const target=getStack();target.appendChild(card);
+    while(target.children.length>3)target.firstElementChild.remove();
+    window.setTimeout(()=>{if(card.isConnected){card.style.transition='opacity .5s, transform .5s';card.style.opacity='0';card.style.transform='translateX(15px)';window.setTimeout(()=>card.remove(),520)}},rand(8500,12500));
+    schedule(rand(32000,78000));
+  }
+  function schedule(ms){window.clearTimeout(timer);timer=window.setTimeout(showNotice,ms)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>schedule(12000),{once:true});else schedule(12000);
+})();
 
 </script>
 
