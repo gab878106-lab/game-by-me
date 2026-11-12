@@ -58,9 +58,7 @@ Le projet est développé en HTML, CSS et JavaScript.
 
 Pour lancer le jeu :
 
-1. Télécharger le fichier HTML.
-2. Ouvrir le fichier dans un navigateur récent.
-3. Profiter de SKALA.
+https://gab878106-lab.github.io/game-by-me/
 
 Pour utiliser les fonctionnalités de compte et de sauvegarde en ligne, la configuration Supabase du projet est nécessaire.
 
