@@ -573,7 +573,7 @@ body.az5-alarm::after{
 }
 
 .shop-list{
-    max-height:calc(100vh - 155px);
+    max-height:calc(100vh - 215px);
     padding-right:5px;
     overflow-y:auto;
 }
@@ -2137,11 +2137,18 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
             </div>
 
+            <div class="buy-mode" id="buyMode">
+                <span class="buy-mode-label">QUANTITÉ</span>
+                <button type="button" class="buy-mode-btn" data-mode="1">x1</button>
+                <button type="button" class="buy-mode-btn" data-mode="10">x10</button>
+                <button type="button" class="buy-mode-btn" data-mode="100">x100</button>
+                <button type="button" class="buy-mode-btn" data-mode="max">MAX</button>
+            </div>
+
             <div
                 class="shop-list"
                 id="shopList"
             ></div>
-
         </section>
 
     </main>
@@ -5740,6 +5747,96 @@ function getPrice(
     return Math.floor(Math.min(1e300,Number.isFinite(raw)?raw:1e300));
 }
 
+/* =========================================================
+   ACHAT EN QUANTITÉ (x1 / x10 / x100 / MAX)
+========================================================= */
+
+let buyMode = localStorage.getItem("clicker_buy_mode") || "1";
+if(!["1","10","100","max"].includes(buyMode)){
+    buyMode = "1";
+}
+
+function bulkCost(upgrade, owned, n){
+    const g = upgrade.priceGrowth;
+    const raw = upgrade.basePrice * Math.pow(g, owned);
+
+    if(n <= 1){
+        return Math.floor(Math.min(1e300, Number.isFinite(raw) ? raw : 1e300));
+    }
+
+    const total = (g === 1)
+        ? raw * n
+        : raw * (Math.pow(g, n) - 1) / (g - 1);
+
+    return Number.isFinite(total)
+        ? Math.floor(Math.min(1e300, total))
+        : Infinity;
+}
+
+function getBulkPurchase(upgrade){
+    const owned = Number(saveData.upgrades[upgrade.id] || 0);
+
+    const remaining = upgrade.maxOwned
+        ? Math.max(0, upgrade.maxOwned - owned)
+        : Infinity;
+
+    let count;
+
+    if(buyMode === "max"){
+        const g = upgrade.priceGrowth;
+        const first = bulkCost(upgrade, owned, 1);
+
+        if(saveData.money < first){
+            count = 1;
+        }
+        else if(g === 1){
+            count = Math.floor(saveData.money / first);
+        }
+        else{
+            count = Math.floor(
+                Math.log(1 + saveData.money * (g - 1) / first) / Math.log(g)
+            );
+            count = Math.max(1, Math.min(count, 100000));
+
+            let guard = 0;
+            while(
+                count > 1 &&
+                bulkCost(upgrade, owned, count) > saveData.money &&
+                guard++ < 50
+            ){
+                count--;
+            }
+        }
+    }
+    else{
+        count = Number(buyMode);
+    }
+
+    count = Math.min(count, remaining);
+    if(!(count >= 1)) count = 1;
+
+    return {
+        count,
+        cost: bulkCost(upgrade, owned, count)
+    };
+}
+
+function setBuyMode(mode){
+    if(!["1","10","100","max"].includes(mode)) return;
+    buyMode = mode;
+    localStorage.setItem("clicker_buy_mode", mode);
+
+    document.querySelectorAll(".buy-mode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === mode);
+    });
+
+    if(saveData) update();
+}
+
+document.querySelectorAll(".buy-mode-btn").forEach(btn => {
+    btn.addEventListener("click", () => setBuyMode(btn.dataset.mode));
+    btn.classList.toggle("active", btn.dataset.mode === buyMode);
+});
 
 /* =========================================================
    FORMATAGE
@@ -6137,8 +6234,6 @@ function buyUpgrade(
             saveData.upgrades[upgrade.id] || 0
         );
 
-    /* Les personnages uniques (Akimov / Diatlov) doivent
-       être vérifiés AVANT de retirer l'argent. */
     if(
         upgrade.maxOwned &&
         ownedBefore >= upgrade.maxOwned
@@ -6152,15 +6247,14 @@ function buyUpgrade(
     }
 
 
-    const price =
-        getPrice(
-            upgrade
-        );
+    const bulk = getBulkPurchase(upgrade);
+    const price = bulk.cost;
+    const count = bulk.count;
 
 
     if(
-        saveData.money <
-        price
+        !Number.isFinite(price) ||
+        saveData.money < price
     ){
 
         notify(
@@ -6189,7 +6283,7 @@ function buyUpgrade(
 
     saveData.upgrades[
         upgrade.id
-    ]++;
+    ] += count;
 
 
     const translated =
@@ -6202,6 +6296,7 @@ function buyUpgrade(
 
         upgrade.icon+
         " "+
+        (count > 1 ? "x"+formatNumber(count)+" " : "")+
         translated.name+
         " "+
         translations[
@@ -6729,11 +6824,13 @@ function update(){
         upgradeCount +=
             owned;
 
-
-        const price =
-            getPrice(
+            const bulk =
+            getBulkPurchase(
                 upgrade
             );
+
+        const price =
+            bulk.cost;
 
 
         const ownedElement =
