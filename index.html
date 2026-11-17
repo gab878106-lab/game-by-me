@@ -5368,6 +5368,49 @@ function updateCurrencySymbols(){
    MULTIPLICATEUR
 ========================================================= */
 
+/* =========================================================
+   ARITHMÉTIQUE SÉCURISÉE — PROTECTION CONTRE INFINITY
+   Les valeurs du jeu restent des Number pour compatibilité
+   avec les sauvegardes Supabase. Le plafond évite Infinity.
+========================================================= */
+const MAX_GAME_VALUE = 1e300;
+const MAX_GAME_LOG2 = Math.log2(MAX_GAME_VALUE);
+
+function safeGameNumber(value, fallback=0){
+    const n=Number(value);
+    if(Number.isNaN(n)) return fallback;
+    if(n===Infinity) return MAX_GAME_VALUE;
+    if(n===-Infinity) return -MAX_GAME_VALUE;
+    return Math.max(-MAX_GAME_VALUE,Math.min(MAX_GAME_VALUE,n));
+}
+
+function safeGameAdd(a,b){
+    return safeGameNumber(safeGameNumber(a)+safeGameNumber(b));
+}
+
+function safeGameMultiply(a,b){
+    a=safeGameNumber(a); b=safeGameNumber(b);
+    if(a===0 || b===0) return 0;
+    const result=a*b;
+    if(!Number.isFinite(result)) return Math.sign(a)*Math.sign(b)*MAX_GAME_VALUE;
+    return Math.max(-MAX_GAME_VALUE,Math.min(MAX_GAME_VALUE,result));
+}
+
+function safePowerOfTwo(exponent){
+    exponent=Math.max(0,safeGameNumber(exponent));
+    if(exponent>=MAX_GAME_LOG2) return MAX_GAME_VALUE;
+    return Math.pow(2,exponent);
+}
+
+function log2PositiveSum(values){
+    const logs=values.filter(v=>Number.isFinite(v)&&v>0).map(v=>Math.log2(v));
+    if(!logs.length) return 0;
+    const maxLog=Math.max(...logs);
+    let scaled=0;
+    for(const log of logs) scaled+=Math.pow(2,log-maxLog);
+    return maxLog+Math.log2(scaled);
+}
+
 function getPrestigeMultiplier(){
 
     if(!saveData){
@@ -5375,12 +5418,18 @@ function getPrestigeMultiplier(){
     }
 
     const state = getShardShopState();
-    const totalShards = saveData.prestigeShards + Number(state.spent || 0);
-    const shopPower = Number(state.power || 0);
+    const shards = safeGameNumber(saveData.prestigeShards);
+    const spent = safeGameNumber(state.spent || 0);
+    const shopPower = safeGameNumber(state.power || 0);
 
-    const superLevels=Number(saveData.superPrestige||0);
-    const overpeterPower=Number(saveData.overpeterShop?.power||0);
-    return (1+totalShards*.25+shopPower*.05)*Math.pow(2,superLevels)*Math.pow(2,overpeterPower);
+    const superLevels=Math.max(0,safeGameNumber(saveData.superPrestige||0));
+    const overpeterPower=Math.max(0,safeGameNumber(saveData.overpeterShop?.power||0));
+
+    // Calcul en logarithmes : on ne calcule jamais 2^niveau directement
+    // lorsque le résultat dépasserait la capacité d'un Number.
+    const logBase=log2PositiveSum([1,safeGameMultiply(shards+spent,.25),safeGameMultiply(shopPower,.05)]);
+    const totalLog2=logBase+superLevels+overpeterPower;
+    return safePowerOfTwo(totalLog2);
 }
 
 
@@ -5434,15 +5483,15 @@ function getEmployeeStats(){
     for(const employee of employees){
         const owned=Number(saveData.upgrades[employee.id]||0);
         total+=owned;
-        production+=employee.production*owned;
-        risk+=employee.risk*owned;
+        production=safeGameAdd(production,safeGameMultiply(employee.production,owned));
+        risk=safeGameAdd(risk,safeGameMultiply(employee.risk,owned));
     }
 
     return {production,risk,total};
 }
 
 function getEmployeeProductionMultiplier(){
-    return 1 + getEmployeeStats().production;
+    return safeGameAdd(1,getEmployeeStats().production);
 }
 
 function getEmployeeRiskModifier(){
@@ -5614,17 +5663,15 @@ function getPersonnelMultiplier(){
         Number(saveData.upgrades.diatlov || 0);
 
     if(akimov > 0){
-        multiplier *=
-            1 +
-            0.20 * akimov;
+        multiplier = safeGameMultiply(multiplier,1+safeGameMultiply(0.20,akimov));
     }
 
     if(diatlov > 0){
-        multiplier *=
-            Math.pow(2, diatlov);
+        multiplier =
+            safeGameMultiply(multiplier,safePowerOfTwo(diatlov));
     }
 
-    multiplier *= getEmployeeProductionMultiplier();
+    multiplier = safeGameMultiply(multiplier,getEmployeeProductionMultiplier());
 
     return multiplier;
 }
@@ -5659,14 +5706,10 @@ function getBaseClickValue(){
                 upgrade.id
             );
 
-        value +=
-            upgrade.click *
-            owned *
-            efficiency;
+        value = safeGameAdd(value,safeGameMultiply(safeGameMultiply(upgrade.click,owned),efficiency));
     }
 
-    return value *
-        getPersonnelMultiplier();
+    return safeGameMultiply(value,getPersonnelMultiplier());
 }
 
 
@@ -5675,10 +5718,10 @@ function getClickValue(){
     const state =
         getShardShopState();
 
-    const overpeterClick=1+Number(saveData.overpeterShop?.click||0)*2.5;
-    return getBaseClickValue() *
-        getPrestigeMultiplier() *
-        (1 + Number(state.click || 0) * 0.10) * overpeterClick;
+    const overpeterClick=1+safeGameMultiply(Number(saveData.overpeterShop?.click||0),2.5);
+    let result=safeGameMultiply(getBaseClickValue(),getPrestigeMultiplier());
+    result=safeGameMultiply(result,1+safeGameMultiply(Number(state.click||0),.10));
+    return safeGameMultiply(result,overpeterClick);
 }
 
 
@@ -5711,20 +5754,17 @@ function getPerSecond(){
                 upgrade.id
             );
 
-        value +=
-            upgrade.auto *
-            owned *
-            efficiency;
+        value = safeGameAdd(value,safeGameMultiply(safeGameMultiply(upgrade.auto,owned),efficiency));
     }
 
     const state =
         getShardShopState();
 
-    const overpeterAuto=1+Number(saveData.overpeterShop?.auto||0)*2.5;
-    return value *
-        getPersonnelMultiplier() *
-        getPrestigeMultiplier() *
-        (1 + Number(state.auto || 0) * 0.10) * overpeterAuto;
+    const overpeterAuto=1+safeGameMultiply(Number(saveData.overpeterShop?.auto||0),2.5);
+    let result=safeGameMultiply(value,getPersonnelMultiplier());
+    result=safeGameMultiply(result,getPrestigeMultiplier());
+    result=safeGameMultiply(result,1+safeGameMultiply(Number(state.auto||0),.10));
+    return safeGameMultiply(result,overpeterAuto);
 }
 
 
@@ -6318,22 +6358,13 @@ function addMoney(
     amount
 ){
 
-    if(
-        isBanned ||
-        !saveData ||
-        !Number.isFinite(amount) ||
-        amount <= 0
-    ){
+    if(isBanned || !saveData || Number.isNaN(Number(amount)) || Number(amount)<=0){
         return;
     }
 
-
-    saveData.money +=
-        amount;
-
-
-    saveData.totalEarned +=
-        amount;
+    amount=safeGameNumber(amount);
+    saveData.money=safeGameAdd(saveData.money,amount);
+    saveData.totalEarned=safeGameAdd(saveData.totalEarned,amount);
 
 
     saveData.xp +=
@@ -6523,10 +6554,7 @@ function getPrestigeGain(){
         Math.floor(
 
             Math.sqrt(
-
-                saveData.totalEarned /
-                PRESTIGE_REQUIREMENT
-
+                Math.min(MAX_GAME_VALUE, safeGameNumber(saveData.totalEarned) / PRESTIGE_REQUIREMENT)
             )
 
         )
@@ -6585,11 +6613,8 @@ async function prestige(){
     }
 
 
-    saveData.prestige++;
-
-
-    saveData.prestigeShards +=
-        gain;
+    saveData.prestige=safeGameAdd(saveData.prestige,1);
+    saveData.prestigeShards=safeGameAdd(saveData.prestigeShards,gain);
 
 
     saveData.money =
@@ -6686,7 +6711,7 @@ function createOverpeterShop(){
 }
 function getSuperPrestigeGain(){
     if(!saveData||Number(saveData.prestige||0)<10||Number(saveData.totalEarned||0)<1e24)return 0;
-    return Math.max(1,Math.floor(Math.sqrt(Number(saveData.totalEarned)/1e24)));
+    return Math.max(1,Math.floor(Math.sqrt(Math.min(MAX_GAME_VALUE,safeGameNumber(saveData.totalEarned)/1e24))));
 }
 async function superPrestige(){
     if(!saveData||isBanned)return;
@@ -6694,8 +6719,8 @@ async function superPrestige(){
     if(gain<=0){notify("🔒 Il faut au moins 10 Renaissances et 1e24 de gains pour la Super Renaissance.");return;}
     const promptText=currentLang==="en"?"Launch a Super Rebirth? Money, levels and normal upgrades will reset. Rebirth shards and Overpeter bonuses are kept. You gain "+gain+" Overpeter fragment(s).":currentLang==="ru"?"Начать Супер-возрождение? Деньги, уровни и обычные улучшения сбросятся. Осколки возрождения и бонусы Оверпетер сохранятся. Вы получите фрагменты: "+gain+".":"Lancer une Super Renaissance ? L'argent, les niveaux et les améliorations normales seront réinitialisés. Les Éclats et bonus Overpeter seront conservés. Tu gagneras "+gain+" fragment(s) Overpeter.";
     if(!confirm("🌌 "+promptText))return;
-    saveData.superPrestige=Number(saveData.superPrestige||0)+1;
-    saveData.overpeterShards=Number(saveData.overpeterShards||0)+gain;
+    saveData.superPrestige=safeGameAdd(saveData.superPrestige||0,1);
+    saveData.overpeterShards=safeGameAdd(saveData.overpeterShards||0,gain);
     saveData.prestige=0;saveData.money=0;saveData.totalEarned=0;saveData.xp=0;saveData.level=1;saveData.clicks=0;
     for(const upgrade of upgradesData)saveData.upgrades[upgrade.id]=0;
     saveData.upgrades._shardShop=saveData.upgrades._shardShop||{power:0,click:0,auto:0,spent:0};
@@ -7019,19 +7044,9 @@ setInterval(
 
         if(income > 0){
 
-            const gain =
-                income /
-                10;
-
-
-            saveData.money +=
-                gain;
-
-
-            saveData.totalEarned +=
-                gain;
-
-
+            const gain = safeGameNumber(income/10);
+            saveData.money=safeGameAdd(saveData.money,gain);
+            saveData.totalEarned=safeGameAdd(saveData.totalEarned,gain);
             update();
 
         }
